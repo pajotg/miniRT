@@ -26,9 +26,13 @@ OBJECTS = $(SOURCE_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
+	$(MAKE) -C minilibx-linux
+	$(MAKE) -C libft
 	$(CC) $(FLAGS) -o $(NAME) $^ $(LDFLAGS)
 
 $(TEST_BINDER_NAME): $(OBJECTS)
+	$(MAKE) -C minilibx-linux
+	$(MAKE) -C libft
 	rm -f $(TEST_BINDER_NAME)
 	ar -rcS $(TEST_BINDER_NAME) $(filter-out %main.o,$(OBJECTS))
 	ranlib $(TEST_BINDER_NAME) # Really long comment so i will fix it once i am done with making it work alright okay this should trigger the norminette+
