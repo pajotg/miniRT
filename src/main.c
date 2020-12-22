@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/22 19:52:07 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/22 22:18:24 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ t_args* parse_args(int argc, char **argv)
 	}
 
 	data->map_file = argv[1];
-	if (ft_strlen(data->map_file) < 3 || ft_strncmp(data->map_file + ft_strlen(data->map_file) - 3,".rt", 3) != 0)
+	if (ft_strlen(data->map_file) < 4 || ft_strncmp(data->map_file + ft_strlen(data->map_file) - 3,".rt", 3) != 0 || (data->map_file[ft_strlen(data->map_file)-4] == '/'))	// Checks for: strlen >= 4, ends with .rt, and character before . != /
 	{
 		data->error_msg = ft_strjoin("File does not end with \".rt\", got: ", data->map_file);
 		if (data->error_msg == NULL)
