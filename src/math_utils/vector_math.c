@@ -6,12 +6,12 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:49 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/22 17:54:45 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/22 19:49:36 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "miniRT_math_utils.h"
-#include <stdlib.h>
+#include "mini_rt_math_utils.h"
+#include <math.h>
 
 t_vec3 vec3_new(float x, float y, float z)
 {
