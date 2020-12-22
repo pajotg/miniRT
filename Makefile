@@ -25,6 +25,7 @@ OBJECTS = $(SOURCE_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 .PHONY: all
 all: $(NAME)
 
+# Be sure to make libft and minilibx no longer submodules when you want to eval, it dont work when you clone it! REEE
 $(NAME): $(OBJECTS)
 	$(MAKE) -C minilibx-linux
 	$(MAKE) -C libft
