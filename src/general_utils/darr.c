@@ -6,13 +6,14 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 11:57:46 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 12:26:55 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 14:22:06 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_utils.h"
 #include <stdlib.h>
 #include "libft.h"
+#include <stdio.h>
 
 bool darray_init(t_darray *darr, size_t data_size)
 {
@@ -41,10 +42,9 @@ t_darray *darray_new(size_t data_size)
 }
 
 
-void darray_free(t_darray *darr)
+void darray_un_init(t_darray *darr)
 {
 	free(darr->data);
-	free(darr);
 }
 
 bool darray_push(t_darray *darr, void *value)

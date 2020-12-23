@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 13:58:24 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 14:25:36 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,14 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 	return true;
 }
 
+void free_scene(t_scene* scene)
+{
+	darray_un_init(&(scene->cameras));
+	darray_un_init(&(scene->objects));
+	darray_un_init(&(scene->lights));
+	free(scene);
+}
+
 t_scene* parse_scene_file(int fd)
 {
 	t_scene* scene = malloc(sizeof(t_scene));
@@ -121,11 +129,9 @@ t_scene* parse_scene_file(int fd)
 	init_success = darray_init(&scene->lights, sizeof(t_light)) && init_success;
 	if (!init_success)
 	{
-		darray_free(&scene->cameras);
-		darray_free(&scene->objects);
-		darray_free(&scene->lights);
-		free(scene);
+		free_scene(scene);
 		set_error("Malloc failed in darray init!", false);
+		return NULL;
 	}
 	char* line;
 
@@ -138,14 +144,15 @@ t_scene* parse_scene_file(int fd)
 		if (out == -1)
 		{
 			set_error(ft_strjoin("Could not read file: ", strerror(errno)), true);
-			free(scene);
+			free_scene(scene);
 			return NULL;
 		}
 
 		if (!parse_line(&parse_data, scene, line))
 		{
+			clear_gnl_data(fd);
 			free(line);
-			free(scene);
+			free_scene(scene);
 			return NULL;
 		}
 		free(line);
@@ -156,15 +163,13 @@ t_scene* parse_scene_file(int fd)
 
 	if (!parse_data.has_ambiant || !parse_data.has_resolution || scene->cameras.count == 0)
 	{
-		darray_free(&scene->cameras);
-		darray_free(&scene->objects);
-		free(scene);
 		if (!parse_data.has_ambiant)
 			set_error("No ambiant in configuration!", false);
 		else if (!parse_data.has_resolution)
 			set_error("No resolution in configuration!", false);
 		else if (scene->cameras.count == 0)
 			set_error("No cameras in configuration", false);
+		free_scene(scene);
 		return NULL;
 	}
 

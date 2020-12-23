@@ -28,6 +28,7 @@ OBJECTS = $(SOURCE_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 all: $(NAME)
 
 # Be sure to make libft and minilibx no longer submodules when you want to eval, it dont work when you clone it! REEE
+# Also be sure to find #include <stdio.h>, you never know where i left it in, alright? alright.
 $(NAME): $(OBJECTS)
 	$(MAKE) -C minilibx-linux
 	$(MAKE) -C libft bonus
