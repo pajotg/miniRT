@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 11:26:48 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 14:22:31 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 15:40:37 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,15 @@ typedef struct s_darray
 	void* data;
 }				t_darray;
 
+typedef void (*t_free_values)(void *value);
+
 char* get_last_error();
 void set_error(char* error_msg, bool should_free);
 void clear_error();
 
 bool darray_init(t_darray *darr, size_t data_size);
 t_darray *darray_new(size_t data_size);
-void darray_un_init(t_darray *darr);
+void darray_un_init(t_darray *darr, t_free_values free_values);
 bool darray_push(t_darray *darr, void *value);
 
 #endif

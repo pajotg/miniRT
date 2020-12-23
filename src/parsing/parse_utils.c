@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:11:07 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 14:57:29 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 15:25:11 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ bool read_int(char* str, int* current, int* value)
 	// Basic atoi
 	while (ft_isdigit(str[*current]))
 	{
-		*value = *value * 10 + str[*current] - '0';
+		*value = (*value) * 10 + str[*current] - '0';
 		if (*value < 0)
 		{
 			set_error("Value out of range!", false);

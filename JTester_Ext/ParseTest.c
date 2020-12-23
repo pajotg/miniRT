@@ -8,55 +8,99 @@
 
 #define ScenesPath "/home/jasper/Desktop/miniRT/scenes"
 
+void get_next(DIR* ValidDir, DIR* InValidDir, struct dirent** dir, bool* ShouldBeValid)
+{
+	if (*ShouldBeValid)
+		*dir = readdir(ValidDir);
+	else
+		*dir = NULL;
+	if (*dir == NULL)
+	{
+		*ShouldBeValid = false;
+		*dir = readdir(InValidDir);
+	}
+	if (*dir != NULL && (*dir)->d_type != DT_REG)
+		get_next(ValidDir, InValidDir, dir, ShouldBeValid);
+}
+
+/*
+**	This test main is using the internal structure of the test code to give every file its own test result
+*/
+
 int main(int argc, char *argv[])
 {
-	TEST_START
-		DIR *d;
-		struct dirent *dir;
-		d = opendir(ScenesPath"/valid");
-		if (!d)
-			tu_warning_message_exit("Failed to open directory "ScenesPath"/valid");
-		while ((dir = readdir(d)) != NULL)
+	tu_test_init(argc, argv);
+
+	// First open both directories
+	struct dirent* file;
+
+	DIR* ValidDir;
+	ValidDir = opendir(ScenesPath"/valid");
+	if (!ValidDir)
+		tu_warning_message_exit("Failed to open directory "ScenesPath"/valid");
+
+	DIR* InValidDir;
+	InValidDir = opendir(ScenesPath"/invalid");
+	if (!InValidDir)
+		tu_warning_message_exit("Failed to open directory "ScenesPath"/invalid");
+
+	// Read what test we are on
+	int testID;
+	int test_number_length = 0;
+	if (!read_int(argv[1], &test_number_length, &testID))
+		tu_warning_message_exit("Failed to parse test id: %s", argv[1]);
+
+	//fprintf(stderr, "Skipping %i files!\n", testID);
+	// Skip [TestID] files, we have already tested them
+	bool ShouldBeValid = true;
+	for (int i = 0; i < testID; i++)
+	{
+		get_next(ValidDir, InValidDir, &file, &ShouldBeValid);
+		//fprintf(stderr, "	Skipped file: %s\n", file->d_name);
+		if (file == NULL)
 		{
-			if (dir->d_type != DT_REG)
-				continue;
-			char* str = ft_strjoin(ScenesPath"/valid/",dir->d_name);
-			int fd = open(str, O_RDONLY);
-
-			if (fd == -1)
-				tu_warning_message_exit("Failed to open scene file: %s", str);
-			t_scene* scene = parse_scene_file(fd);
-			if (!scene)
-				tu_ko_message_exit("Failed to parse valid scene: %s, reason: %s",str, get_last_error());
-			free(str);
-			close(fd);
+			tu_warning_message_exit("Failed to call test_stop: %s", argv[1]);
+			return 1;
 		}
-		closedir(d);
-	TEST
-		DIR *d;
-		struct dirent *dir;
-		d = opendir(ScenesPath"/invalid");
-		if (!d)
-			tu_warning_message_exit("Failed to open directory "ScenesPath"/invalid");
-		while ((dir = readdir(d)) != NULL)
-		{
-			if (dir->d_type != DT_REG)
-				continue;
-			char* str = ft_strjoin(ScenesPath"/invalid/",dir->d_name);
-			int fd = open(str, O_RDONLY);
+	}
 
-			if (fd == -1)
-				tu_warning_message_exit("Failed to open scene file: %s", str);
-			//fprintf(stderr,"Start read %s: %i\n", str, tu_malloc_non_null_count() - tu_free_non_null_count());
-			t_scene* scene = parse_scene_file(fd);	// First call mallocs once more than it frees..
-			//fprintf(stderr,"End read %s: %i\n", str, tu_malloc_non_null_count() - tu_free_non_null_count());
-			if (scene)
-				tu_ko_message_exit("Failed to detect invalid valid scene: %s",str);
-			free(str);
-			close(fd);
-		}
-		closedir(d);
+	// Get the test file we are supposed to test
+	get_next(ValidDir, InValidDir, &file, &ShouldBeValid);
+	char* str = NULL;
+	if (!file)
+		tu_test_stop();	// Guess we are done here
+	else
+	{
+		// Open the file
+		str = ft_strjoin(ShouldBeValid ? ScenesPath"/valid/" : ScenesPath"/invalid/",file->d_name);
+		int fd = open(str, O_RDONLY);
+		if (fd == -1)
+			tu_warning_message_exit("Failed to open scene file: %s", str);
 
-	TEST_END
-	return (0);
+		// Parse the scene
+		t_scene* scene = parse_scene_file(fd);
+
+		// Check the output
+		if (ShouldBeValid && !scene)
+			tu_ko_message_exit("Failed to parse valid scene: %s, reason: %s",str, get_last_error());
+		else if (!ShouldBeValid && scene)
+			tu_ko_message_exit("Failed to detect invalid valid scene: %s",str);
+
+
+		close(fd);
+	}
+
+	// Close and free all the stuff
+	clear_error();	// free the error string in case its malloced
+	closedir(ValidDir);
+	closedir(InValidDir);
+
+	// Change the leak message to also contain the file we tested
+	if (tu_malloc_non_null_count() != tu_free_non_null_count() + 1)	// + 1 because we still have str allocated
+	{
+		tu_ko_message_exit("Leaks detected for file: %s! mallocs != frees (%i != %i)",str, tu_malloc_non_null_count(), tu_free_non_null_count() + 1);
+	}
+	free(str);
+	tu_test_finish();
+	return 0;
 }

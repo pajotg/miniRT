@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 14:59:27 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 15:41:25 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,12 +145,16 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 	return true;
 }
 
+void un_init_object(t_object* object)
+{
+	free(object->ObjectData);
+}
+
 void free_scene(t_scene* scene)
 {
-	// TODO: Free object allocations
-	darray_un_init(&(scene->cameras));
-	darray_un_init(&(scene->objects));
-	darray_un_init(&(scene->lights));
+	darray_un_init(&(scene->cameras), NULL);
+	darray_un_init(&(scene->objects), (t_free_values)un_init_object);
+	darray_un_init(&(scene->lights), NULL);
 	free(scene);
 }
 

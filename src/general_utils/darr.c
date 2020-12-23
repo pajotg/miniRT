@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 11:57:46 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 14:22:06 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 15:40:58 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,13 @@ t_darray *darray_new(size_t data_size)
 }
 
 
-void darray_un_init(t_darray *darr)
+void darray_un_init(t_darray *darr, t_free_values free_values)
 {
+	if (free_values)
+		for (size_t i = 0; i < darr->count; i++)
+		{
+			(*free_values)(darr->data + darr->data_size * i);
+		}
 	free(darr->data);
 }
 
