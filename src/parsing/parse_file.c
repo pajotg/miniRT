@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 17:08:24 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 17:20:01 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,11 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			set_error("Malloc failed", false);
 			return false;
 		}
-		object.ObjectData = sphere;
+		object.object_data = sphere;
+		object.IntersectFunc = (t_object_intersect_func)ray_intersects_sphere;
 		darray_push(&scene->objects, &object);
 		skip_whitespace(line, &curr);
-		if (!read_vec3(line, &curr, &object.Transform.position))
+		if (!read_vec3(line, &curr, &object.transform.position))
 		{
 			set_error(ft_strjoin("sphere position incorrectly formatted: ", line), true);
 			return false;
@@ -137,10 +138,11 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			set_error("Malloc failed", false);
 			return false;
 		}
-		object.ObjectData = plane;
+		object.object_data = plane;
+		object.IntersectFunc = (t_object_intersect_func)ray_intersects_plane;
 		darray_push(&scene->objects, &object);
 		skip_whitespace(line, &curr);
-		if (!read_transform(line, &curr, &object.Transform))
+		if (!read_transform(line, &curr, &object.transform))
 		{
 			set_error(ft_strjoin("plane position and normal incorrectly formatted: ", line), true);
 			return false;
@@ -161,10 +163,11 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			set_error("Malloc failed", false);
 			return false;
 		}
-		object.ObjectData = square;
+		object.object_data = square;
+		object.IntersectFunc = (t_object_intersect_func)ray_intersects_square;
 		darray_push(&scene->objects, &object);
 		skip_whitespace(line, &curr);
-		if (!read_transform(line, &curr, &object.Transform))
+		if (!read_transform(line, &curr, &object.transform))
 		{
 			set_error(ft_strjoin("square position and normal incorrectly formatted: ", line), true);
 			return false;
@@ -191,10 +194,11 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			set_error("Malloc failed", false);
 			return false;
 		}
-		object.ObjectData = cylinder;
+		object.object_data = cylinder;
+		object.IntersectFunc = (t_object_intersect_func)ray_intersects_cylinder;
 		darray_push(&scene->objects, &object);
 		skip_whitespace(line, &curr);
-		if (!read_transform(line, &curr, &object.Transform))
+		if (!read_transform(line, &curr, &object.transform))
 		{
 			set_error(ft_strjoin("cylinder position and normal incorrectly formatted: ", line), true);
 			return false;
@@ -227,10 +231,11 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			set_error("Malloc failed", false);
 			return false;
 		}
-		object.ObjectData = triangle;
+		object.object_data = triangle;
+		object.IntersectFunc = (t_object_intersect_func)ray_intersects_triangle;
 		darray_push(&scene->objects, &object);
 		skip_whitespace(line, &curr);
-		if (!read_vec3(line, &curr, &object.Transform.position))
+		if (!read_vec3(line, &curr, &object.transform.position))
 		{
 			set_error(ft_strjoin("triangle first position incorrectly formatted: ", line), true);
 			return false;
@@ -272,7 +277,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 
 void un_init_object(t_object* object)
 {
-	free(object->ObjectData);
+	free(object->object_data);
 }
 
 void free_scene(t_scene* scene)

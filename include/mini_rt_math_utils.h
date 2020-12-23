@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:09:49 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 16:37:04 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 17:34:51 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ typedef struct	s_ray_hit
 {
 	t_vec3 location;
 	t_vec3 normal;
+	t_color_hdr color;
+	float distance;
 }				t_ray_hit;
 
 typedef struct	s_ray

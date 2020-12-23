@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 12:33:21 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 17:30:31 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ int main(int argc, char **argv)
 	t_args* data = parse_args(argc, argv);
 	if (!data)
 	{
+		write(STDOUT_FILENO, "Error\n", 6);
 		write(STDOUT_FILENO, get_last_error(), ft_strlen(get_last_error()));
 		write(STDOUT_FILENO, "\n", 1);
 		return 1;
