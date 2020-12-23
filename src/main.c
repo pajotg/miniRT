@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 18:00:25 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 18:03:58 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,19 +92,6 @@ int main(int argc, char **argv)
 		write(STDOUT_FILENO, "\"!\n", 3);
 		free(data);
 		return 1;
-	}
-
-	for (float l = 0; l < 10; l+=0.1)
-	{
-		t_color_hdr hdr;
-		hdr.r = l;
-		hdr.g = l;
-		hdr.b = l;
-
-		t_color_rgb rgb = color_hdr_to_rgb_reindard(hdr);
-		t_color_rgb rgb_white = color_hdr_to_rgb_reindard_white(hdr, 5);
-
-		fprintf(stderr, "Input: %.2f, reindard: %.2f reindard_white: %.2f\n", l, rgb.r / 255.0, rgb_white.r / 255.0);
 	}
 
 	free(data);

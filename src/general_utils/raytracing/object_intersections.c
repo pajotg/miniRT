@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 17:48:26 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 18:20:37 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,37 @@
 #include "mini_rt_color_math_utils.h"
 #include <stdbool.h>
 
+/*
+**	https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
+*/
+
+/*
+**	Skipping case of delta = 0, when will that ever appear?
+**	delta > -dot should make it work from inside the sphere too
+*/
+
 bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 {
 	t_object_sphere* data = object->object_data;
-	(void)data;
-	(void)object;
-	(void)ray;
-	(void)hit;
-	return false;
+	t_vec3 offset = vec3_subtract(ray->origin, object->transform.position);
+
+	float dot = vec3_dot(ray->direction,offset);
+	float delta = dot * dot - vec3_magnitude_sqr(offset) + data->radius;
+
+	if (delta < 0)
+		return false;
+	if (delta > -dot)
+		delta = -delta;
+	hit->distance = -dot - delta;
+	hit->color = data->color;
+	hit->location = vec3_add(ray->origin, vec3_scale(ray->direction, hit->distance));
+	hit->normal = vec3_scale(vec3_subtract(hit->location, object->transform.position), 1 / data->radius);
+	return true;
 }
+
+/*
+**	Pure memory
+*/
 
 bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
 {

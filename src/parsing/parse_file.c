@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 17:20:01 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 18:13:53 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,11 +117,12 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			return false;
 		}
 		skip_whitespace(line, &curr);
-		if (!read_float(line, &curr, &sphere->diameter))
+		if (!read_float(line, &curr, &sphere->radius))
 		{
 			set_error(ft_strjoin("sphere missing diameter: ", line), true);
 			return false;
 		}
+		sphere->radius /= 2;
 		skip_whitespace(line, &curr);
 		if (!read_color(line, &curr, false, &sphere->color))
 		{
@@ -204,11 +205,12 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			return false;
 		}
 		skip_whitespace(line, &curr);
-		if (!read_float(line, &curr, &cylinder->diameter))
+		if (!read_float(line, &curr, &cylinder->radius))
 		{
 			set_error(ft_strjoin("cylinder diameter incorrectly formatted: ", line), true);
 			return false;
 		}
+		cylinder->radius /= 2;
 		skip_whitespace(line, &curr);
 		if (!read_float(line, &curr, &cylinder->height))
 		{
