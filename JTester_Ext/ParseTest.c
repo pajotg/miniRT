@@ -86,6 +86,8 @@ int main(int argc, char *argv[])
 		else if (!ShouldBeValid && scene)
 			tu_ko_message_exit("Failed to detect invalid valid scene: %s",str);
 
+		if (scene)
+			free_scene(scene);
 
 		close(fd);
 	}

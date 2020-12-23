@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 15:41:25 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 17:08:24 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@
 
 bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 {
-	int curr = 1;
-	if (line[0] == 'R')
+	int curr = 2;
+	if (line[0] == 'R' && ft_isspace(line[1]))
 	{
 		if (parse_data->has_resolution)
 		{
@@ -45,7 +45,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			return false;
 		}
 	}
-	else if (line[0] == 'A')
+	else if (line[0] == 'A' && ft_isspace(line[1]))
 	{
 		if (parse_data->has_ambiant)
 		{
@@ -60,7 +60,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			return false;
 		}
 	}
-	else if (line[0] == 'c')
+	else if (line[0] == 'c' && ft_isspace(line[1]))
 	{
 		t_camera camera;
 		skip_whitespace(line, &curr);
@@ -82,7 +82,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		}
 		darray_push(&scene->cameras, &camera);
 	}
-	else if (line[0] == 'l')
+	else if (line[0] == 'l' && ft_isspace(line[1]))
 	{
 		skip_whitespace(line, &curr);
 		t_light light;
@@ -100,7 +100,6 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 	}
 	else if (ft_strncmp(line, "sp", 2) == 0)
 	{
-		curr = 2;
 		t_object object;
 		t_object_sphere* sphere = malloc(sizeof(t_object_sphere));
 		if (!sphere)
@@ -109,6 +108,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			return false;
 		}
 		object.ObjectData = sphere;
+		darray_push(&scene->objects, &object);
 		skip_whitespace(line, &curr);
 		if (!read_vec3(line, &curr, &object.Transform.position))
 		{
@@ -127,7 +127,132 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			set_error(ft_strjoin("sphere color incorrectly formatted: ", line), true);
 			return false;
 		}
+	}
+	else if (ft_strncmp(line, "pl", 2) == 0)
+	{
+		t_object object;
+		t_object_plane* plane = malloc(sizeof(t_object_plane));
+		if (!plane)
+		{
+			set_error("Malloc failed", false);
+			return false;
+		}
+		object.ObjectData = plane;
 		darray_push(&scene->objects, &object);
+		skip_whitespace(line, &curr);
+		if (!read_transform(line, &curr, &object.Transform))
+		{
+			set_error(ft_strjoin("plane position and normal incorrectly formatted: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_color(line, &curr, false, &plane->color))
+		{
+			set_error(ft_strjoin("plane color incorrectly formatted: ", line), true);
+			return false;
+		}
+	}
+	else if (ft_strncmp(line, "sq", 2) == 0)
+	{
+		t_object object;
+		t_object_square* square = malloc(sizeof(t_object_square));
+		if (!square)
+		{
+			set_error("Malloc failed", false);
+			return false;
+		}
+		object.ObjectData = square;
+		darray_push(&scene->objects, &object);
+		skip_whitespace(line, &curr);
+		if (!read_transform(line, &curr, &object.Transform))
+		{
+			set_error(ft_strjoin("square position and normal incorrectly formatted: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_float(line, &curr, &square->size))
+		{
+			set_error(ft_strjoin("square size incorrectly formatted: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_color(line, &curr, false, &square->color))
+		{
+			set_error(ft_strjoin("square color incorrectly formatted: ", line), true);
+			return false;
+		}
+	}
+	else if (ft_strncmp(line, "cy", 2) == 0)
+	{
+		t_object object;
+		t_object_cylinder* cylinder = malloc(sizeof(t_object_cylinder));
+		if (!cylinder)
+		{
+			set_error("Malloc failed", false);
+			return false;
+		}
+		object.ObjectData = cylinder;
+		darray_push(&scene->objects, &object);
+		skip_whitespace(line, &curr);
+		if (!read_transform(line, &curr, &object.Transform))
+		{
+			set_error(ft_strjoin("cylinder position and normal incorrectly formatted: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_float(line, &curr, &cylinder->diameter))
+		{
+			set_error(ft_strjoin("cylinder diameter incorrectly formatted: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_float(line, &curr, &cylinder->height))
+		{
+			set_error(ft_strjoin("cylinder height incorrectly formatted: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_color(line, &curr, false, &cylinder->color))
+		{
+			set_error(ft_strjoin("cylinder color incorrectly formatted: ", line), true);
+			return false;
+		}
+	}
+	else if (ft_strncmp(line, "tr", 2) == 0)
+	{
+		t_object object;
+		t_object_triangle* triangle = malloc(sizeof(t_object_triangle));
+		if (!triangle)
+		{
+			set_error("Malloc failed", false);
+			return false;
+		}
+		object.ObjectData = triangle;
+		darray_push(&scene->objects, &object);
+		skip_whitespace(line, &curr);
+		if (!read_vec3(line, &curr, &object.Transform.position))
+		{
+			set_error(ft_strjoin("triangle first position incorrectly formatted: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_vec3(line, &curr, &triangle->second_point))
+		{
+			set_error(ft_strjoin("triangle second position incorrectly formatted: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_vec3(line, &curr, &triangle->third_point))
+		{
+			set_error(ft_strjoin("triangle third position incorrectly formatted: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_color(line, &curr, false, &triangle->color))
+		{
+			set_error(ft_strjoin("triangle color incorrectly formatted: ", line), true);
+			return false;
+		}
 	}
 	else {
 		if (line[0] == '\0')

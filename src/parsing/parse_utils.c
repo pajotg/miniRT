@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:11:07 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 15:25:11 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 16:59:45 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,13 +103,23 @@ bool read_vec3(char* str, int* current, t_vec3 *vec3)
 	return true;
 }
 
+bool read_vec3_unit(char* str, int* current, t_vec3 *vec3)
+{
+	if (!read_vec3(str, current, vec3))
+		return false;
+	float magnitude_sqr = vec3_magnitude_sqr(*vec3);
+	if (magnitude_sqr > 1.1 || magnitude_sqr < 0.9)
+		return false;
+	return true;
+}
+
 bool read_transform(char* str, int* current, t_transform *transform)
 {
 	if (!read_vec3(str, current, &transform->position))
 		return false;
 	skip_whitespace(str, current);
 	t_vec3 forward;
-	if (!read_vec3(str, current, &forward))
+	if (!read_vec3_unit(str, current, &forward))
 		return false;
 	transform->rotation = quaternion_from_forward_up(forward, vec3_new(0, 1, 0));
 	return true;
@@ -122,6 +132,8 @@ bool read_color(char* str, int* current, bool has_ratio, t_color_hdr *color)
 	if (has_ratio)
 	{
 		if (!read_float(str, current, &ratio))
+			return false;
+		if (ratio < 0 || ratio > 1)
 			return false;
 		ratio /= 255;
 		skip_whitespace(str, current);

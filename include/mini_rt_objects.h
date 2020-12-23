@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 14:36:34 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 14:39:17 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 16:47:30 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,25 @@ typedef struct	s_object_plane
 {
 	t_color_hdr color;
 }				t_object_plane;
+
+typedef struct	s_object_square
+{
+	t_color_hdr color;
+	float size;
+}				t_object_square;
+
+typedef struct	s_object_cylinder
+{
+	t_color_hdr color;
+	float diameter;
+	float height;
+}				t_object_cylinder;
+
+typedef struct	s_object_triangle
+{
+	t_color_hdr color;
+	t_vec3 second_point;
+	t_vec3 third_point;
+}				t_object_triangle;
 
 #endif

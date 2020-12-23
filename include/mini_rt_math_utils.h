@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:09:49 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 15:50:53 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 16:37:04 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,11 @@ t_vec3 vec3_new(float x, float y, float z);
 t_vec3 vec3_add(t_vec3 a, t_vec3 b);
 t_vec3 vec3_subtract(t_vec3 a, t_vec3 b);
 t_vec3 vec3_multiply(t_vec3 a, t_vec3 b);
+t_vec3 vec3_divide(t_vec3 a, t_vec3 b);
+t_vec3 vec3_scale(t_vec3 a, float b);
 float vec3_magnitude_sqr(t_vec3 a);
 float vec3_magnitude(t_vec3 a);
+t_vec3 vec3_normalize(t_vec3 a);
 float vec3_dot(t_vec3 a, t_vec3 b);
 t_vec3 vec3_cross(t_vec3 a, t_vec3 b);
 

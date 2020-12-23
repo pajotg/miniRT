@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:19 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 14:53:12 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 16:56:29 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct	s_scene
 	t_darray lights;
 }				t_scene;
 
+void free_scene(t_scene* scene);
 t_scene* parse_scene_file(int fd);
 
 bool skip_char(char* str, int* current, char chr);
@@ -46,6 +47,7 @@ bool read_int(char* str, int* current, int* value);
 bool read_float(char* str, int* current, float* value);
 
 bool read_vec3(char* str, int* current, t_vec3 *vec3);
+bool read_vec3_unit(char* str, int* current, t_vec3 *vec3);
 bool read_transform(char* str, int* current, t_transform *transform);
 bool read_color(char* str, int* current, bool has_ratio, t_color_hdr *color);
 
