@@ -13,10 +13,12 @@ INCLIB=$(INC)/../lib
 SRC_DIR = src/
 OBJ_DIR = obj/
 INCLUDE_DIRS = include/
-INCLUDE = -Iinclude -Ilibft -Iminilibx-linux
+INCLUDE = -Iinclude -Ilibft -Iminilibx-linux -Isrc/get_next_line
 LDFLAGS = -Lminilibx-linux/ -lmlx -Llibft -lft -L$(INCLIB) -lXext -lX11 -lm -lbsd
 
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror -DBUFFER_SIZE=128
+
+# Really not really happy where the GNL is now located, TODO: Add makefile into GNL that compiles a library, and then link ik via -L and -l
 
 SOURCE_FILES = $(shell find src -type f -name *.c)	# Really long comment so i will fix it once i am done with making it work alright okay this should trigger the norminette+
 HEADER_FILES = $(shell find $(INCLUDE_DIR) -type f -name *.h)
@@ -28,7 +30,7 @@ all: $(NAME)
 # Be sure to make libft and minilibx no longer submodules when you want to eval, it dont work when you clone it! REEE
 $(NAME): $(OBJECTS)
 	$(MAKE) -C minilibx-linux
-	$(MAKE) -C libft
+	$(MAKE) -C libft bonus
 	$(CC) $(FLAGS) -o $(NAME) $^ $(LDFLAGS)
 
 $(TEST_BINDER_NAME): $(OBJECTS)

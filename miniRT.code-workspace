@@ -11,6 +11,7 @@
 			"${workspaceFolder}/../JTester/utils/include",
 			"${workspaceFolder}/libft",
 			"${workspaceFolder}/minilibx-linux",
+			"${workspaceFolder}/src/get_next_line",
 		],
 		"files.associations": {
 			"test_utils.h": "c",

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/22 22:18:24 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 12:33:21 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,29 +21,24 @@ t_args* parse_args(int argc, char **argv)
 {
 	t_args* data = malloc(sizeof(t_args));
 	if (data == NULL)
+	{
+		set_error("Malloc failed for parse args!", false);
 		return NULL;
+	}
 
 	if (argc <= 1)
 	{
-		data->error_msg = ft_strdup("Usage: miniRT [file] {args}");
-		if (data->error_msg == NULL)
-		{
-			free(data);
-			return (NULL);
-		}
-		return data;
+		set_error("Usage: miniRT [file] {args}", false);
+		free(data);
+		return (NULL);
 	}
 
 	data->map_file = argv[1];
 	if (ft_strlen(data->map_file) < 4 || ft_strncmp(data->map_file + ft_strlen(data->map_file) - 3,".rt", 3) != 0 || (data->map_file[ft_strlen(data->map_file)-4] == '/'))	// Checks for: strlen >= 4, ends with .rt, and character before . != /
 	{
-		data->error_msg = ft_strjoin("File does not end with \".rt\", got: ", data->map_file);
-		if (data->error_msg == NULL)
-		{
-			free(data);
-			return (NULL);
-		}
-		return data;
+		set_error(ft_strjoin("File does not end with \".rt\", got: ", data->map_file), true);
+		free(data);
+		return NULL;
 	}
 
 
@@ -55,18 +50,13 @@ t_args* parse_args(int argc, char **argv)
 			data->save = true;
 		else
 		{
-			data->error_msg = ft_strjoin("Argument not recognized: ", arg);
-			if (data->error_msg == NULL)
-			{
-				free(data);
-				return (NULL);
-			}
-			return data;
+			set_error(ft_strjoin("Argument not recognized: ", arg), true);
+			free(data);
+			return NULL;
 		}
 		i++;
 	}
 
-	data->error_msg = NULL;
 	return data;
 }
 
@@ -75,15 +65,8 @@ int main(int argc, char **argv)
 	t_args* data = parse_args(argc, argv);
 	if (!data)
 	{
-		write(STDOUT_FILENO, "Error\nMalloc Failed!\n", 21);
-		return 1;
-	}
-	if (data->error_msg != NULL)
-	{
-		write(STDOUT_FILENO, "Error\n", 6);
-		write(STDOUT_FILENO, data->error_msg, ft_strlen(data->error_msg));
+		write(STDOUT_FILENO, get_last_error(), ft_strlen(get_last_error()));
 		write(STDOUT_FILENO, "\n", 1);
-		free(data);
 		return 1;
 	}
 
@@ -103,7 +86,9 @@ int main(int argc, char **argv)
 	t_scene* scene = parse_scene_file(fd);
 	if (!scene)
 	{
-		write(STDOUT_FILENO, "Error\nMalloc Failed!\n", 21);
+		write(STDOUT_FILENO, "Error\nAn error occured while parsing the file: \"", 48);
+		write(STDOUT_FILENO, get_last_error(), ft_strlen(get_last_error()));
+		write(STDOUT_FILENO, "\"!\n", 3);
 		free(data);
 		return 1;
 	}

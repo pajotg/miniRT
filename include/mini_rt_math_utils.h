@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:09:49 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/22 21:23:22 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 13:55:25 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,34 @@ typedef struct	s_vec3
 	float y;
 	float z;
 }				t_vec3;
+
+/*
+**	I could have use unsigned chars, but i think having a HDR image is better
+**	So why not? :)
+*/
+
+typedef struct	s_color_rgb
+{
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
+}				t_color_rgb;
+
+// To go from HDR to rgb we use tone mapping:
+//	Reinhard tone mapping: c/(1+c), where c is a color channel (or luminance)
+//	Reinhard with white point w: (1+c/w^2)/(1+c)
+// I dont know, by John Hable, first used in uncharted 2
+//	t(x) = (x*(ax + cb) + de) / (x*(ax + b) + df) - e/f
+//	final color = t(ce) / t(w)	// e = exposure, w = white point, c = color, rest are constant values that configure the curve
+// "Neutral": t( c/t(w) ) / t(w)
+// ACES also exists
+
+typedef struct	s_color_hdr
+{
+	float r;
+	float g;
+	float b;
+}				t_color_hdr;
 
 typedef struct	s_matrix3x3
 {
@@ -59,6 +87,24 @@ typedef struct	s_ray
 	t_vec3 origin;
 	t_vec3 direction;
 }				t_ray;
+
+typedef struct	s_transform
+{
+	t_vec3 position;
+	t_quaternion rotation;
+}				t_transform;
+
+typedef struct	s_camera
+{
+	t_transform transform;
+	float fov;
+}				t_camera;
+
+typedef struct	s_light
+{
+	t_vec3 position;
+	t_color_hdr color;
+}				t_light;
 
 /*
 **	Vector functions
