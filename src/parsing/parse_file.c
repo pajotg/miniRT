@@ -6,13 +6,14 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 14:25:36 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 14:59:27 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_parse_utils.h"
 #include <stddef.h>
 #include "mini_rt_utils.h"
+#include "mini_rt_objects.h"
 #include "get_next_line.h"
 #include <string.h>
 #include <errno.h>
@@ -27,27 +28,35 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 	{
 		if (parse_data->has_resolution)
 		{
-			set_error(ft_strjoin("Duplicate resolution!: ", line), true);
+			set_error(ft_strjoin("Duplicate resolution: ", line), true);
 			return false;
 		}
 		parse_data->has_resolution = true;
 		skip_whitespace(line, &curr);
-		scene->resolution.width = read_int(line, &curr);
+		if (!read_int(line, &curr, &scene->resolution.width))
+		{
+			set_error(ft_strjoin("resolution missing width: ", line), true);
+			return false;
+		}
 		skip_whitespace(line, &curr);
-		scene->resolution.height = read_int(line, &curr);
+		if (!read_int(line, &curr, &scene->resolution.height))
+		{
+			set_error(ft_strjoin("resolution missing height: ", line), true);
+			return false;
+		}
 	}
 	else if (line[0] == 'A')
 	{
 		if (parse_data->has_ambiant)
 		{
-			set_error(ft_strjoin("Duplicate ambiant!: ", line), true);
+			set_error(ft_strjoin("Duplicate ambiant: ", line), true);
 			return false;
 		}
 		parse_data->has_ambiant = true;
 		skip_whitespace(line, &curr);
-		if (!read_color(line, &curr, &scene->ambiant))
+		if (!read_color(line, &curr, true, &scene->ambiant))
 		{
-			set_error(ft_strjoin("Ambiant incorrectly formatted!: ", line), true);
+			set_error(ft_strjoin("Ambiant incorrectly formatted: ", line), true);
 			return false;
 		}
 	}
@@ -57,15 +66,13 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		skip_whitespace(line, &curr);
 		if (!read_transform(line, &curr, &camera.transform))
 		{
-			set_error(ft_strjoin("Camera transform incorrectly formatted!: ", line), true);
+			set_error(ft_strjoin("Camera transform incorrectly formatted: ", line), true);
 			return false;
 		}
 		skip_whitespace(line, &curr);
-		int start = curr;
-		camera.fov = read_float(line, &curr);
-		if (curr == start)
+		if (!read_float(line, &curr, &camera.fov))
 		{
-			set_error(ft_strjoin("Camera FOV incorrectly formatted!: ", line), true);
+			set_error(ft_strjoin("Camera missing FOV: ", line), true);
 			return false;
 		}
 		if (camera.fov < 0 || camera.fov > 180)
@@ -85,11 +92,42 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			return false;
 		}
 		skip_whitespace(line, &curr);
-		if (!read_color(line, &curr, &light.color))
+		if (!read_color(line, &curr, true, &light.color))
 		{
 			set_error(ft_strjoin("Light color incorrectly formatted: ", line), true);
 			return false;
 		}
+	}
+	else if (ft_strncmp(line, "sp", 2) == 0)
+	{
+		curr = 2;
+		t_object object;
+		t_object_sphere* sphere = malloc(sizeof(t_object_sphere));
+		if (!sphere)
+		{
+			set_error("Malloc failed", false);
+			return false;
+		}
+		object.ObjectData = sphere;
+		skip_whitespace(line, &curr);
+		if (!read_vec3(line, &curr, &object.Transform.position))
+		{
+			set_error(ft_strjoin("sphere position incorrectly formatted: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_float(line, &curr, &sphere->diameter))
+		{
+			set_error(ft_strjoin("sphere missing diameter: ", line), true);
+			return false;
+		}
+		skip_whitespace(line, &curr);
+		if (!read_color(line, &curr, false, &sphere->color))
+		{
+			set_error(ft_strjoin("sphere color incorrectly formatted: ", line), true);
+			return false;
+		}
+		darray_push(&scene->objects, &object);
 	}
 	else {
 		if (line[0] == '\0')
@@ -109,6 +147,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 
 void free_scene(t_scene* scene)
 {
+	// TODO: Free object allocations
 	darray_un_init(&(scene->cameras));
 	darray_un_init(&(scene->objects));
 	darray_un_init(&(scene->lights));

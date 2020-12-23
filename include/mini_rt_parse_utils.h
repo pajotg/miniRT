@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:19 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 13:51:14 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 14:53:12 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,6 @@
 #include "mini_rt_utils.h"
 #include "mini_rt_math_utils.h"
 #include <stdbool.h>
-
-typedef t_ray_hit	(*t_object_intersect_func)(void* ObjectData, t_ray ray);
-
-typedef struct	s_object
-{
-	t_transform Transform;
-	void* ObjectData;
-	t_object_intersect_func* IntersectFunc;
-}				t_object;
 
 typedef struct	s_resolution
 {
@@ -51,11 +42,11 @@ t_scene* parse_scene_file(int fd);
 
 bool skip_char(char* str, int* current, char chr);
 void skip_whitespace(char* str, int* current);
-int read_int(char* str, int* current);
-float read_float(char* str, int* current);
+bool read_int(char* str, int* current, int* value);
+bool read_float(char* str, int* current, float* value);
 
 bool read_vec3(char* str, int* current, t_vec3 *vec3);
 bool read_transform(char* str, int* current, t_transform *transform);
-bool read_color(char* str, int* current, t_color_hdr *color);
+bool read_color(char* str, int* current, bool has_ratio, t_color_hdr *color);
 
 #endif
