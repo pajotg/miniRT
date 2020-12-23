@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 18:13:53 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 18:46:58 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,11 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		if (!read_int(line, &curr, &scene->resolution.height))
 		{
 			set_error(ft_strjoin("resolution missing height: ", line), true);
+			return false;
+		}
+		if (scene->resolution.width <= 0 || scene->resolution.height <= 0)
+		{
+			set_error("Invalid resolution!", false);
 			return false;
 		}
 	}
