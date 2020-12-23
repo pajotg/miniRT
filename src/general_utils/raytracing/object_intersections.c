@@ -6,11 +6,12 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 17:36:44 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 17:48:26 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_objects.h"
+#include "mini_rt_color_math_utils.h"
 #include <stdbool.h>
 
 bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)

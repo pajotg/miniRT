@@ -6,14 +6,14 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 14:36:34 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 17:26:37 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 17:48:50 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_RT_OBJECTS_H
 # define MINI_RT_OBJECTS_H
 
-#include "mini_rt_math_utils.h"
+#include "mini_rt_color_math_utils.h"
 #include <stdbool.h>
 
 /*
