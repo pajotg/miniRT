@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:28:33 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/22 21:47:50 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 15:52:45 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,17 @@
 /*
 **	Wikipedia!
 **	Also: http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/index.htm
-**	Well, euclideanspace has a different idea of what direction the x,y,z,w are
-**	My directions are: x = 1, y = i, z = j, w = k
-**	But the website says: x = i, y = j, z = k, w = 1
+**	the website says: x = i, y = j, z = k, w = r
 */
 
-t_quaternion quaternion_new(float x, float y, float z, float w)
+t_quaternion quaternion_new(float r, float i, float j, float k)
 {
 	t_quaternion quat;
 
-	quat.x = x;
-	quat.y = y;
-	quat.z = z;
-	quat.w = w;
+	quat.r = r;
+	quat.i = i;
+	quat.j = j;
+	quat.k = k;
 
 	return (quat);
 }
@@ -54,23 +52,23 @@ t_quaternion quaternion_mult(t_quaternion a, t_quaternion b)
 {
 	t_quaternion quat;
 
-    quat.x = a.x * b.x - a.y * b.y - a.z * b.z - a.w * b.w;
-	quat.y = a.x * b.y + a.y * b.x + a.z * b.w - a.w * b.z;
-    quat.z = a.x * b.z - a.y * b.w + a.z * b.x + a.w * b.y;
-    quat.w = a.x * b.w + a.y * b.z - a.z * b.y + a.w * b.x;
+    quat.r = a.r * b.r - a.i * b.i - a.j * b.j - a.k * b.k;
+	quat.i = a.r * b.i + a.i * b.r + a.j * b.k - a.k * b.j;
+    quat.j = a.r * b.j - a.i * b.k + a.j * b.r + a.k * b.i;
+    quat.k = a.r * b.k + a.i * b.j - a.j * b.i + a.k * b.r;
 
 	return (quat);
 }
 
 t_quaternion quaternion_conjugate(t_quaternion a)
 {
-	return (quaternion_new(a.x, -a.y, -a.z, -a.w));
+	return (quaternion_new(a.r, -a.i, -a.j, -a.k));
 }
 
 t_quaternion quaternion_normalize(t_quaternion a)
 {
-	float Magnitude = sqrtf(a.x * a.x + a.y * a.y + a.z * a.z + a.w * a.w);
-	return (quaternion_new(a.x / Magnitude, a.y / Magnitude, a.z / Magnitude, a.w / Magnitude));
+	float Magnitude = sqrtf(a.r * a.r + a.i * a.i + a.j * a.j + a.k * a.k);
+	return (quaternion_new(a.r / Magnitude, a.i / Magnitude, a.j / Magnitude, a.k / Magnitude));
 }
 
 /*
@@ -81,7 +79,7 @@ t_quaternion quaternion_normalize(t_quaternion a)
 t_vec3 quaternion_mult_vec3(t_quaternion a, t_vec3 b)
 {
 	t_quaternion result = quaternion_mult(quaternion_mult(a, quaternion_new(0, b.x, b.y, b.z)), quaternion_conjugate(a));
-	return vec3_new(result.y, result.z, result.w);
+	return vec3_new(result.i, result.j, result.k);
 }
 
 t_quaternion quaternion_from_matrix(t_matrix3x3 matrix)
@@ -92,28 +90,28 @@ t_quaternion quaternion_from_matrix(t_matrix3x3 matrix)
 
 	if (tr > 0) {
 		float S = sqrt(tr+1) * 2; // S=4*qw
-		quat.x = 0.25 * S;
-		quat.y = (matrix.zy - matrix.yz) / S;
-		quat.z = (matrix.xz - matrix.zx) / S;
-		quat.w = (matrix.yx - matrix.xy) / S;
+		quat.r = 0.25 * S;
+		quat.i = (matrix.zy - matrix.yz) / S;
+		quat.j = (matrix.xz - matrix.zx) / S;
+		quat.k = (matrix.yx - matrix.xy) / S;
 	} else if ((matrix.xx > matrix.yy)&(matrix.xx > matrix.zz)) {
 		float S = sqrtf(1 + matrix.xx - matrix.yy - matrix.zz) * 2; // S=4*qx
-		quat.x = (matrix.zy - matrix.yz) / S;
-		quat.y = 0.25 * S;
-		quat.z = (matrix.xy + matrix.yx) / S;
-		quat.w = (matrix.xz + matrix.zx) / S;
+		quat.r = (matrix.zy - matrix.yz) / S;
+		quat.i = 0.25 * S;
+		quat.j = (matrix.xy + matrix.yx) / S;
+		quat.k = (matrix.xz + matrix.zx) / S;
 	} else if (matrix.yy > matrix.zz) {
 		float S = sqrtf(1 + matrix.yy - matrix.xx - matrix.zz) * 2; // S=4*qy
-		quat.x = (matrix.xz - matrix.zx) / S;
-		quat.y = (matrix.xy + matrix.yx) / S;
-		quat.z = 0.25 * S;
-		quat.w = (matrix.yz + matrix.zy) / S;
+		quat.r = (matrix.xz - matrix.zx) / S;
+		quat.i = (matrix.xy + matrix.yx) / S;
+		quat.j = 0.25 * S;
+		quat.k = (matrix.yz + matrix.zy) / S;
 	} else {
 		float S = sqrtf(1 + matrix.zz - matrix.xx - matrix.yy) * 2; // S=4*qz
-		quat.x = (matrix.yx - matrix.xy) / S;
-		quat.y = (matrix.xz + matrix.zx) / S;
-		quat.z = (matrix.yz + matrix.zy) / S;
-		quat.w = 0.25 * S;
+		quat.r = (matrix.yx - matrix.xy) / S;
+		quat.i = (matrix.xz + matrix.zx) / S;
+		quat.j = (matrix.yz + matrix.zy) / S;
+		quat.k = 0.25 * S;
 	}
 
 	return quat;

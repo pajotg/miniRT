@@ -12,10 +12,10 @@ bool same_vec(t_vec3 a, t_vec3 b)
 
 bool same_quat(t_quaternion a, t_quaternion b)
 {
-	return ((a.x - b.x) * (a.x - b.x)
-	+ (a.y - b.y) * (a.y - b.y)
-	+ (a.z - b.z) * (a.z - b.z)
-	+ (a.w - b.w) * (a.w - b.w)) < 0.01f;
+	return ((a.r - b.r) * (a.r - b.r)
+	+ (a.i - b.i) * (a.i - b.i)
+	+ (a.j - b.j) * (a.j - b.j)
+	+ (a.k - b.k) * (a.k - b.k)) < 0.01f;
 
 }
 
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 		t_quaternion resultb = quaternion_mult(random, identity);
 
 		if (!same_quat(random, resulta) && same_quat(random,resultb))
-			tu_ko_message_exit("Multiplying by the identity quaternion did not produce the input! Input: (%.2f,%.2f,%.2f,%.2f), I*q = (%.2f,%.2f,%.2f,%.2f), q*I = (%.2f,%.2f,%.2f,%.2f)", random.x, random.y, random.z, random.w, resulta.x, resulta.y, resulta.z, resulta.w, resultb.x, resultb.y, resultb.z, resultb.w);
+			tu_ko_message_exit("Multiplying by the identity quaternion did not produce the input! Input: (%.2f,%.2f,%.2f,%.2f), I*q = (%.2f,%.2f,%.2f,%.2f), q*I = (%.2f,%.2f,%.2f,%.2f)", random.r, random.i, random.j, random.k, resulta.r, resulta.i, resulta.j, resulta.k, resultb.r, resultb.i, resultb.j, resultb.k);
 	TEST
 		t_quaternion identity = quaternion_identity();
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 		t_quaternion resultb = quaternion_mult(quaternion_conjugate(random), resulta);
 
 		if (!same_quat(resultb, identity))
-			tu_ko_message_exit("Multiplying by the identity by a random quaternion and then the conjugation did not produce the identity! Random: (%.2f,%.2f,%.2f,%.2f), I*q = (%.2f,%.2f,%.2f,%.2f), q'*(I*q = (%.2f,%.2f,%.2f,%.2f)", random.x, random.y, random.z, random.w, resulta.x, resulta.y, resulta.z, resulta.w, resultb.x, resultb.y, resultb.z, resultb.w);
+			tu_ko_message_exit("Multiplying by the identity by a random quaternion and then the conjugation did not produce the identity! Random: (%.2f,%.2f,%.2f,%.2f), I*q = (%.2f,%.2f,%.2f,%.2f), q'*(I*q = (%.2f,%.2f,%.2f,%.2f)", random.r, random.i, random.j, random.k, resulta.r, resulta.i, resulta.j, resulta.k, resultb.r, resultb.i, resultb.j, resultb.k);
 	TEST
 		t_quaternion identity = quaternion_identity();
 

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:09:49 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 13:55:25 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/23 15:50:53 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,10 @@ typedef struct	s_matrix3x3
 
 typedef struct	s_quaternion
 {
-	float x;
-	float y;
-	float z;
-	float w;
+	float r;
+	float i;
+	float j;
+	float k;
 }				t_quaternion;
 
 typedef struct	s_ray_hit
