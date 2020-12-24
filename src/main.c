@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 20:45:03 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 14:12:01 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,23 +67,80 @@ int	hook_key(int key,void *p)
 	if (key == 65307)
 	{
 		t_mlx_data* data = p;
-		mlx_destroy_window(data->mlx, data->window);
 		mlx_loop_end(data->mlx);
 	}
 	return 0;
 }
 
+/*
+**	TODO: Sync rendering
+*/
+
+/*
+int	hook_expose(void *p)
+{
+	t_mlx_data* data = p;
+
+	printf("Expose!\n");
+	mlx_put_image_to_window(data->mlx, data->window, data->render_image.image, 0, 0);
+	return 0;
+}
+*/
+
+bool init_image(void* mlx, t_mlx_image* img, int width, int height)
+{
+	void* image = mlx_new_image(mlx, width, height);
+	if (!image)
+		return false;
+	img->image = image;
+	img->width = width;
+	img->height = height;
+	img->addr = mlx_get_data_addr(image, &img->bits_per_pixel, &img->line_length, (int*)&img->big_endian);
+	return true;
+}
+
+/* Super simple render image function
+static int x = 0;
+static int red = 128;
+for (int i = 0; i < 100; i++)
+{
+	x++;
+	if (x == img.width)
+	{
+		x = 0;
+		red += 64;
+	}
+	for (int y = 0; y < img.height; y++)
+	{
+		unsigned int col = (x | y << 8) | red << 16;
+		size_t offset = x * (img.bits_per_pixel / 8) + y * img.line_length;
+		unsigned int* addr = (unsigned int*)(img.addr + offset);
+		*addr = col;
+	}
+}
+*/
+
+/*
+** Why do i have to destroy and re-create the image for it to work!?
+*/
+
 int	hook_loop(void *p)
 {
-//	printf("Looping!\n");
-	(void)p;
+	t_mlx_data* data = p;
+
+	t_mlx_image img;
+	init_image(data->mlx, &img, data->scene->resolution.width, data->scene->resolution.height);
+
+	// Render image here
+
+	mlx_put_image_to_window(data->mlx, data->window, img.image, 0, 0);
+	mlx_destroy_image(data->mlx, img.image);
 	return 0;
 }
 
 int hook_destroy_notify(void* p)
 {
 	t_mlx_data* data = p;
-	mlx_destroy_window(data->mlx, data->window);
 	mlx_loop_end(data->mlx);
 	return 0;
 }
@@ -156,15 +213,32 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	void* image = mlx_new_image(mlx, scene->resolution.width, scene->resolution.height);
+	if (!image)
+	{
+		mlx_destroy_window(mlx, window);
+		free_scene(scene);
+		free(data);
+		write(STDOUT_FILENO, "Error\nCould not create mlx image!\n", 35);
+		return 1;
+	}
+
 	t_mlx_data mlx_data;
 	mlx_data.mlx = mlx;
 	mlx_data.window = window;
+	mlx_data.scene = scene;
+
+	//mlx_expose_hook(window,hook_expose,&mlx_data);
 	mlx_key_hook(window, hook_key, &mlx_data);
 	mlx_loop_hook(mlx, hook_loop, &mlx_data);
 	mlx_hook(window, ClientMessage, NoEventMask, hook_destroy_notify, &mlx_data);
 
 	mlx_loop(mlx);
 
+	// TODO: if save arg specified, save image here
+
+	mlx_destroy_window(mlx, window);
+	mlx_destroy_image(mlx, image);
 	free(data);
 	close(fd);
 	write(STDOUT_FILENO, "Completed!\n", 11);
