@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:11:07 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 16:59:45 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 19:05:30 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,10 @@ bool read_transform(char* str, int* current, t_transform *transform)
 	t_vec3 forward;
 	if (!read_vec3_unit(str, current, &forward))
 		return false;
-	transform->rotation = quaternion_from_forward_up(forward, vec3_new(0, 1, 0));
+	if (vec3_magnitude_sqr(vec3_subtract(forward, vec3_new(0,1,0))) <= 0.0001)
+		transform->rotation = quaternion_from_forward_up(forward, vec3_new(1, 0, 0));
+	else
+		transform->rotation = quaternion_from_forward_up(forward, vec3_new(0, 1, 0));
 	return true;
 }
 

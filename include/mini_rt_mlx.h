@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 18:51:02 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 14:11:19 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 18:19:39 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct	s_mlx_data
 	void* mlx;
 	void* window;
 	t_scene* scene;
+	t_mlx_image img;
 
 	int current_pixel;
 	t_pixel_data* pixels;

@@ -6,11 +6,22 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:38:38 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 18:00:14 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 17:39:28 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_color_math_utils.h"
+#include <math.h>
+
+/*
+**	A little more accurate, but slower, and harder to set a colors to a certain luminance
+**	return sqrtf( 0.299*0.299*hdr.r*hdr.r + 0.587*0.587*hdr.g*hdr.g + 0.114*0.114*hdr.b*hdr.b );
+*/
+
+float to_luminance(t_color_hdr hdr)
+{
+	return 0.2126*hdr.r + 0.7152*hdr.g + 0.0722*hdr.b;
+}
 
 static unsigned char float_to_char(float f)
 {
@@ -25,9 +36,13 @@ t_color_rgb color_hdr_to_rgb_reindard(t_color_hdr hdr)
 {
 	t_color_rgb rgb;
 
-	rgb.r = float_to_char(hdr.r / (hdr.r + 1));
-	rgb.g = float_to_char(hdr.g / (hdr.g + 1));
-	rgb.b = float_to_char(hdr.b / (hdr.b + 1));
+	float lum = to_luminance(hdr);
+	float new_lum = lum / (lum + 1);
+	float scale = new_lum / lum;
+
+	rgb.r = float_to_char(hdr.r * scale);
+	rgb.g = float_to_char(hdr.g * scale);
+	rgb.b = float_to_char(hdr.b * scale);
 
 	return rgb;
 }
@@ -38,11 +53,13 @@ t_color_rgb color_hdr_to_rgb_reindard_white(t_color_hdr hdr, float white_point)
 
 	float sqr = white_point * white_point;
 
-	rgb.r = float_to_char(hdr.r * ((1 + (hdr.r / sqr)) / (1 + hdr.r)));
+	float lum = to_luminance(hdr);
+	float new_lum = lum * ((1 + (lum / sqr)) / (1 + lum));
+	float scale = new_lum / lum;
 
-	rgb.g = float_to_char(hdr.g * ((1 + (hdr.g / sqr)) / (1 + hdr.g)));
-
-	rgb.b = float_to_char(hdr.b * ((1 + (hdr.b / sqr)) / (1 + hdr.b)));
+	rgb.r = float_to_char(hdr.r * scale);
+	rgb.g = float_to_char(hdr.g * scale);
+	rgb.b = float_to_char(hdr.b * scale);
 
 	return rgb;
 }
@@ -61,9 +78,13 @@ t_color_rgb color_hdr_to_rgb_jh(t_color_hdr hdr, t_color_hdr_to_rgb_jh* m)
 {
 	t_color_rgb rgb;
 
-	rgb.r = float_to_char(t(hdr.r * m->e, m) / t(m->w, m));
-	rgb.g = float_to_char(t(hdr.g * m->e, m) / t(m->w, m));
-	rgb.b = float_to_char(t(hdr.b * m->e, m) / t(m->w, m));
+	float lum = to_luminance(hdr);
+	float new_lum = t(lum * m->e, m) / t(m->w, m);
+	float scale = new_lum / lum;
+
+	rgb.r = float_to_char(hdr.r * scale);
+	rgb.g = float_to_char(hdr.g * scale);
+	rgb.b = float_to_char(hdr.b * scale);
 
 	return rgb;
 }

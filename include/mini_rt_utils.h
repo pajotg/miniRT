@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 11:26:48 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 15:40:37 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 18:26:07 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,6 @@ bool darray_init(t_darray *darr, size_t data_size);
 t_darray *darray_new(size_t data_size);
 void darray_un_init(t_darray *darr, t_free_values free_values);
 bool darray_push(t_darray *darr, void *value);
+void* darray_index(t_darray *darr, int index);
 
 #endif

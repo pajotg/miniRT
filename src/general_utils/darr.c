@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 11:57:46 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 15:40:58 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 18:25:55 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ t_darray *darray_new(size_t data_size)
 	return darr;
 }
 
-
 void darray_un_init(t_darray *darr, t_free_values free_values)
 {
 	if (free_values)
@@ -70,6 +69,13 @@ bool darray_push(t_darray *darr, void *value)
 	ft_memcpy(data + darr->data_size * darr->count, value, darr->data_size);
 	darr->count++;
 	return (true);
+}
+
+void* darray_index(t_darray *darr, int index)
+{
+	if (index < 0 || index >= darr->count)
+		return NULL;
+	return darr->data + darr->data_size * index;
 }
 
 /*

@@ -90,6 +90,22 @@ int main(int argc, char *argv[])
 		else if (!ShouldBeValid && scene)
 			tu_ko_message_exit("Failed to detect invalid valid scene: %s",str);
 
+		if (ShouldBeValid)
+		{
+			for (size_t i = 0; i < scene->objects.count; i++)
+			{
+				t_object* obj = darray_index(&scene->objects, i);
+				t_quaternion quat = obj->transform.rotation;
+				float sqrmag = quat.r * quat.r + quat.i * quat.i + quat.j * quat.j + quat.k * quat.k;
+				if (sqrmag > 1.01 || sqrmag < 0.99)
+					tu_ko_message_exit("Failed to set quaternion to valid value for object %lu in scene file: %s", i, str);
+				t_vec3 pos = obj->transform.position;
+				sqrmag = pos.x * pos.x + pos.y * pos.y + pos.z * pos.z;
+				if (sqrmag > 250*250)
+					tu_ko_message_exit("Failed to set position to valid value for object %lu in scene file: %s", i, str);
+			}
+		}
+
 		if (scene)
 			free_scene(scene);
 

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:22 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 18:52:17 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 18:39:23 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "mini_rt_utils.h"
 #include "mini_rt_color_math_utils.h"
 #include "mini_rt_mlx.h"
+#include "mini_rt_objects.h"
 #include <stdbool.h>
 
 typedef struct	s_args

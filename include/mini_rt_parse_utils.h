@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:19 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 16:56:29 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 18:25:00 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct	s_scene
 {
 	t_resolution resolution;
 	t_color_hdr ambiant;
+	int current_camera_index;
 	t_darray cameras;
 	t_darray objects;
 	t_darray lights;

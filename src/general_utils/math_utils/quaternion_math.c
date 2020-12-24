@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:28:33 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 15:52:45 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 15:37:47 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ t_quaternion quaternion_mult(t_quaternion a, t_quaternion b)
 {
 	t_quaternion quat;
 
-    quat.r = a.r * b.r - a.i * b.i - a.j * b.j - a.k * b.k;
+	quat.r = a.r * b.r - a.i * b.i - a.j * b.j - a.k * b.k;
 	quat.i = a.r * b.i + a.i * b.r + a.j * b.k - a.k * b.j;
-    quat.j = a.r * b.j - a.i * b.k + a.j * b.r + a.k * b.i;
-    quat.k = a.r * b.k + a.i * b.j - a.j * b.i + a.k * b.r;
+	quat.j = a.r * b.j - a.i * b.k + a.j * b.r + a.k * b.i;
+	quat.k = a.r * b.k + a.i * b.j - a.j * b.i + a.k * b.r;
 
 	return (quat);
 }

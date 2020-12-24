@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 18:46:58 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 19:15:28 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 #include <string.h>
 #include <errno.h>
 #include "libft.h"
+#include <math.h>
 
-#include <stdio.h>
+#include <stdio.h>	// bad
 
 bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 {
@@ -85,6 +86,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			set_error(ft_strjoin("Camera FOV out of range! (0-180): ", line), true);
 			return false;
 		}
+		camera.fov = camera.fov / 180 * M_PI;
 		darray_push(&scene->cameras, &camera);
 	}
 	else if (line[0] == 'l' && ft_isspace(line[1]))
@@ -114,16 +116,18 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		}
 		object.object_data = sphere;
 		object.IntersectFunc = (t_object_intersect_func)ray_intersects_sphere;
-		darray_push(&scene->objects, &object);
 		skip_whitespace(line, &curr);
+		object.transform.rotation = quaternion_identity();
 		if (!read_vec3(line, &curr, &object.transform.position))
 		{
+			free(sphere);
 			set_error(ft_strjoin("sphere position incorrectly formatted: ", line), true);
 			return false;
 		}
 		skip_whitespace(line, &curr);
 		if (!read_float(line, &curr, &sphere->radius))
 		{
+			free(sphere);
 			set_error(ft_strjoin("sphere missing diameter: ", line), true);
 			return false;
 		}
@@ -131,9 +135,11 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		skip_whitespace(line, &curr);
 		if (!read_color(line, &curr, false, &sphere->color))
 		{
+			free(sphere);
 			set_error(ft_strjoin("sphere color incorrectly formatted: ", line), true);
 			return false;
 		}
+		darray_push(&scene->objects, &object);
 	}
 	else if (ft_strncmp(line, "pl", 2) == 0)
 	{
@@ -146,19 +152,21 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		}
 		object.object_data = plane;
 		object.IntersectFunc = (t_object_intersect_func)ray_intersects_plane;
-		darray_push(&scene->objects, &object);
 		skip_whitespace(line, &curr);
 		if (!read_transform(line, &curr, &object.transform))
 		{
+			free(plane);
 			set_error(ft_strjoin("plane position and normal incorrectly formatted: ", line), true);
 			return false;
 		}
 		skip_whitespace(line, &curr);
 		if (!read_color(line, &curr, false, &plane->color))
 		{
+			free(plane);
 			set_error(ft_strjoin("plane color incorrectly formatted: ", line), true);
 			return false;
 		}
+		darray_push(&scene->objects, &object);
 	}
 	else if (ft_strncmp(line, "sq", 2) == 0)
 	{
@@ -171,25 +179,28 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		}
 		object.object_data = square;
 		object.IntersectFunc = (t_object_intersect_func)ray_intersects_square;
-		darray_push(&scene->objects, &object);
 		skip_whitespace(line, &curr);
 		if (!read_transform(line, &curr, &object.transform))
 		{
+			free(square);
 			set_error(ft_strjoin("square position and normal incorrectly formatted: ", line), true);
 			return false;
 		}
 		skip_whitespace(line, &curr);
 		if (!read_float(line, &curr, &square->size))
 		{
+			free(square);
 			set_error(ft_strjoin("square size incorrectly formatted: ", line), true);
 			return false;
 		}
 		skip_whitespace(line, &curr);
 		if (!read_color(line, &curr, false, &square->color))
 		{
+			free(square);
 			set_error(ft_strjoin("square color incorrectly formatted: ", line), true);
 			return false;
 		}
+		darray_push(&scene->objects, &object);
 	}
 	else if (ft_strncmp(line, "cy", 2) == 0)
 	{
@@ -202,16 +213,17 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		}
 		object.object_data = cylinder;
 		object.IntersectFunc = (t_object_intersect_func)ray_intersects_cylinder;
-		darray_push(&scene->objects, &object);
 		skip_whitespace(line, &curr);
 		if (!read_transform(line, &curr, &object.transform))
 		{
+			free(cylinder);
 			set_error(ft_strjoin("cylinder position and normal incorrectly formatted: ", line), true);
 			return false;
 		}
 		skip_whitespace(line, &curr);
 		if (!read_float(line, &curr, &cylinder->radius))
 		{
+			free(cylinder);
 			set_error(ft_strjoin("cylinder diameter incorrectly formatted: ", line), true);
 			return false;
 		}
@@ -219,15 +231,18 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		skip_whitespace(line, &curr);
 		if (!read_float(line, &curr, &cylinder->height))
 		{
+			free(cylinder);
 			set_error(ft_strjoin("cylinder height incorrectly formatted: ", line), true);
 			return false;
 		}
 		skip_whitespace(line, &curr);
 		if (!read_color(line, &curr, false, &cylinder->color))
 		{
+			free(cylinder);
 			set_error(ft_strjoin("cylinder color incorrectly formatted: ", line), true);
 			return false;
 		}
+		darray_push(&scene->objects, &object);
 	}
 	else if (ft_strncmp(line, "tr", 2) == 0)
 	{
@@ -240,31 +255,36 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		}
 		object.object_data = triangle;
 		object.IntersectFunc = (t_object_intersect_func)ray_intersects_triangle;
-		darray_push(&scene->objects, &object);
+		object.transform.rotation = quaternion_identity();
 		skip_whitespace(line, &curr);
 		if (!read_vec3(line, &curr, &object.transform.position))
 		{
+			free(triangle);
 			set_error(ft_strjoin("triangle first position incorrectly formatted: ", line), true);
 			return false;
 		}
 		skip_whitespace(line, &curr);
 		if (!read_vec3(line, &curr, &triangle->second_point))
 		{
+			free(triangle);
 			set_error(ft_strjoin("triangle second position incorrectly formatted: ", line), true);
 			return false;
 		}
 		skip_whitespace(line, &curr);
 		if (!read_vec3(line, &curr, &triangle->third_point))
 		{
+			free(triangle);
 			set_error(ft_strjoin("triangle third position incorrectly formatted: ", line), true);
 			return false;
 		}
 		skip_whitespace(line, &curr);
 		if (!read_color(line, &curr, false, &triangle->color))
 		{
+			free(triangle);
 			set_error(ft_strjoin("triangle color incorrectly formatted: ", line), true);
 			return false;
 		}
+		darray_push(&scene->objects, &object);
 	}
 	else {
 		if (line[0] == '\0')
@@ -314,6 +334,7 @@ t_scene* parse_scene_file(int fd)
 		return NULL;
 	}
 	char* line;
+	scene->current_camera_index = 0;
 
 	t_scene_parse_data parse_data;
 	parse_data.has_ambiant = false;
