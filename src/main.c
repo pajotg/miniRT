@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 18:48:50 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 19:36:09 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,27 +98,28 @@ bool init_image(void* mlx, t_mlx_image* img, int width, int height)
 	return true;
 }
 
-void update_image(t_mlx_data* data, t_mlx_image* img)
+
+void update_pix(t_mlx_data* data, int x, int y)
+{
+	t_color_hdr hdr = data->pixels[x + y * data->scene->resolution.width].color;
+	t_color_rgb rgb = color_hdr_to_rgb_reindard_white(hdr, data->white);
+	unsigned int col = (rgb.b | rgb.g << 8) | rgb.r << 16;
+
+	size_t offset = x * (data->img.bits_per_pixel / 8) + y * data->img.line_length;
+	unsigned int* addr = (unsigned int*)(data->img.addr + offset);
+	*addr = col;
+}
+
+void update_image(t_mlx_data* data)
 {
 	// TODO: I should only update the pixels that have changed, this already takes 100 ms
-	static float white = 0;
-	for (int x = 0; x < img->width; x++)
+	for (int x = 0; x < data->img.width; x++)
 	{
-		for (int y = 0; y < img->height; y++)
+		for (int y = 0; y < data->img.height; y++)
 		{
-			t_color_hdr hdr = data->pixels[x + y * data->scene->resolution.width].color;
-			t_color_rgb rgb = color_hdr_to_rgb_reindard_white(hdr, white);
-			unsigned int col = (rgb.b | rgb.g << 8) | rgb.r << 16;
-
-			size_t offset = x * (img->bits_per_pixel / 8) + y * img->line_length;
-			unsigned int* addr = (unsigned int*)(img->addr + offset);
-			*addr = col;
+			update_pix(data, x, y);
 		}
 	}
-
-	white += (white) / 100 + 0.01;
-	if (white > 5)
-		white = 0;
 }
 
 /*
@@ -166,6 +167,7 @@ void trace_ray(t_mlx_data* data, int x, int y)
 		hdr->g = 0;
 		hdr->b = 0;
 	}
+	update_pix(data, x, y);
 }
 
 void trace_next_ray(t_mlx_data* data)
@@ -224,13 +226,18 @@ int	hook_loop(void *p)
 	t_mlx_data* data = p;
 
 	// Render
-	clock_t stop = clock() + CLOCKS_PER_SEC / 100;
+	clock_t stop = clock() + CLOCKS_PER_SEC / 60;
 	while (clock() < stop)
 	{
 		for (int i = 0; i < 1000; i++)
 			trace_next_ray(data);
 	}
-	update_image(data, &data->img);
+	/*
+	data->white += (data->white) / 100 + 0.01;
+	if (data->white > 5)
+		data->white = 0;
+	update_image(data);
+	*/
 
 	mlx_put_image_to_window(data->mlx, data->window, data->img.image, 0, 0);
 
@@ -323,6 +330,7 @@ int main(int argc, char **argv)
 	mlx_data.scene = scene;
 	mlx_data.pixels = malloc(sizeof(*mlx_data.pixels) * scene->resolution.width * scene->resolution.height);
 	mlx_data.current_pixel = 0;
+	mlx_data.white = 1;
 	if (mlx_data.pixels == NULL)
 	{
 		mlx_destroy_window(mlx, window);
