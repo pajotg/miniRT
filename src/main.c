@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 20:12:29 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 21:10:39 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,8 @@ void trace_ray(t_mlx_data* data, int x, int y)
 {
 	t_color_hdr* hdr = &data->pixels[x + y * data->scene->resolution.width].color;
 	float fov_axis = data->scene->resolution.width;
-	float ox = (x - data->scene->resolution.width / 2.0) / fov_axis;
-	float oy = (y - data->scene->resolution.height / 2.0) / fov_axis;
+	float ox = (data->scene->resolution.width / 2.0 - x) / fov_axis;
+	float oy = (data->scene->resolution.height / 2.0 - y) / fov_axis;
 
 	// ox and oy are in the range -0.5 to 0.5
 

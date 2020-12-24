@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 19:15:28 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 21:10:53 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			return false;
 		}
 		camera.fov = camera.fov / 180 * M_PI;
+		t_vec3 up = quaternion_mult_vec3(camera.transform.rotation, vec3_new(0,1,0));
 		darray_push(&scene->cameras, &camera);
 	}
 	else if (line[0] == 'l' && ft_isspace(line[1]))
