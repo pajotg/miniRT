@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 19:36:09 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 20:12:29 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,10 +123,10 @@ void update_image(t_mlx_data* data)
 }
 
 /*
-** acos(1 / dist) = cam.fov
-** 1 / dist = cos(cam.fov)
-** 1 = cos(cam.fov) * dist
-** 1 / cos(cam.fov) = dist
+** asin(0.5 / dist) = cam.fov / 2
+** 0.5 / dist = sin(cam.fov / 2)
+** 0.5 = sin(cam.fov / 2) * dist
+** 0.5 / sin(cam.fov / 2) = dist
 */
 
 void trace_ray(t_mlx_data* data, int x, int y)
@@ -139,12 +139,26 @@ void trace_ray(t_mlx_data* data, int x, int y)
 	// ox and oy are in the range -0.5 to 0.5
 
 	t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
-	float dist = 1 / cos(cam->fov);
+	float dist = 0.5 / sin(cam->fov / 2);
 
 	t_vec3 dir = vec3_normalize(vec3_add(
-		vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(1,0,0)), ox),
-		vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(0,1,0)), oy)
+		vec3_add(
+			vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(1,0,0)), ox),
+			vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(0,1,0)), oy)
+		),
+		vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(0,0,-1)), dist)
 	));
+
+	/*
+	printf("asin(0.5/dist) = %.2f degrees\n", asinf(0.5/dist) / M_PI * 180);
+	printf("ox, oy: %.2f %.2f\n", ox, oy);
+	printf("Dist: %.2f\n", dist);
+	printf("Direction: %.2f %.2f %.2f\n", dir.x, dir.y, dir.z);
+	t_vec3 up = quaternion_mult_vec3(cam->transform.rotation, vec3_new(0,1,0));
+	t_vec3 right = quaternion_mult_vec3(cam->transform.rotation, vec3_new(1,0,0));
+	printf("Up: %.2f %.2f %.2f\n", up.x, up.y, up.z);
+	printf("Right: %.2f %.2f %.2f\n", right.x, right.y, right.z);
+	//*/
 
 	t_ray ray;
 	ray.origin = cam->transform.position;
@@ -153,7 +167,7 @@ void trace_ray(t_mlx_data* data, int x, int y)
 	t_ray_hit hit;
 	hit.distance = INFINITY;
 	bool has_hit = false;
-	for (int i = 0; i < data->scene->objects.count; i++)
+	for (size_t i = 0; i < data->scene->objects.count; i++)
 	{
 		t_object* obj = darray_index(&data->scene->objects, i);
 		if (obj->IntersectFunc(obj, &ray, &hit))
@@ -162,11 +176,7 @@ void trace_ray(t_mlx_data* data, int x, int y)
 	if (has_hit)
 		*hdr = hit.color;
 	else
-	{
-		hdr->r = 0;
-		hdr->g = 0;
-		hdr->b = 0;
-	}
+		*hdr = data->scene->ambiant;
 	update_pix(data, x, y);
 }
 
@@ -291,7 +301,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	for (int i = 0; i < scene->objects.count; i++)
+	for (size_t i = 0; i < scene->objects.count; i++)
 	{
 		t_object* obj = darray_index(&scene->objects, i);
 		t_vec3 x = quaternion_mult_vec3(obj->transform.rotation, vec3_new(1,0,0));
@@ -367,12 +377,14 @@ int main(int argc, char **argv)
 			hdr->b = (x+y) / 1000.0;
 		}
 	}
+	update_image(&mlx_data);
 
 	mlx_key_hook(window, hook_key, &mlx_data);
 	mlx_loop_hook(mlx, hook_loop, &mlx_data);
 	mlx_hook(window, ClientMessage, NoEventMask, hook_client_message, &mlx_data);
 
 	mlx_loop(mlx);
+	//trace_ray(&mlx_data, 0, 0);
 
 	// TODO: if save arg specified, save image here
 

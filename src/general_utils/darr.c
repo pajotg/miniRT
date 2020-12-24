@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 11:57:46 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 18:25:55 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/24 20:03:04 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,9 @@ bool darray_push(t_darray *darr, void *value)
 	return (true);
 }
 
-void* darray_index(t_darray *darr, int index)
+void* darray_index(t_darray *darr, size_t index)
 {
-	if (index < 0 || index >= darr->count)
+	if (index >= darr->count)
 		return NULL;
 	return darr->data + darr->data_size * index;
 }
