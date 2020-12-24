@@ -1,4 +1,4 @@
-#include "mini_rt_math_utils.h"
+#include "mini_rt.h"
 #include "test_utils.h"
 #include <math.h>
 
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 		if (!same_vec(y, vec3_new(0,1,0)))
 			tu_ko_message_exit("I * (0,1,0) != (0,1,0) it made: %.2f %.2f %.2f", y.x, y.y, y.z);
 		if (!same_vec(z, vec3_new(0,0,1)))
-			tu_ko_message_exit("I * (0,0,1) != (0,0,1) it made: %.2f %.2f %.2f", z.x, x.y, z.z);
+			tu_ko_message_exit("I * (0,0,1) != (0,0,1) it made: %.2f %.2f %.2f", z.x, z.y, z.z);
 	TEST
 		t_quaternion rotation = quaternion_from_AxisAngle(vec3_new(0,1,0), -M_PI/2);
 
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 		if (!same_vec(y, vec3_new(0,1,0)))
 			tu_ko_message_exit("AxisAngle(0,1,0,90) * (0,1,0) != (0,1,0) it made: %.2f %.2f %.2f", y.x, y.y, y.z);
 		if (!same_vec(z, vec3_new(-1,0,0)))
-			tu_ko_message_exit("AxisAngle(0,1,0,90) * (0,0,1) != (-1,0,0) it made: %.2f %.2f %.2f", z.x, x.y, z.z);
+			tu_ko_message_exit("AxisAngle(0,1,0,90) * (0,0,1) != (-1,0,0) it made: %.2f %.2f %.2f", z.x, z.y, z.z);
 	TEST
 		t_quaternion rotation = quaternion_from_forward_up(vec3_new(1,0,0),vec3_new(0,-1,0));
 
@@ -78,12 +78,48 @@ int main(int argc, char *argv[])
 		t_vec3 y = quaternion_mult_vec3(rotation, vec3_new(0,1,0));
 		t_vec3 z = quaternion_mult_vec3(rotation, vec3_new(0,0,-1));	// Negative z = forward
 
-		if (!same_vec(x, vec3_new(0,0,1)))
-			tu_ko_message_exit("forward_up(1,0,0,0,-1,0) * (1,0,0) != (0,0,1) it made: %.2f %.2f %.2f", x.x, x.y, x.z);
+		if (!same_vec(x, vec3_new(0,0,-1)))
+			tu_ko_message_exit("forward_up(1,0,0,0,-1,0) * (1,0,0) != (0,0,-1) it made: %.2f %.2f %.2f", x.x, x.y, x.z);
 		if (!same_vec(y, vec3_new(0,-1,0)))
 			tu_ko_message_exit("forward_up(1,0,0,0,-1,0) * (0,1,0) != (0,-1,0) it made: %.2f %.2f %.2f", y.x, y.y, y.z);
-		if (!same_vec(z, vec3_new(-1,0,0)))
-			tu_ko_message_exit("forward_up(1,0,0,0,-1,0) * (0,0,1) != (-1,0,0) it made: %.2f %.2f %.2f", z.x, x.y, z.z);
+		if (!same_vec(z, vec3_new(1,0,0)))
+			tu_ko_message_exit("forward_up(1,0,0,0,-1,0) * (0,0,1) != (-1,0,0) it made: %.2f %.2f %.2f", z.x, z.y, z.z);
+	TEST
+		t_quaternion rotation = quaternion_from_forward_up(vec3_new(0,1,0),vec3_new(0,0,1));
+
+		t_vec3 z = quaternion_mult_vec3(rotation, vec3_new(0,0,-1));	// Negative z = forward
+
+		if (!same_vec(z, vec3_new(0,1,0)))
+			tu_ko_message_exit("forward_up(0,1,0,0,0,1) * (0,0,-1) != (0,1,0) it made: %.2f %.2f %.2f", z.x, z.y, z.z);
+	TEST
+		t_object obj;
+		t_object_sphere object_data;
+		t_ray ray;
+		t_ray_hit hit;
+
+		obj.transform.position = vec3_new(0,0,0);
+		obj.transform.rotation = quaternion_identity();
+		obj.object_data = &object_data;
+
+		object_data.radius = 1;
+
+		ray.origin = vec3_new(0,0,-5);
+		ray.direction = vec3_new(0,0,1);
+
+		hit.distance = INFINITY;
+		if (!ray_intersects_sphere(&obj, &ray, &hit))
+			tu_ko_message_exit("Ray to sphere at 0,0,0 with r=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not hit!");
+		if (!same_vec(hit.location, vec3_new(0,0,-1)))
+			tu_ko_message_exit("Ray to sphere at 0,0,0 with r=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not procude location 0,0,-1!");
+		if (!same_vec(hit.normal, vec3_new(0,0,-1)))
+			tu_ko_message_exit("Ray to sphere at 0,0,0 with r=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not procude normal 0,0,-1!");
+		if (hit.distance != 4)
+			tu_ko_message_exit("Ray to sphere at 0,0,0 with r=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not procude distance 4!");
+
+		ray.origin = vec3_new(0.5,0,-5);
+		hit.distance = INFINITY;
+		if (!ray_intersects_sphere(&obj, &ray, &hit))
+			tu_ko_message_exit("Ray to sphere at 0,0,0 with r=1 with ray origin = 0.5,0,-5 and dir = 0,0,1 did not hit!");
 	TEST_END
 	return (0);
 }
