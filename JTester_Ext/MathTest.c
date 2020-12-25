@@ -1,6 +1,7 @@
 #include "mini_rt.h"
 #include "test_utils.h"
 #include <math.h>
+#include "libft.h"
 
 #include <stdio.h>
 
@@ -120,6 +121,31 @@ int main(int argc, char *argv[])
 		hit.distance = INFINITY;
 		if (!ray_intersects_sphere(&obj, &ray, &hit))
 			tu_ko_message_exit("Ray to sphere at 0,0,0 with r=1 with ray origin = 0.5,0,-5 and dir = 0,0,1 did not hit!");
+	TEST
+		for (int i = 0; i < 100; i++)
+		{
+			t_vec3 vec = vec3_normalize(vec3_new(
+				ft_randf() * 2 - 1,
+				ft_randf() * 2 - 1,
+				ft_randf() * 2 - 1
+			));
+
+			t_vec3 vecB = vec3_normalize(vec3_new(
+				ft_randf() * 2 - 1,
+				ft_randf() * 2 - 1,
+				ft_randf() * 2 - 1
+			));
+
+			t_quaternion rotation = quaternion_from_forward_up(vec,vecB);
+			t_vec3 z = quaternion_mult_vec3(rotation, vec3_new(0,0,-1));	// Negative z = forward
+			if (!same_vec(z, vec))
+				tu_ko_message_exit("%i forward_up( %.2f,%.2f,%.2f | %.2f,%.2f,%.2f ) * (0,0,-1) != (%.2f,%.2f,%.2f) it made: %.2f %.2f %.2f", i,
+				vec.x, vec.y, vec.z,
+				vecB.x, vecB.y, vecB.z,
+				vec.x, vec.y, vec.z,
+				z.x, z.y, z.z
+			);
+		}
 	TEST_END
 	return (0);
 }

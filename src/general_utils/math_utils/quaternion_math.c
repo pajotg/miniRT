@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:28:33 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 20:58:11 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 17:47:21 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,8 @@ t_quaternion quaternion_from_matrix(t_matrix3x3 matrix)
 
 t_quaternion quaternion_from_forward_up(t_vec3 forward, t_vec3 up)
 {
-	t_vec3 side = vec3_cross(forward, up);
+	t_vec3 base_up = up;
+	t_vec3 side = vec3_normalize(vec3_cross(forward, up));
 	up = vec3_cross(side, forward);
 
 	t_matrix3x3 matrix;
@@ -217,17 +218,18 @@ t_quaternion quaternion_from_forward_up(t_vec3 forward, t_vec3 up)
 
 		fprintf(stderr, "Found quat from forward up err!\n");
 		fprintf(stderr, "	Forward:\n");
-		fprintf(stderr, "		Target: %.2f %.2f %.2f\n", forward.x, forward.y, forward.z);
-		fprintf(stderr, "		Matrix: %.2f %.2f %.2f\n", matrix.zx, matrix.zy, matrix.zz);
-		fprintf(stderr, "		Got: %.2f %.2f %.2f\n", got_forward.x, got_forward.y, got_forward.z);
+		fprintf(stderr, "		Target: %.2f %.2f %.2f (%.2f)\n", forward.x, forward.y, forward.z, vec3_magnitude(forward));
+		fprintf(stderr, "		Matrix: %.2f %.2f %.2f (%.2f)\n", matrix.zx, matrix.zy, matrix.zz, vec3_magnitude(vec3_new(matrix.zx, matrix.zy, matrix.zz)));
+		fprintf(stderr, "		Got: %.2f %.2f %.2f (%.2f)\n", got_forward.x, got_forward.y, got_forward.z, vec3_magnitude(got_forward));
 		fprintf(stderr, "	Up:\n");
-		fprintf(stderr, "		Target: %.2f %.2f %.2f\n", up.x, up.y, up.z);
-		fprintf(stderr, "		Matrix: %.2f %.2f %.2f\n", matrix.yx, matrix.yy, matrix.yz);
-		fprintf(stderr, "		Got: %.2f %.2f %.2f\n", got_up.x, got_up.y, got_up.z);
+		fprintf(stderr, "		Base: %.2f %.2f %.2f (%.2f)\n", base_up.x, base_up.y, base_up.z, vec3_magnitude(base_up));
+		fprintf(stderr, "		Target: %.2f %.2f %.2f (%.2f)\n", up.x, up.y, up.z, vec3_magnitude(up));
+		fprintf(stderr, "		Matrix: %.2f %.2f %.2f (%.2f)\n", matrix.yx, matrix.yy, matrix.yz, vec3_magnitude(vec3_new(matrix.yx, matrix.yy, matrix.yz)));
+		fprintf(stderr, "		Got: %.2f %.2f %.2f (%.2f)\n", got_up.x, got_up.y, got_up.z, vec3_magnitude(got_up));
 		fprintf(stderr, "	Side:\n");
-		fprintf(stderr, "		Target: %.2f %.2f %.2f\n", side.x, side.y, side.z);
-		fprintf(stderr, "		Matrix: %.2f %.2f %.2f\n", matrix.xx, matrix.xy, matrix.xz);
-		fprintf(stderr, "		Got: %.2f %.2f %.2f\n", got_side.x, got_side.y, got_side.z);
+		fprintf(stderr, "		Target: %.2f %.2f %.2f (%.2f)\n", side.x, side.y, side.z, vec3_magnitude(side));
+		fprintf(stderr, "		Matrix: %.2f %.2f %.2f (%.2f)\n", matrix.xx, matrix.xy, matrix.xz, vec3_magnitude(vec3_new(matrix.xx, matrix.xy, matrix.xz)));
+		fprintf(stderr, "		Got: %.2f %.2f %.2f (%.2f)\n", got_side.x, got_side.y, got_side.z, vec3_magnitude(got_side));
 	}
 
 	return quat;
