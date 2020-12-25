@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 12:12:21 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 12:52:11 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,7 +288,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		darray_push(&scene->objects, &object);
 	}
 	else {
-		if (line[0] == '\0')
+		if (line[0] == '\0' || line[0] == '#')
 			return (true);
 		set_error(ft_strjoin("Unknown configuration: ", line), true);
 		return false;

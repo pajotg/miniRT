@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 14:27:34 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 14:33:07 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -405,9 +405,11 @@ int main(int argc, char **argv)
 	mlx_hook(window, KeyRelease, KeyReleaseMask, &hook_key_up, &mlx_data);
 	mlx_loop_hook(mlx, hook_loop, &mlx_data);
 	mlx_mouse_hook(window, hook_mouse, &mlx_data);
-	mlx_do_key_autorepeatoff(mlx);
 
 	mlx_hook(window, ClientMessage, NoEventMask, hook_client_message, &mlx_data);
+
+	//mlx_do_key_autorepeatoff(mlx);	// TODO: Add to hook mouse enter, or maybe not
+	//mlx_do_key_autorepeaton(mlx);	// TODO: Add to hook mouse leave, or maybe not
 
 	mlx_loop(mlx);
 	//trace_ray(&mlx_data, 0, 0);

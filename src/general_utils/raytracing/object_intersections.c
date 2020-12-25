@@ -6,15 +6,18 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 12:46:38 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 15:05:15 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_objects.h"
 #include "mini_rt_color_math_utils.h"
 #include <stdbool.h>
+#include <math.h>
 
 #include <stdio.h>	// bad
+#include <stdlib.h> // bad
+#include "ft_printf.h"	// bad
 
 /*
 **	https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
@@ -36,8 +39,9 @@ bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 	if (delta < 0)
 		return false;
 
+	delta = sqrtf(delta);
 	// Distance is either dot - delta or dot + delta, if we can subtract, subtract
-	if (delta > dot)
+	if (delta < dot)
 		delta = -delta;
 	float distance = dot + delta;
 	if (hit->distance < distance || distance < 0)
@@ -46,6 +50,25 @@ bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 	hit->color = data->color;
 	hit->location = vec3_add(ray->origin, vec3_scale(ray->direction, hit->distance));
 	hit->normal = vec3_scale(vec3_subtract(hit->location, object->transform.position), 1 / data->radius);
+
+	/*
+	float sqrmag = vec3_magnitude_sqr(hit->normal);
+	if (sqrmag > 1.01 || sqrmag < 0.99)
+	{
+		printf("Failed to calculate correct normal!\n");
+		ft_printf("	Origin: %v\n", ray->origin);
+		ft_printf("	Direction: %v\n", ray->direction);
+		ft_printf("	Sphere pos: %v\n", object->transform.position);
+		ft_printf("	Sphere radius: %v\n", data->radius);
+		ft_printf("	Got offset: %v\n", offset);
+		printf("	Got dot: %.2f\n", dot);
+		printf("	Got delta: %.2f\n", delta);
+		printf("	Got distance: %f\n", hit->distance);
+		ft_printf("	Got location: %v\n", hit->location);
+		ft_printf("	Got normal: %v\n", hit->normal);
+		exit(1);
+	}
+	*/
 	return true;
 }
 
@@ -58,8 +81,8 @@ bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
 	t_object_plane* data = object->object_data;
 
 	t_vec3 normal = quaternion_mult_vec3(object->transform.rotation, vec3_new(0, 0, -1));
-	float height = vec3_dot( normal, vec3_subtract(object->transform.position, ray->origin) );
-	float travel_distance = height / vec3_dot( normal, ray->direction );
+	float height = vec3_dot( normal, vec3_subtract(ray->origin, object->transform.position) );
+	float travel_distance = -height / vec3_dot( normal, ray->direction );
 
 	if (travel_distance < 0 || travel_distance > hit->distance)
 		return false;
@@ -67,7 +90,10 @@ bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
 	hit->distance = travel_distance;
 	hit->color = data->color;
 	hit->location = vec3_add(ray->origin, vec3_scale(ray->direction, travel_distance));
-	hit->normal = normal;
+	if (height > 0)
+		hit->normal = normal;
+	else
+		hit->normal = vec3_subtract(vec3_new(0,0,0), normal);
 	return true;
 }
 

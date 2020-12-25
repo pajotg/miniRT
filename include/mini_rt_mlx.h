@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 18:51:02 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 19:32:34 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 13:38:09 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,26 @@ typedef struct	s_mlx_image
 	bool big_endian;
 }				t_mlx_image;
 
+typedef struct	s_input
+{
+	bool left;
+	bool right;
+	bool forward;
+	bool backward;
+	bool up;
+	bool down;
+
+	bool white_up;
+	bool white_down;
+}				t_input;
+
+
 typedef struct	s_mlx_data
 {
 	void* mlx;
 	void* window;
 	t_scene* scene;
+	t_input input;
 	t_mlx_image img;
 	float white;
 

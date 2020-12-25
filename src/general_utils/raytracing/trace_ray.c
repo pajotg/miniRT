@@ -6,14 +6,14 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 12:42:19 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 14:23:35 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt.h"
 #include <math.h>
 
-bool trace_ray(t_mlx_data* data, t_ray* ray, t_ray_hit* o_hit)
+static bool trace_ray_raw(t_mlx_data* data, t_ray* ray, t_ray_hit* o_hit)
 {
 	bool has_hit = false;
 	for (size_t i = 0; i < data->scene->objects.count; i++)
@@ -23,6 +23,18 @@ bool trace_ray(t_mlx_data* data, t_ray* ray, t_ray_hit* o_hit)
 			has_hit = true;
 	}
 	return has_hit;
+}
+
+bool trace_ray(t_mlx_data* data, t_ray* ray, t_ray_hit* o_hit)
+{
+	o_hit->distance = INFINITY;
+	return trace_ray_raw(data, ray, o_hit);
+}
+
+bool trace_ray_max(t_mlx_data* data, t_ray* ray, t_ray_hit* o_hit, float max_dist)
+{
+	o_hit->distance = max_dist;
+	return trace_ray_raw(data, ray, o_hit);
 }
 
 #include <stdio.h>
@@ -46,8 +58,7 @@ void trace_ambiant(t_mlx_data* data, t_vec3* position, t_vec3* normal, t_color_h
 		float sqr_dist = vec3_magnitude_sqr(offset);
 
 		ray.direction = normalized;
-		hit.distance = sqrtf(sqr_dist);
-		if (!trace_ray(data, &ray, &hit))
+		if (!trace_ray_max(data, &ray, &hit, sqrtf(sqr_dist)) || true)
 		{
 			strength *= 10 / sqr_dist;
 
@@ -63,19 +74,34 @@ void trace_ambiant(t_mlx_data* data, t_vec3* position, t_vec3* normal, t_color_h
 void trace_color(t_mlx_data* data, t_ray* ray, t_color_hdr* o_hdr)
 {
 	t_ray_hit hit;
-	hit.distance = INFINITY;
 	if (trace_ray(data, ray, &hit))
 	{
+		//*
 		t_color_hdr ambiant;
 		trace_ambiant(data, &hit.location, &hit.normal, &ambiant);
 
 		o_hdr->r = hit.color.r * ambiant.r;
 		o_hdr->g = hit.color.g * ambiant.g;
 		o_hdr->b = hit.color.b * ambiant.b;
+		//*/
+
+		/*
+		o_hdr->r = hit.normal.x;
+		o_hdr->g = hit.normal.y;
+		o_hdr->b = hit.normal.z;
+		//*/
 	}
 	else
 		*o_hdr = data->scene->ambiant;
 }
+
+/*
+** Dont need to search up how, i can just use ALGEBRA!
+** asin(0.5 / dist) = cam.fov / 2	// angle of ray = desired angle
+** 0.5 / dist = sin(cam.fov / 2)
+** 0.5 = sin(cam.fov / 2) * dist
+** 0.5 / sin(cam.fov / 2) = dist
+*/
 
 void pix_to_ray(t_mlx_data* data, int x, int y, t_ray* o_ray)
 {
