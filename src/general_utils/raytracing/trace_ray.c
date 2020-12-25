@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 14:23:35 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 15:06:34 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void trace_ambiant(t_mlx_data* data, t_vec3* position, t_vec3* normal, t_color_h
 		float sqr_dist = vec3_magnitude_sqr(offset);
 
 		ray.direction = normalized;
-		if (!trace_ray_max(data, &ray, &hit, sqrtf(sqr_dist)) || true)
+		if (!trace_ray_max(data, &ray, &hit, sqrtf(sqr_dist)))
 		{
 			strength *= 10 / sqr_dist;
 
