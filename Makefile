@@ -13,15 +13,15 @@ INCLIB=$(INC)/../lib
 SRC_DIR = src/
 OBJ_DIR = obj/
 INCLUDE_DIRS = include/
-INCLUDE = -Iinclude -Ilibft -Iminilibx-linux -Isrc/get_next_line
+INCLUDE = -Iinclude -Ilibft/include -Iminilibx-linux -Isrc/get_next_line
 LDFLAGS = -Lminilibx-linux/ -lmlx -Llibft -lft -L$(INCLIB) -lXext -lX11 -lm -lbsd
 
-FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra #-Werror # ADD WERROR OKAY YEAH DO IT YES YES YES YES
+FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
 
 # Really not really happy where the GNL is now located, TODO: Add makefile into GNL that compiles a library, and then link ik via -L and -l
 
-SOURCE_FILES = $(shell find src -type f -name *.c)	# Really long comment so i will fix it once i am done with making it work alright okay this should trigger the norminette+
-HEADER_FILES = $(shell find $(INCLUDE_DIR) -type f -name *.h)
+SOURCE_FILES = $(shell find $(SRC_DIR) -type f -name *.c)	# Really long comment so i will fix it once i am done with making it work alright okay this should trigger the norminette+
+HEADER_FILES = $(shell find $(INCLUDE_DIRS) -type f -name *.h)
 OBJECTS = $(SOURCE_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 
 .PHONY: all
@@ -31,7 +31,7 @@ all: $(NAME)
 # Also be sure to find #include <stdio.h>, you never know where i left it in, alright? alright.
 $(NAME): $(OBJECTS)
 	$(MAKE) -C minilibx-linux
-	$(MAKE) -C libft bonus
+	$(MAKE) -C libft
 	$(CC) $(FLAGS) -o $(NAME) $^ $(LDFLAGS)
 
 $(TEST_BINDER_NAME): $(OBJECTS)
@@ -41,7 +41,7 @@ $(TEST_BINDER_NAME): $(OBJECTS)
 	ar -rcS $(TEST_BINDER_NAME) $(filter-out %main.o,$(OBJECTS))
 	ranlib $(TEST_BINDER_NAME) # Really long comment so i will fix it once i am done with making it work alright okay this should trigger the norminette+
 
-$(OBJ_DIR):
+$(OBJ_DIR) $(SRC_DIR):
 	mkdir $@
 
 $(OBJECTS): $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES) \
@@ -56,6 +56,7 @@ clean:
 .PHONY: fclean
 fclean: clean
 	rm -f $(NAME)
+	rm -f $(TEST_BINDER_NAME)
 
 .PHONY: re
 re:

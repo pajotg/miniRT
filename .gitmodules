@@ -4,5 +4,5 @@
 	ignore = dirty
 [submodule "libft"]
 	path = libft
-	url = git@vogsphere-v2.codam.nl:vogsphere/intra-uuid-c9126f0c-41c1-4ad1-8bd0-c2f0e25d4806-3374638
+	url = https://github.com/pajotg/libft
 	ignore = dirty
