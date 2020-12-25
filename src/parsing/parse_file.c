@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 10:52:20 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 12:12:21 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 			set_error(ft_strjoin("Light color incorrectly formatted: ", line), true);
 			return false;
 		}
+		darray_push(&scene->lights, &light);
 	}
 	else if (ft_strncmp(line, "sp", 2) == 0)
 	{

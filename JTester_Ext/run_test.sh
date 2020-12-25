@@ -13,4 +13,4 @@ test="$1"
 make_result=$(make TestBinder.a -C $DIR/..)
 
 # test!
-~/Desktop/JTester/run_test.sh "$DIR/../TestBinder.a -lm -L$DIR/../libft/ -lft" "-I$DIR/../libft -I $DIR/../include" "$DIR"
+~/Desktop/JTester/run_test.sh "$DIR/../TestBinder.a -lm -L$DIR/../libft/ -lft" "-I$DIR/../libft/include -I $DIR/../include" "$DIR"

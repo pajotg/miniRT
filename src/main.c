@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 11:58:23 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 12:02:36 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,7 +206,7 @@ int	hook_loop(void *p)
 	if (data->white > 5)
 		data->white = 0;
 	update_image(data);
-	*/
+	//*/
 
 	mlx_put_image_to_window(data->mlx, data->window, data->img.image, 0, 0);
 
