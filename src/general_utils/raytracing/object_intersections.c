@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 10:43:44 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 12:46:38 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,12 @@ bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 
 	if (delta < 0)
 		return false;
+
+	// Distance is either dot - delta or dot + delta, if we can subtract, subtract
 	if (delta > dot)
 		delta = -delta;
-	float distance = dot - delta;
-	if (hit->distance < distance)
+	float distance = dot + delta;
+	if (hit->distance < distance || distance < 0)
 		return false;
 	hit->distance = distance;
 	hit->color = data->color;
