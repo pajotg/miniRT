@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 14:33:07 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 16:09:08 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -357,6 +357,13 @@ int main(int argc, char **argv)
 		write(STDOUT_FILENO, "Error\nCould not init mlx!\n", 26);
 		return 1;
 	}
+
+	int rx, ry;
+	mlx_get_screen_size(mlx, &rx, &ry);
+	if (scene->resolution.width > rx)
+		scene->resolution.width = rx;
+	if (scene->resolution.height > ry)
+		scene->resolution.height = ry;
 
 	void* window = mlx_new_window(mlx, scene->resolution.width, scene->resolution.height, "miniRT");
 	if (!window)
