@@ -9,7 +9,7 @@
 			"${default}",
 			"${workspaceFolder}/include",
 			"${workspaceFolder}/../JTester/utils/include",
-			"${workspaceFolder}/libft",
+			"${workspaceFolder}/libft/include",
 			"${workspaceFolder}/minilibx-linux",
 			"${workspaceFolder}/src/get_next_line",
 		],

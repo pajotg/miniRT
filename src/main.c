@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 11:35:52 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 11:58:23 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "mlx.h"
 #include "mlx_int.h"
 #include <math.h>
+#include "ft_printf.h"
 
 
 #include <time.h>	// no-norm
@@ -136,7 +137,6 @@ void trace_pixel(t_mlx_data* data, int x, int y)
 	pix_to_ray(data, x, y, &ray);
 	trace_color(data, &ray, hdr);
 	update_pix(data, x, y);
-	//usleep(10000);
 }
 
 void trace_next_pixel(t_mlx_data* data)
@@ -228,24 +228,22 @@ int hook_client_message(void* p)
 
 int main(int argc, char **argv)
 {
+	init_ft_printf();
+
 	t_args* arg_data = parse_args(argc, argv);
 	if (!arg_data)
 	{
-		write(STDOUT_FILENO, "Error\n", 6);
-		write(STDOUT_FILENO, get_last_error(), ft_strlen(get_last_error()));
-		write(STDOUT_FILENO, "\n", 1);
+		ft_printf("Error\n%s\n",get_last_error());
 		return 1;
 	}
 
-	printf("File: %s\n", arg_data->map_file);
-	printf("Save: %i\n", arg_data->save);
+	ft_printf("File: %s\n", arg_data->map_file);
+	ft_printf("Save: %i\n", arg_data->save);
 
 	int fd = open(arg_data->map_file, O_RDONLY);
 	if (fd == -1)
 	{
-		write(STDOUT_FILENO, "Error\nCould not open file \"", 27);
-		write(STDOUT_FILENO, arg_data->map_file, ft_strlen(arg_data->map_file));
-		write(STDOUT_FILENO, "\"!\n", 3);
+		ft_printf("Error\nCould not open file \"%s\"!\n", arg_data->map_file);
 		free(arg_data);
 		return 1;
 	}
@@ -253,9 +251,7 @@ int main(int argc, char **argv)
 	t_scene* scene = parse_scene_file(fd);
 	if (!scene)
 	{
-		write(STDOUT_FILENO, "Error\nAn error occured while parsing the file: \"", 48);
-		write(STDOUT_FILENO, get_last_error(), ft_strlen(get_last_error()));
-		write(STDOUT_FILENO, "\"!\n", 3);
+		ft_printf("Error\nAn error occured while parsing the file: \"%s\"!\n", get_last_error());
 		free(arg_data);
 		return 1;
 	}
@@ -266,13 +262,10 @@ int main(int argc, char **argv)
 		t_vec3 x = quaternion_mult_vec3(obj->transform.rotation, vec3_new(1,0,0));
 		t_vec3 y = quaternion_mult_vec3(obj->transform.rotation, vec3_new(0,1,0));
 		t_vec3 z = quaternion_mult_vec3(obj->transform.rotation, vec3_new(0,0,1));
-		printf("Found object at: (%.2f %.2f %.2f) with x (%.2f %.2f %.2f) y: (%.2f %.2f %.2f) z: (%.2f %.2f %.2f) \n",
-			obj->transform.position.x,obj->transform.position.y,obj->transform.position.z,
-			x.x, x.y, x.z,
-			y.x, y.y, y.z,
-			z.x, z.y, z.z
+		ft_printf("Found object with transform %t with x (%v) y: (%v) z: (%v) \n",
+			obj->transform,
+			x, y, z
 		);
-		printf("	Rot: (%.2f %.2f %.2f %.2f)\n", obj->transform.rotation.r, obj->transform.rotation.i, obj->transform.rotation.j, obj->transform.rotation.k);
 	}
 
 	void* mlx = mlx_init();
