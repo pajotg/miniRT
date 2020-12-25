@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 21:10:39 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 11:35:52 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,58 +129,17 @@ void update_image(t_mlx_data* data)
 ** 0.5 / sin(cam.fov / 2) = dist
 */
 
-void trace_ray(t_mlx_data* data, int x, int y)
+void trace_pixel(t_mlx_data* data, int x, int y)
 {
 	t_color_hdr* hdr = &data->pixels[x + y * data->scene->resolution.width].color;
-	float fov_axis = data->scene->resolution.width;
-	float ox = (data->scene->resolution.width / 2.0 - x) / fov_axis;
-	float oy = (data->scene->resolution.height / 2.0 - y) / fov_axis;
-
-	// ox and oy are in the range -0.5 to 0.5
-
-	t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
-	float dist = 0.5 / sin(cam->fov / 2);
-
-	t_vec3 dir = vec3_normalize(vec3_add(
-		vec3_add(
-			vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(1,0,0)), ox),
-			vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(0,1,0)), oy)
-		),
-		vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(0,0,-1)), dist)
-	));
-
-	/*
-	printf("asin(0.5/dist) = %.2f degrees\n", asinf(0.5/dist) / M_PI * 180);
-	printf("ox, oy: %.2f %.2f\n", ox, oy);
-	printf("Dist: %.2f\n", dist);
-	printf("Direction: %.2f %.2f %.2f\n", dir.x, dir.y, dir.z);
-	t_vec3 up = quaternion_mult_vec3(cam->transform.rotation, vec3_new(0,1,0));
-	t_vec3 right = quaternion_mult_vec3(cam->transform.rotation, vec3_new(1,0,0));
-	printf("Up: %.2f %.2f %.2f\n", up.x, up.y, up.z);
-	printf("Right: %.2f %.2f %.2f\n", right.x, right.y, right.z);
-	//*/
-
 	t_ray ray;
-	ray.origin = cam->transform.position;
-	ray.direction = dir;
-
-	t_ray_hit hit;
-	hit.distance = INFINITY;
-	bool has_hit = false;
-	for (size_t i = 0; i < data->scene->objects.count; i++)
-	{
-		t_object* obj = darray_index(&data->scene->objects, i);
-		if (obj->IntersectFunc(obj, &ray, &hit))
-			has_hit = true;
-	}
-	if (has_hit)
-		*hdr = hit.color;
-	else
-		*hdr = data->scene->ambiant;
+	pix_to_ray(data, x, y, &ray);
+	trace_color(data, &ray, hdr);
 	update_pix(data, x, y);
+	//usleep(10000);
 }
 
-void trace_next_ray(t_mlx_data* data)
+void trace_next_pixel(t_mlx_data* data)
 {
 	int pix = data->current_pixel;
 	data->current_pixel++;
@@ -189,7 +148,7 @@ void trace_next_ray(t_mlx_data* data)
 		printf("Completed frame!\n");
 		data->current_pixel = 0;
 	}
-	trace_ray(data, pix % data->scene->resolution.width, pix / data->scene->resolution.width);
+	trace_pixel(data, pix % data->scene->resolution.width, pix / data->scene->resolution.width);
 }
 
 /*
@@ -240,7 +199,7 @@ int	hook_loop(void *p)
 	while (clock() < stop)
 	{
 		for (int i = 0; i < 1000; i++)
-			trace_next_ray(data);
+			trace_next_pixel(data);
 	}
 	/*
 	data->white += (data->white) / 100 + 0.01;

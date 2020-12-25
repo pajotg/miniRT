@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 19:56:50 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 10:43:44 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
 	t_object_plane* data = object->object_data;
 
 	t_vec3 normal = quaternion_mult_vec3(object->transform.rotation, vec3_new(0, 0, -1));
-	float height = vec3_dot( normal, vec3_subtract(ray->origin, object->transform.position ) );
+	float height = vec3_dot( normal, vec3_subtract(object->transform.position, ray->origin) );
 	float travel_distance = height / vec3_dot( normal, ray->direction );
 
 	if (travel_distance < 0 || travel_distance > hit->distance)
