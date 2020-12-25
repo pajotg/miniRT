@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 12:02:36 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 14:27:34 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,18 @@
 #include <math.h>
 #include "ft_printf.h"
 
-
 #include <time.h>	// no-norm
+
+#define KEY_ESC 65307
+#define KEY_W 119
+#define KEY_A 97
+#define KEY_S 115
+#define KEY_D 100
+#define KEY_Q 113
+#define KEY_E 101
+
+#define KEY_R 114
+#define KEY_F 102
 
 t_args* parse_args(int argc, char **argv)
 {
@@ -67,19 +77,103 @@ t_args* parse_args(int argc, char **argv)
 	return data;
 }
 
-int	hook_key(int key,void *p)
+int	hook_key_down(int key,void *p)
 {
-	if (key == 65307)	//esc
-	{
-		t_mlx_data* data = p;
+	t_mlx_data* data = p;
+	printf("Key down: %i\n", key);
+
+	if (key == KEY_ESC)
 		mlx_loop_end(data->mlx);
-	}
+	else if (key == KEY_W)
+		data->input.forward = true;
+	else if (key == KEY_A)
+		data->input.left = true;
+	else if (key == KEY_S)
+		data->input.backward = true;
+	else if (key == KEY_D)
+		data->input.right = true;
+	else if (key == KEY_Q)
+		data->input.up = true;
+	else if (key == KEY_E)
+		data->input.down = true;
+	else if (key == KEY_R)
+		data->input.white_up = true;
+	else if (key == KEY_F)
+		data->input.white_down = true;
 	return 0;
 }
 
-int hook_configure_notify(void* p)
+int	hook_key_up(int key,void *p)
 {
-	printf("Yeet %p\n", p);
+	t_mlx_data* data = p;
+	printf("Key up: %i\n", key);
+
+	if (key == KEY_W)
+		data->input.forward = false;
+	else if (key == KEY_A)
+		data->input.left = false;
+	else if (key == KEY_S)
+		data->input.backward = false;
+	else if (key == KEY_D)
+		data->input.right = false;
+	else if (key == KEY_Q)
+		data->input.up = false;
+	else if (key == KEY_E)
+		data->input.down = false;
+	else if (key == KEY_R)
+		data->input.white_up = false;
+	else if (key == KEY_F)
+		data->input.white_down = false;
+	return 0;
+}
+
+/*
+**	1 (left click) = look at point
+**	2 (middle click) = gather debug data from pixel
+**	3 (right click) = get HDR color
+*/
+
+int hook_mouse(int button, int x, int y, void* p)
+{
+	t_mlx_data* data = p;
+
+	//printf("mouse hooked! %i at: (%i, %i) %p\n",button, x, y, p);
+	if (button == 1)
+	{
+		t_ray ray;
+		pix_to_ray(data, x, y, &ray);
+
+		t_quaternion new_rot = quaternion_from_forward_up(ray.direction, vec3_new(0,1,0));
+		t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
+		cam->transform.rotation = new_rot;
+	}
+	if (button == 2)
+	{
+		t_ray ray;
+		t_ray_hit hit;
+
+		pix_to_ray(data, x, y, &ray);
+		if (trace_ray(data, &ray, &hit))
+		{
+			printf("Hit!\n");
+			ft_printf("Location: %v!\n", hit.location);
+			ft_printf("Normal: %v!\n", hit.normal);
+			ft_printf("Color: %v!\n", *(t_vec3*)&hit.color);
+
+			float sqrmag = vec3_magnitude_sqr(hit.normal);
+			if (sqrmag > 1.01 || sqrmag < 0.99)
+				printf("Normal magnitude != 1, actual: %.2f\n", sqrtf(sqrmag));
+		}
+		else
+			printf("Miss!\n");
+	}
+	else if (button == 3)
+	{
+		t_color_hdr hdr = data->pixels[x + y * data->scene->resolution.width].color;
+		printf("Color: %.2f %.2f %.2f, mag: %.2f\n", hdr.r, hdr.g, hdr.b,
+			sqrtf(hdr.r * hdr.r + hdr.g * hdr.g + hdr.b * hdr.b)
+		);
+	}
 	return 0;
 }
 
@@ -98,7 +192,6 @@ bool init_image(void* mlx, t_mlx_image* img, int width, int height)
 	img->addr = mlx_get_data_addr(image, &img->bits_per_pixel, &img->line_length, (int*)&img->big_endian);
 	return true;
 }
-
 
 void update_pix(t_mlx_data* data, int x, int y)
 {
@@ -123,13 +216,6 @@ void update_image(t_mlx_data* data)
 	}
 }
 
-/*
-** asin(0.5 / dist) = cam.fov / 2
-** 0.5 / dist = sin(cam.fov / 2)
-** 0.5 = sin(cam.fov / 2) * dist
-** 0.5 / sin(cam.fov / 2) = dist
-*/
-
 void trace_pixel(t_mlx_data* data, int x, int y)
 {
 	t_color_hdr* hdr = &data->pixels[x + y * data->scene->resolution.width].color;
@@ -150,24 +236,6 @@ void trace_next_pixel(t_mlx_data* data)
 	}
 	trace_pixel(data, pix % data->scene->resolution.width, pix / data->scene->resolution.width);
 }
-
-/*
-void update_image_lines(t_mlx_data* data, t_mlx_image* img)
-{
-	static int red = 128;
-	for (int x = 0; x < img->width; x++)
-	{
-		for (int y = 0; y < img->height; y++)
-		{
-			unsigned int col = (x | y << 8) | red << 16;
-			size_t offset = x * (img->bits_per_pixel / 8) + y * img->line_length;
-			unsigned int* addr = (unsigned int*)(img->addr + offset);
-			*addr = col;
-		}
-	}
-	red += 64;
-}
-*/
 
 /*
 **	Beware! if you get more than 400 fps it gets REAL LAGGY...
@@ -194,6 +262,16 @@ int	hook_loop(void *p)
 
 	t_mlx_data* data = p;
 
+	// Input
+	t_vec3 move_dir = vec3_new(0,0,0);
+	move_dir.z = (data->input.forward ? -1 : 0) + (data->input.backward ? 1 : 0);
+	move_dir.x = (data->input.right ? -1 : 0) + (data->input.left ? 1 : 0);
+	move_dir.y = (data->input.down ? -1 : 0) + (data->input.up ? 1 : 0);
+
+	t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
+	move_dir = quaternion_mult_vec3(cam->transform.rotation, vec3_scale(move_dir, diff / (float)CLOCKS_PER_SEC * 2.0));
+	cam->transform.position = vec3_add(cam->transform.position, move_dir);
+
 	// Render
 	clock_t stop = clock() + CLOCKS_PER_SEC / 60;
 	while (clock() < stop)
@@ -201,12 +279,15 @@ int	hook_loop(void *p)
 		for (int i = 0; i < 1000; i++)
 			trace_next_pixel(data);
 	}
-	/*
-	data->white += (data->white) / 100 + 0.01;
-	if (data->white > 5)
-		data->white = 0;
-	update_image(data);
-	//*/
+
+	if (data->input.white_up != data->input.white_down)
+	{
+		data->white += ((data->input.white_down ? -1 : 0) + (data->input.white_up ? 1 : 0))
+					* diff / (float)CLOCKS_PER_SEC * 2.0;
+		if (data->white < 0)
+			data->white = 0;
+		update_image(data);
+	}
 
 	mlx_put_image_to_window(data->mlx, data->window, data->img.image, 0, 0);
 
@@ -293,6 +374,7 @@ int main(int argc, char **argv)
 	mlx_data.pixels = malloc(sizeof(*mlx_data.pixels) * scene->resolution.width * scene->resolution.height);
 	mlx_data.current_pixel = 0;
 	mlx_data.white = 1;
+	ft_bzero(&mlx_data.input, sizeof(t_input));
 	if (mlx_data.pixels == NULL)
 	{
 		mlx_destroy_window(mlx, window);
@@ -319,20 +401,12 @@ int main(int argc, char **argv)
 		col->b = 0;
 	}
 
-	for (int x = 0; x < scene->resolution.width; x++)
-	{
-		for (int y = 0; y < scene->resolution.height; y++)
-		{
-			t_color_hdr* hdr = &mlx_data.pixels[x + y * scene->resolution.width].color;
-			hdr->r = x / 100.0;
-			hdr->g = y / 100.0;
-			hdr->b = (x+y) / 1000.0;
-		}
-	}
-	update_image(&mlx_data);
-
-	mlx_key_hook(window, hook_key, &mlx_data);
+	mlx_hook(window, KeyPress, KeyPressMask, &hook_key_down, &mlx_data);
+	mlx_hook(window, KeyRelease, KeyReleaseMask, &hook_key_up, &mlx_data);
 	mlx_loop_hook(mlx, hook_loop, &mlx_data);
+	mlx_mouse_hook(window, hook_mouse, &mlx_data);
+	mlx_do_key_autorepeatoff(mlx);
+
 	mlx_hook(window, ClientMessage, NoEventMask, hook_client_message, &mlx_data);
 
 	mlx_loop(mlx);
