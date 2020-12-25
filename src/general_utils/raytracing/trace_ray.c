@@ -6,12 +6,15 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 15:06:34 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 17:17:42 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt.h"
 #include <math.h>
+#include "libft.h"
+
+#define NORMAL_OFFSET 0.01
 
 static bool trace_ray_raw(t_mlx_data* data, t_ray* ray, t_ray_hit* o_hit)
 {
@@ -37,15 +40,12 @@ bool trace_ray_max(t_mlx_data* data, t_ray* ray, t_ray_hit* o_hit, float max_dis
 	return trace_ray_raw(data, ray, o_hit);
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-void trace_ambiant(t_mlx_data* data, t_vec3* position, t_vec3* normal, t_color_hdr* o_hdr)
+void trace_lights(t_mlx_data* data, t_vec3* position, t_vec3* normal, t_color_hdr* o_hdr)
 {
 	t_ray_hit hit;
 	t_ray ray;
-	ray.origin = vec3_add(*position, vec3_scale(*normal, 0.01));
+	ray.origin = vec3_add(*position, vec3_scale(*normal, NORMAL_OFFSET));
 
-	*o_hdr = data->scene->ambiant;
 	for (size_t i = 0; i < data->scene->lights.count; i++)
 	{
 		t_light* light = darray_index(&data->scene->lights, i);
@@ -71,25 +71,50 @@ void trace_ambiant(t_mlx_data* data, t_vec3* position, t_vec3* normal, t_color_h
 	(void)normal;
 }
 
+/* For bounce light
+**	ambiant.r = 0;
+**	ambiant.g = 0;
+**	ambiant.b = 0;
+**
+**	t_color_hdr sample;
+**	t_ray new_ray;
+**	new_ray.origin = vec3_add(hit.location, vec3_scale(hit.normal, NORMAL_OFFSET));
+**	for (int i = 0; i < SAMPLES; i++)
+**	{
+**		float u = ft_randf();
+**		float v = ft_randf();
+**		u = M_PI * 2 * u;
+**		new_ray.direction.x = cosf(u) * cosf(v);
+**		new_ray.direction.y = 2 * v - 1;
+**		new_ray.direction.z = sinf(u) * cosf(v);
+**
+**		float dot = vec3_dot(new_ray.direction, hit.normal);
+**		if (dot < 0)
+**			new_ray.direction = vec3_add(new_ray.direction, vec3_scale(hit.normal, -dot*2));
+**
+**		trace_color(data, &new_ray, &sample, depth - 1);
+**		ambiant.r += sample.r;
+**		ambiant.g += sample.g;
+**		ambiant.b += sample.b;
+**
+**	}
+**
+**	ambiant.r /= SAMPLES;
+**	ambiant.g /= SAMPLES;
+**	ambiant.b /= SAMPLES;
+*/
+
 void trace_color(t_mlx_data* data, t_ray* ray, t_color_hdr* o_hdr)
 {
 	t_ray_hit hit;
 	if (trace_ray(data, ray, &hit))
 	{
-		//*
-		t_color_hdr ambiant;
-		trace_ambiant(data, &hit.location, &hit.normal, &ambiant);
+		t_color_hdr ambiant = data->scene->ambiant;
+		trace_lights(data, &hit.location, &hit.normal, &ambiant);
 
 		o_hdr->r = hit.color.r * ambiant.r;
 		o_hdr->g = hit.color.g * ambiant.g;
 		o_hdr->b = hit.color.b * ambiant.b;
-		//*/
-
-		/*
-		o_hdr->r = hit.normal.x;
-		o_hdr->g = hit.normal.y;
-		o_hdr->b = hit.normal.z;
-		//*/
 	}
 	else
 		*o_hdr = data->scene->ambiant;

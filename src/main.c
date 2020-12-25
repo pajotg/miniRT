@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 16:09:08 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/25 17:25:20 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,8 +143,13 @@ int hook_mouse(int button, int x, int y, void* p)
 		t_ray ray;
 		pix_to_ray(data, x, y, &ray);
 
-		t_quaternion new_rot = quaternion_from_forward_up(ray.direction, vec3_new(0,1,0));
 		t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
+		float sqrmag = vec3_magnitude_sqr(ray.direction);
+		if (sqrmag < 0.99 || sqrmag > 1.01)
+		{
+			printf("Bad ray create! %.2f = sqrmag != 1: %.2f %.2f %.2f\n", sqrmag, ray.direction.x, ray.direction.y, ray.direction.z);
+		}
+		t_quaternion new_rot = quaternion_from_forward_up(ray.direction, vec3_new(0,1,0));
 		cam->transform.rotation = new_rot;
 	}
 	if (button == 2)
