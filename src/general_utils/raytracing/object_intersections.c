@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/26 14:21:41 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/26 14:41:23 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
 ** I am pretty sure this works in any dimension too, so that is cool, maybe make a 4D raytracer? :)))
 */
 
-// TODO: Non-Axis alligned squares
 bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
 {
 	t_object_square* data = object->object_data;
@@ -114,14 +113,17 @@ bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
 	float max_b[3];
 	char side[3];
 	float candidate_plane[3];
-	float* origin = (float*)&ray->origin;
-	float* dir = (float*)&ray->direction;
 	bool inside = true;
+
+	t_vec3 origin_vec = quaternion_mult_vec3(quaternion_conjugate(object->transform.rotation), vec3_subtract(ray->origin, object->transform.position));
+	t_vec3 dir_vec = quaternion_mult_vec3(quaternion_conjugate(object->transform.rotation), ray->direction);
+	float* origin = (float*)&origin_vec;
+	float* dir = (float*)&dir_vec;
 
 	for (i = 0; i < 3; i++)
 	{
-		min_b[i] = ((float*)&object->transform.position)[i] - data->size;
-		max_b[i] = ((float*)&object->transform.position)[i] + data->size;
+		min_b[i] = - data->size;
+		max_b[i] = + data->size;
 	}
 
 	// Calculate which three planes we need to intersect
