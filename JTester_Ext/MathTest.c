@@ -146,6 +146,35 @@ int main(int argc, char *argv[])
 				z.x, z.y, z.z
 			);
 		}
+	TEST
+		t_object obj;
+		t_object_square object_data;
+		t_ray ray;
+		t_ray_hit hit;
+
+		obj.transform.position = vec3_new(0,0,0);
+		obj.transform.rotation = quaternion_identity();
+		obj.object_data = &object_data;
+
+		object_data.size = 1;
+
+		ray.origin = vec3_new(0,0,-5);
+		ray.direction = vec3_new(0,0,1);
+
+		hit.distance = INFINITY;
+		if (!ray_intersects_square(&obj, &ray, &hit))
+			tu_ko_message_exit("Ray to square at 0,0,0 with s=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not hit!");
+		if (!same_vec(hit.location, vec3_new(0,0,-1)))
+			tu_ko_message_exit("Ray to square at 0,0,0 with s=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not procude location 0,0,-1!");
+		if (!same_vec(hit.normal, vec3_new(0,0,-1)))
+			tu_ko_message_exit("Ray to square at 0,0,0 with s=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not procude normal 0,0,-1!");
+		if (hit.distance != 4)
+			tu_ko_message_exit("Ray to square at 0,0,0 with s=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not procude distance 4!");
+
+		ray.origin = vec3_new(0.5,0,-5);
+		hit.distance = INFINITY;
+		if (!ray_intersects_square(&obj, &ray, &hit))
+			tu_ko_message_exit("Ray to square at 0,0,0 with s=1 with ray origin = 0.5,0,-5 and dir = 0,0,1 did not hit!");
 	TEST_END
 	return (0);
 }

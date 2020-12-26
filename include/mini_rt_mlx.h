@@ -6,12 +6,14 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 18:51:02 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 13:38:09 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/26 13:16:15 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_RT_MLX_H
 # define MINI_RT_MLX_H
+
+#include <pthread.h>
 
 typedef struct	s_pixel_data
 {
@@ -52,6 +54,8 @@ typedef struct	s_mlx_data
 	t_input input;
 	t_mlx_image img;
 	float white;
+	bool active;
+	pthread_mutex_t lock;
 
 	int current_pixel;
 	t_pixel_data* pixels;

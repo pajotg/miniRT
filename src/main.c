@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/26 13:23:03 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/26 14:08:22 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,9 +164,10 @@ int hook_mouse(int button, int x, int y, void* p)
 		if (trace_ray(data, &ray, &hit))
 		{
 			printf("Hit!\n");
-			ft_printf("Location: %v!\n", hit.location);
-			ft_printf("Normal: %v!\n", hit.normal);
-			ft_printf("Color: %v!\n", *(t_vec3*)&hit.color);
+			ft_printf("	Location: %v!\n", hit.location);
+			printf("	Distance: %.2f!\n", hit.distance);
+			ft_printf("	Normal: %v!\n", hit.normal);
+			ft_printf("	Color: %v!\n", *(t_vec3*)&hit.color);
 
 			float sqrmag = vec3_magnitude_sqr(hit.normal);
 			if (sqrmag > 1.01 || sqrmag < 0.99)
@@ -240,7 +241,7 @@ void trace_next_pixels(t_mlx_data* data, int desired)
 	data->current_pixel+=desired;
 	if (data->current_pixel >= data->scene->resolution.width * data->scene->resolution.height)
 	{
-		printf("Completed frame!\n");
+		//printf("Completed frame!\n");
 		data->current_pixel = 0;
 	}
 	pthread_mutex_unlock(&data->lock);
@@ -280,9 +281,9 @@ int	hook_loop(void *p)
 	last_tick = current;
 	time += diff;
 	frames++;
-	if (time > CLOCKS_PER_SEC)
+	if (time > CLOCKS_PER_SEC * NUM_THREADS)
 	{
-		printf("%i fps (%.4fs/f)\n", frames, (float)(time / frames) / CLOCKS_PER_SEC);
+		printf("%i fps (%.4fs/f)\n", frames, (float)(time / frames) / (CLOCKS_PER_SEC * NUM_THREADS));
 		time = 0;
 		frames = 0;
 	}
