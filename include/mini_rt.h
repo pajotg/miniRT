@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:22 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 11:47:13 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/26 16:44:17 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,6 @@ typedef struct	s_args
 }				t_args;
 
 void init_ft_printf();
+bool write_bmp(int fd, unsigned char *pixels, int width, int height);
 
 #endif

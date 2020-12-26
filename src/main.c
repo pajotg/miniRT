@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/26 14:08:22 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/26 17:02:06 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -386,10 +386,10 @@ int main(int argc, char **argv)
 
 	int rx, ry;
 	mlx_get_screen_size(mlx, &rx, &ry);
-	if (scene->resolution.width > rx)
-		scene->resolution.width = rx;
-	if (scene->resolution.height > ry)
-		scene->resolution.height = ry;
+	//if (scene->resolution.width > rx)
+	//	scene->resolution.width = rx;
+	//if (scene->resolution.height > ry)
+	//	scene->resolution.height = ry;
 
 	void* window = mlx_new_window(mlx, scene->resolution.width, scene->resolution.height, "miniRT");
 	if (!window)
@@ -467,6 +467,42 @@ int main(int argc, char **argv)
 	//trace_ray(&mlx_data, 0, 0);
 
 	// TODO: if save arg specified, save image here
+	if (arg_data->save)
+	{
+		unsigned char* pixels = malloc(scene->resolution.width * scene->resolution.height * 3);
+		if (pixels != NULL)
+		{
+			for (int i = 0; i < scene->resolution.width * scene->resolution.height; i++)
+			{
+				int x = i % scene->resolution.width;
+				int y = i / scene->resolution.width;
+
+				size_t offset = x * (mlx_data.img.bits_per_pixel / 8) + y * mlx_data.img.line_length;
+				unsigned int col = *(unsigned int*)(mlx_data.img.addr + offset);
+				// (rgb.b | rgb.g << 8) | rgb.r << 16;
+				unsigned char r = (col >> 16) & 0xff;
+				unsigned char g = (col >> 8 ) & 0xff;
+				unsigned char b = (col >> 0 ) & 0xff;
+
+				pixels[i * 3] = r;
+				pixels[i * 3 + 1] = g;
+				pixels[i * 3 + 2] = b;
+			}
+
+			int fd = open("screenshot.bmp", O_WRONLY | O_CREAT | O_TRUNC);
+			if (fd != -1)
+			{
+				if (!write_bmp(fd, pixels, scene->resolution.width, scene->resolution.height))
+					write(STDOUT_FILENO, "Error\nCould not write into screenshot.bmp file!\n", 48);
+				close(fd);
+			}
+			else
+				write(STDOUT_FILENO, "Error\nCould not create screenshot.bmp file!\n", 44);
+			free(pixels);
+		} else {
+			write(STDOUT_FILENO, "Error\nCould not malloc pixels to create screenshot!\n", 52);
+		}
+	}
 
 	mlx_destroy_window(mlx, window);
 	mlx_destroy_image(mlx, mlx_data.img.image);
