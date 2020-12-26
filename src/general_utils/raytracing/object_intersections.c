@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/26 14:41:23 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/26 15:35:44 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,9 @@ bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
 	}
 	hit->distance = max_t[which_plane];
 	hit->color = data->color;
+
+	hit->normal = quaternion_mult_vec3(object->transform.rotation, hit->normal);
+	hit->location = vec3_add(quaternion_mult_vec3(object->transform.rotation, hit->location), object->transform.position);
 
 	return true;
 }
