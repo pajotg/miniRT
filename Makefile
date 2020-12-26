@@ -14,7 +14,7 @@ SRC_DIR = src/
 OBJ_DIR = obj/
 INCLUDE_DIRS = include/
 INCLUDE = -Iinclude -Ilibft/include -Iminilibx-linux -Isrc/get_next_line
-LDFLAGS = -Lminilibx-linux/ -lmlx -Llibft -lft -L$(INCLIB) -lXext -lX11 -lm -lbsd
+LDFLAGS = -Lminilibx-linux/ -lmlx -Llibft -lft -L$(INCLIB) -lXext -lX11 -lm -lbsd -lpthread
 
 FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
 

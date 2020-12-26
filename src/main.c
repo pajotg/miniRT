@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 17:25:20 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/26 13:23:03 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include "mlx_int.h"
 #include <math.h>
 #include "ft_printf.h"
+#include <pthread.h>
 
 #include <time.h>	// no-norm
 
@@ -33,6 +34,8 @@
 
 #define KEY_R 114
 #define KEY_F 102
+
+#define NUM_THREADS 5
 
 t_args* parse_args(int argc, char **argv)
 {
@@ -230,16 +233,35 @@ void trace_pixel(t_mlx_data* data, int x, int y)
 	update_pix(data, x, y);
 }
 
-void trace_next_pixel(t_mlx_data* data)
+void trace_next_pixels(t_mlx_data* data, int desired)
 {
+	pthread_mutex_lock(&data->lock);
 	int pix = data->current_pixel;
-	data->current_pixel++;
+	data->current_pixel+=desired;
 	if (data->current_pixel >= data->scene->resolution.width * data->scene->resolution.height)
 	{
 		printf("Completed frame!\n");
 		data->current_pixel = 0;
 	}
-	trace_pixel(data, pix % data->scene->resolution.width, pix / data->scene->resolution.width);
+	pthread_mutex_unlock(&data->lock);
+	int stop = pix+desired;
+	if (stop > data->scene->resolution.width * data->scene->resolution.height)
+		stop = data->scene->resolution.width * data->scene->resolution.height;
+	for (int i = pix; i < stop; i++)
+	{
+		trace_pixel(data, i % data->scene->resolution.width, i / data->scene->resolution.width);
+	}
+}
+
+void* new_thread(void* p)
+{
+	t_mlx_data* data = p;
+
+	while (data->active)
+	{
+		trace_next_pixels(data, 1000);
+	}
+	return NULL;
 }
 
 /*
@@ -278,19 +300,17 @@ int	hook_loop(void *p)
 	cam->transform.position = vec3_add(cam->transform.position, move_dir);
 
 	// Render
-	clock_t stop = clock() + CLOCKS_PER_SEC / 60;
-	while (clock() < stop)
-	{
-		for (int i = 0; i < 1000; i++)
-			trace_next_pixel(data);
-	}
+	trace_next_pixels(data, 1000);
 
 	if (data->input.white_up != data->input.white_down)
 	{
-		data->white += ((data->input.white_down ? -1 : 0) + (data->input.white_up ? 1 : 0))
-					* diff / (float)CLOCKS_PER_SEC * 2.0;
-		if (data->white < 0)
-			data->white = 0;
+		float change = powf(1.1,
+			((data->input.white_down ? -1 : 0) + (data->input.white_up ? 1 : 0))
+			* (diff / (float)CLOCKS_PER_SEC * 10)
+		);
+		data->white *= change;
+		if (data->white < 0.001)
+			data->white = 0.001;
 		update_image(data);
 	}
 
@@ -386,13 +406,23 @@ int main(int argc, char **argv)
 	mlx_data.pixels = malloc(sizeof(*mlx_data.pixels) * scene->resolution.width * scene->resolution.height);
 	mlx_data.current_pixel = 0;
 	mlx_data.white = 1;
+	mlx_data.active = true;
 	ft_bzero(&mlx_data.input, sizeof(t_input));
 	if (mlx_data.pixels == NULL)
 	{
 		mlx_destroy_window(mlx, window);
 		free_scene(scene);
 		free(arg_data);
-		write(STDOUT_FILENO, "Error\nCould not create pixel array!\n", 35);
+		write(STDOUT_FILENO, "Error\nCould not create pixel array!\n", 36);
+		return 1;
+	}
+	if (pthread_mutex_init(&mlx_data.lock, NULL) != 0)
+	{
+		free(mlx_data.pixels);
+		mlx_destroy_window(mlx, window);
+		free_scene(scene);
+		free(arg_data);
+		write(STDOUT_FILENO, "Error\nCould not init pthread mutex!\n", 36);
 		return 1;
 	}
 	init_image(mlx, &mlx_data.img, scene->resolution.width, scene->resolution.height);
@@ -423,7 +453,16 @@ int main(int argc, char **argv)
 	//mlx_do_key_autorepeatoff(mlx);	// TODO: Add to hook mouse enter, or maybe not
 	//mlx_do_key_autorepeaton(mlx);	// TODO: Add to hook mouse leave, or maybe not
 
+	pthread_t thread_ids[NUM_THREADS];
+	for (int i = 0; i < NUM_THREADS; i++)
+		pthread_create(&thread_ids[i], NULL, new_thread, &mlx_data);
+
 	mlx_loop(mlx);
+	mlx_data.active = false;
+
+	for (int i = 0; i < NUM_THREADS; i++)
+		pthread_join(thread_ids[i], NULL);
+	pthread_mutex_destroy(&mlx_data.lock);
 	//trace_ray(&mlx_data, 0, 0);
 
 	// TODO: if save arg specified, save image here

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:11:07 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 12:59:56 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/26 12:26:54 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,8 +108,10 @@ bool read_vec3_unit(char* str, int* current, t_vec3 *vec3)
 	if (!read_vec3(str, current, vec3))
 		return false;
 	float magnitude_sqr = vec3_magnitude_sqr(*vec3);
-	if (magnitude_sqr > 1.1 || magnitude_sqr < 0.9)
+	//if (magnitude_sqr > 1.1 || magnitude_sqr < 0.9)
+	if (magnitude_sqr < 0.001)
 		return false;
+	*vec3 = vec3_normalize(*vec3);
 	return true;
 }
 
