@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 11:37:47 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 11:57:55 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 16:06:57 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,24 +19,24 @@
 // I did add ft_printf floating point printing to my TODO list
 static void	handle_conversion_v(t_format *format, t_print_state *state)
 {
-	t_vec3 vec3 = va_arg(state->lst, t_vec3);
-	state->printed += fprintf(stderr, "%.2f %.2f %.2f", vec3.x, vec3.y, vec3.z);
+	t_vec3* vec3 = va_arg(state->lst, t_vec3*);
+	state->printed += fprintf(stderr, "%.2f %.2f %.2f", vec3->x, vec3->y, vec3->z);
 	(void)format;
 }
 
 static void	handle_conversion_q(t_format *format, t_print_state *state)
 {
-	t_quaternion quat = va_arg(state->lst, t_quaternion);
-	state->printed += fprintf(stderr, "%.2f %.2f %.2f %.2f", quat.r, quat.i, quat.j, quat.k);
+	t_quaternion* quat = va_arg(state->lst, t_quaternion*);
+	state->printed += fprintf(stderr, "%.2f %.2f %.2f %.2f", quat->r, quat->i, quat->j, quat->k);
 	(void)format;
 }
 
 static void	handle_conversion_t(t_format *format, t_print_state *state)
 {
-	t_transform trans = va_arg(state->lst, t_transform);
+	t_transform* trans = va_arg(state->lst, t_transform*);
 	state->printed += fprintf(stderr, "%.2f %.2f %.2f (%.2f %.2f %.2f %.2f)",
-		trans.position.x, trans.position.y, trans.position.z,
-		trans.rotation.r, trans.rotation.i, trans.rotation.j, trans.rotation.k
+		trans->position.x, trans->position.y, trans->position.z,
+		trans->rotation.r, trans->rotation.i, trans->rotation.j, trans->rotation.k
 	);
 	(void)format;
 }

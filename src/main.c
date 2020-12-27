@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 15:08:38 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 16:07:49 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,10 +176,10 @@ int hook_mouse(int button, int x, int y, void* p)
 		if (trace_ray(data, &ray, &hit))
 		{
 			printf("Hit!\n");
-			ft_printf("	Location: %v!\n", hit.location);
+			ft_printf("	Location: %v!\n", &hit.location);
 			printf("	Distance: %.2f!\n", hit.distance);
-			ft_printf("	Normal: %v!\n", hit.normal);
-			ft_printf("	Color: %v!\n", *(t_vec3*)&hit.color);
+			ft_printf("	Normal: %v!\n", &hit.normal);
+			ft_printf("	Color: %v!\n", (t_vec3*)&hit.color);
 
 			float sqrmag = vec3_magnitude_sqr(&hit.normal);
 			if (sqrmag > 1.01 || sqrmag < 0.99)
@@ -356,7 +356,7 @@ bool save_image(t_mlx_image* img, char* path)
 		return false;
 	}
 
-	int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC);
+	int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
 	if (fd == -1)
 	{
 		set_error(ft_strjoin("Could not open/create file: ", path), true);
@@ -389,6 +389,21 @@ bool save_image(t_mlx_image* img, char* path)
 	close(fd);
 
 	return true;
+}
+
+/*
+**	I wanted to use the optimization flags
+**	But then it complained about UNUSED VARIABLES with the write
+**	I CANT USE the variable, IT IS the error message!
+**	It already returns an error!
+**	What does it expect me to do? write an error if it fails?
+*/
+
+void iwrite(int fd, char* str, int count)
+{
+	int out = write(fd, str, count);
+	if (out == 0)
+		return;
 }
 
 int main(int argc, char **argv)
@@ -432,8 +447,8 @@ int main(int argc, char **argv)
 		quaternion_mult_vec3(&y, &obj->transform.rotation, vec3_up());
 		quaternion_mult_vec3(&z, &obj->transform.rotation, vec3_back());
 		ft_printf("Found object with transform %t with x (%v) y: (%v) z: (%v) \n",
-			obj->transform,
-			x, y, z
+			&obj->transform,
+			&x, &y, &z
 		);
 	}
 
@@ -442,7 +457,7 @@ int main(int argc, char **argv)
 	{
 		free_scene(scene);
 		free(arg_data);
-		write(STDOUT_FILENO, "Error\nCould not init mlx!\n", 26);
+		iwrite(STDOUT_FILENO, "Error\nCould not init mlx!\n", 26);
 		return 1;
 	}
 
@@ -461,7 +476,7 @@ int main(int argc, char **argv)
 	{
 		free_scene(scene);
 		free(arg_data);
-		write(STDOUT_FILENO, "Error\nCould not create mlx window!\n", 35);
+		iwrite(STDOUT_FILENO, "Error\nCould not create mlx window!\n", 35);
 		return 1;
 	}
 
@@ -479,7 +494,7 @@ int main(int argc, char **argv)
 		mlx_destroy_window(mlx, window);
 		free_scene(scene);
 		free(arg_data);
-		write(STDOUT_FILENO, "Error\nCould not create pixel array!\n", 36);
+		iwrite(STDOUT_FILENO, "Error\nCould not create pixel array!\n", 36);
 		return 1;
 	}
 	if (pthread_mutex_init(&mlx_data.lock, NULL) != 0)
@@ -488,7 +503,7 @@ int main(int argc, char **argv)
 		mlx_destroy_window(mlx, window);
 		free_scene(scene);
 		free(arg_data);
-		write(STDOUT_FILENO, "Error\nCould not init pthread mutex!\n", 36);
+		iwrite(STDOUT_FILENO, "Error\nCould not init pthread mutex!\n", 36);
 		return 1;
 	}
 	init_image(mlx, &mlx_data.img, scene->resolution.width, scene->resolution.height);
@@ -498,7 +513,7 @@ int main(int argc, char **argv)
 		free_scene(scene);
 		free(mlx_data.pixels);
 		free(arg_data);
-		write(STDOUT_FILENO, "Error\nCould not create mlx image!\n", 35);
+		iwrite(STDOUT_FILENO, "Error\nCould not create mlx image!\n", 35);
 		return 1;
 	}
 	for (int i = 0; i < scene->resolution.width * scene->resolution.height; i++)
@@ -535,6 +550,6 @@ int main(int argc, char **argv)
 	mlx_destroy_image(mlx, mlx_data.img.image);
 	free(arg_data);
 	close(fd);
-	write(STDOUT_FILENO, "Completed!\n", 11);
+	iwrite(STDOUT_FILENO, "Completed!\n", 11);
 	return 0;
 }

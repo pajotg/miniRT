@@ -16,7 +16,7 @@ INCLUDE_DIRS = include/
 INCLUDE = -Iinclude -Ilibft/include -Iminilibx-linux -Isrc/get_next_line
 LDFLAGS = -Lminilibx-linux/ -lmlx -Llibft -lft -L$(INCLIB) -lXext -lX11 -lm -lbsd -lpthread
 
-FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
+FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror -O2
 
 # Really not really happy where the GNL is now located, TODO: Add makefile into GNL that compiles a library, and then link ik via -L and -l
 
