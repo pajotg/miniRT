@@ -6,293 +6,71 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 15:04:58 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 17:11:52 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_parse_utils.h"
+#include "mini_rt_parse_line.h"
 #include <stddef.h>
 #include "mini_rt_utils.h"
 #include "mini_rt_objects.h"
 #include "get_next_line.h"
 #include <string.h>
-#include <errno.h>
 #include "libft.h"
 #include <math.h>
+#include <errno.h>
 
 #include <stdio.h>	// bad
 
-bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
+static bool is_object(char *line, char *object, int *curr)
 {
-	int curr = 2;
-	if (line[0] == 'R' && ft_isspace(line[1]))
+	int i;
+
+	i = *curr;
+	while (*object)
 	{
-		if (parse_data->has_resolution)
-		{
-			set_error(ft_strjoin("Duplicate resolution: ", line), true);
-			return false;
-		}
-		parse_data->has_resolution = true;
-		skip_whitespace(line, &curr);
-		if (!read_int(line, &curr, &scene->resolution.width))
-		{
-			set_error(ft_strjoin("resolution missing width: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_int(line, &curr, &scene->resolution.height))
-		{
-			set_error(ft_strjoin("resolution missing height: ", line), true);
-			return false;
-		}
-		if (scene->resolution.width <= 0 || scene->resolution.height <= 0)
-		{
-			set_error("Invalid resolution!", false);
-			return false;
-		}
+		if (line[i] != *object)
+			return (false);
+		object++;
+		i++;
 	}
-	else if (line[0] == 'A' && ft_isspace(line[1]))
-	{
-		if (parse_data->has_ambiant)
-		{
-			set_error(ft_strjoin("Duplicate ambiant: ", line), true);
-			return false;
-		}
-		parse_data->has_ambiant = true;
-		skip_whitespace(line, &curr);
-		if (!read_color(line, &curr, true, &scene->ambiant))
-		{
-			set_error(ft_strjoin("Ambiant incorrectly formatted: ", line), true);
-			return false;
-		}
-	}
-	else if (line[0] == 'c' && ft_isspace(line[1]))
-	{
-		t_camera camera;
-		skip_whitespace(line, &curr);
-		if (!read_transform(line, &curr, &camera.transform))
-		{
-			set_error(ft_strjoin("Camera transform incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_float(line, &curr, &camera.fov))
-		{
-			set_error(ft_strjoin("Camera missing FOV: ", line), true);
-			return false;
-		}
-		if (camera.fov < 0 || camera.fov > 180)
-		{
-			set_error(ft_strjoin("Camera FOV out of range! (0-180): ", line), true);
-			return false;
-		}
-		camera.fov = camera.fov / 180 * M_PI;
-		darray_push(&scene->cameras, &camera);
-	}
-	else if (line[0] == 'l' && ft_isspace(line[1]))
-	{
-		skip_whitespace(line, &curr);
-		t_light light;
-		if (!read_vec3(line, &curr, &light.position))
-		{
-			set_error(ft_strjoin("Light position incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_color(line, &curr, true, &light.color))
-		{
-			set_error(ft_strjoin("Light color incorrectly formatted: ", line), true);
-			return false;
-		}
-		darray_push(&scene->lights, &light);
-	}
-	else if (ft_strncmp(line, "sp", 2) == 0)
-	{
-		t_object object;
-		t_object_sphere* sphere = malloc(sizeof(t_object_sphere));
-		if (!sphere)
-		{
-			set_error("Malloc failed", false);
-			return false;
-		}
-		object.object_data = sphere;
-		object.IntersectFunc = (t_object_intersect_func)ray_intersects_sphere;
-		skip_whitespace(line, &curr);
-		object.transform.rotation = *quaternion_identity();
-		if (!read_vec3(line, &curr, &object.transform.position))
-		{
-			free(sphere);
-			set_error(ft_strjoin("sphere position incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_float(line, &curr, &sphere->radius))
-		{
-			free(sphere);
-			set_error(ft_strjoin("sphere missing diameter: ", line), true);
-			return false;
-		}
-		sphere->radius /= 2;
-		skip_whitespace(line, &curr);
-		if (!read_color(line, &curr, false, &sphere->color))
-		{
-			free(sphere);
-			set_error(ft_strjoin("sphere color incorrectly formatted: ", line), true);
-			return false;
-		}
-		darray_push(&scene->objects, &object);
-	}
-	else if (ft_strncmp(line, "pl", 2) == 0)
-	{
-		t_object object;
-		t_object_plane* plane = malloc(sizeof(t_object_plane));
-		if (!plane)
-		{
-			set_error("Malloc failed", false);
-			return false;
-		}
-		object.object_data = plane;
-		object.IntersectFunc = (t_object_intersect_func)ray_intersects_plane;
-		skip_whitespace(line, &curr);
-		if (!read_transform(line, &curr, &object.transform))
-		{
-			free(plane);
-			set_error(ft_strjoin("plane position and normal incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_color(line, &curr, false, &plane->color))
-		{
-			free(plane);
-			set_error(ft_strjoin("plane color incorrectly formatted: ", line), true);
-			return false;
-		}
-		darray_push(&scene->objects, &object);
-	}
-	else if (ft_strncmp(line, "sq", 2) == 0)
-	{
-		t_object object;
-		t_object_square* square = malloc(sizeof(t_object_square));
-		if (!square)
-		{
-			set_error("Malloc failed", false);
-			return false;
-		}
-		object.object_data = square;
-		object.IntersectFunc = (t_object_intersect_func)ray_intersects_square;
-		skip_whitespace(line, &curr);
-		if (!read_transform(line, &curr, &object.transform))
-		{
-			free(square);
-			set_error(ft_strjoin("square position and normal incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_float(line, &curr, &square->size))
-		{
-			free(square);
-			set_error(ft_strjoin("square size incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_color(line, &curr, false, &square->color))
-		{
-			free(square);
-			set_error(ft_strjoin("square color incorrectly formatted: ", line), true);
-			return false;
-		}
-		darray_push(&scene->objects, &object);
-	}
-	else if (ft_strncmp(line, "cy", 2) == 0)
-	{
-		t_object object;
-		t_object_cylinder* cylinder = malloc(sizeof(t_object_cylinder));
-		if (!cylinder)
-		{
-			set_error("Malloc failed", false);
-			return false;
-		}
-		object.object_data = cylinder;
-		object.IntersectFunc = (t_object_intersect_func)ray_intersects_cylinder;
-		skip_whitespace(line, &curr);
-		if (!read_transform(line, &curr, &object.transform))
-		{
-			free(cylinder);
-			set_error(ft_strjoin("cylinder position and normal incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_float(line, &curr, &cylinder->radius))
-		{
-			free(cylinder);
-			set_error(ft_strjoin("cylinder diameter incorrectly formatted: ", line), true);
-			return false;
-		}
-		cylinder->radius /= 2;
-		skip_whitespace(line, &curr);
-		if (!read_float(line, &curr, &cylinder->height))
-		{
-			free(cylinder);
-			set_error(ft_strjoin("cylinder height incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_color(line, &curr, false, &cylinder->color))
-		{
-			free(cylinder);
-			set_error(ft_strjoin("cylinder color incorrectly formatted: ", line), true);
-			return false;
-		}
-		darray_push(&scene->objects, &object);
-	}
-	else if (ft_strncmp(line, "tr", 2) == 0)
-	{
-		t_object object;
-		t_object_triangle* triangle = malloc(sizeof(t_object_triangle));
-		if (!triangle)
-		{
-			set_error("Malloc failed", false);
-			return false;
-		}
-		object.object_data = triangle;
-		object.IntersectFunc = (t_object_intersect_func)ray_intersects_triangle;
-		object.transform.rotation = *quaternion_identity();
-		skip_whitespace(line, &curr);
-		if (!read_vec3(line, &curr, &object.transform.position))
-		{
-			free(triangle);
-			set_error(ft_strjoin("triangle first position incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_vec3(line, &curr, &triangle->second_point))
-		{
-			free(triangle);
-			set_error(ft_strjoin("triangle second position incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_vec3(line, &curr, &triangle->third_point))
-		{
-			free(triangle);
-			set_error(ft_strjoin("triangle third position incorrectly formatted: ", line), true);
-			return false;
-		}
-		skip_whitespace(line, &curr);
-		if (!read_color(line, &curr, false, &triangle->color))
-		{
-			free(triangle);
-			set_error(ft_strjoin("triangle color incorrectly formatted: ", line), true);
-			return false;
-		}
-		darray_push(&scene->objects, &object);
-	}
+	if (!ft_isspace(line[i]))
+		return (false);
+	*curr = i + 1;
+	return (true);
+}
+
+static bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
+{
+	int curr = 0;
+	bool success = true;
+
+	if (is_object(line, "R", &curr))
+		success = parse_resolution(parse_data, scene, line, &curr);
+	else if (is_object(line, "A", &curr))
+		success = parse_ambiant(parse_data, scene, line, &curr);
+	else if (is_object(line, "c", &curr))
+		success = parse_camera(scene, line, &curr);
+	else if (is_object(line, "l", &curr))
+		success = parse_light(scene, line, &curr);
+	else if (is_object(line, "sp", &curr))
+		success = parse_sphere(scene, line, &curr);
+	else if (is_object(line, "pl", &curr))
+		success = parse_plane(scene, line, &curr);
+	else if (is_object(line, "sq", &curr))
+		success = parse_square(scene, line, &curr);
+	else if (is_object(line, "cy", &curr))
+		success = parse_cylinder(scene, line, &curr);
+	else if (is_object(line, "tr", &curr))
+		success = parse_triangle(scene, line, &curr);
 	else {
 		if (line[0] == '\0' || line[0] == '#')
 			return (true);
 		set_error(ft_strjoin("Unknown configuration: ", line), true);
 		return false;
 	}
+	if (!success)
+		return (false);
 
 	skip_whitespace(line, &curr);
 	if (line[curr] != '\0')
