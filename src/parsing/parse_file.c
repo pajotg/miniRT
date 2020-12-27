@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 17:11:52 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 17:20:40 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,36 +40,38 @@ static bool is_object(char *line, char *object, int *curr)
 	return (true);
 }
 
-static bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
+static bool parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *line, int *curr)
 {
-	int curr = 0;
-	bool success = true;
+	if (is_object(line, "R", curr))
+		return parse_resolution(parse_data, scene, line, curr);
+	else if (is_object(line, "A", curr))
+		return parse_ambiant(parse_data, scene, line, curr);
+	else if (is_object(line, "c", curr))
+		return parse_camera(scene, line, curr);
+	else if (is_object(line, "l", curr))
+		return parse_light(scene, line, curr);
+	else if (is_object(line, "sp", curr))
+		return parse_sphere(scene, line, curr);
+	else if (is_object(line, "pl", curr))
+		return parse_plane(scene, line, curr);
+	else if (is_object(line, "sq", curr))
+		return parse_square(scene, line, curr);
+	else if (is_object(line, "cy", curr))
+		return parse_cylinder(scene, line, curr);
+	else if (is_object(line, "tr", curr))
+		return parse_triangle(scene, line, curr);
+	set_error(ft_strjoin("Unknown configuration: ", line), true);
+	return (false);
+}
 
-	if (is_object(line, "R", &curr))
-		success = parse_resolution(parse_data, scene, line, &curr);
-	else if (is_object(line, "A", &curr))
-		success = parse_ambiant(parse_data, scene, line, &curr);
-	else if (is_object(line, "c", &curr))
-		success = parse_camera(scene, line, &curr);
-	else if (is_object(line, "l", &curr))
-		success = parse_light(scene, line, &curr);
-	else if (is_object(line, "sp", &curr))
-		success = parse_sphere(scene, line, &curr);
-	else if (is_object(line, "pl", &curr))
-		success = parse_plane(scene, line, &curr);
-	else if (is_object(line, "sq", &curr))
-		success = parse_square(scene, line, &curr);
-	else if (is_object(line, "cy", &curr))
-		success = parse_cylinder(scene, line, &curr);
-	else if (is_object(line, "tr", &curr))
-		success = parse_triangle(scene, line, &curr);
-	else {
-		if (line[0] == '\0' || line[0] == '#')
-			return (true);
-		set_error(ft_strjoin("Unknown configuration: ", line), true);
-		return false;
-	}
-	if (!success)
+static bool parse_line(t_scene_parse_data *parse_data, t_scene *scene, char *line)
+{
+	int curr;
+
+	if (line[0] == '\0' || line[0] == '#')
+		return (true);
+	curr = 0;
+	if (!parse_object(parse_data, scene, line, &curr))
 		return (false);
 
 	skip_whitespace(line, &curr);
