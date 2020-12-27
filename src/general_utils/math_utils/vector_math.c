@@ -6,74 +6,128 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:49 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 16:36:34 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 15:37:22 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_math_utils.h"
 #include <math.h>
 
-t_vec3 vec3_new(float x, float y, float z)
+const t_vec3* vec3_left()
 {
-	t_vec3 vec;
-
-	vec.x = x;
-	vec.y = y;
-	vec.z = z;
-
-	return (vec);
+	static const t_vec3 vec = { -1, 0, 0 };
+	return &vec;
 }
 
-t_vec3 vec3_add(t_vec3 a, t_vec3 b)
+const t_vec3* vec3_right()
 {
-	return (vec3_new(a.x + b.x, a.y + b.y, a.z + b.z));
+	static const t_vec3 vec = { 1, 0, 0 };
+	return &vec;
 }
 
-t_vec3 vec3_subtract(t_vec3 a, t_vec3 b)
+const t_vec3* vec3_up()
 {
-	return (vec3_new(a.x - b.x, a.y - b.y, a.z - b.z));
+	static const t_vec3 vec = { 0, 1, 0 };
+	return &vec;
 }
 
-t_vec3 vec3_multiply(t_vec3 a, t_vec3 b)
+const t_vec3* vec3_down()
 {
-	return (vec3_new(a.x * b.x, a.y * b.y, a.z * b.z));
+	static const t_vec3 vec = { 0, -1, 0 };
+	return &vec;
 }
 
-t_vec3 vec3_divide(t_vec3 a, t_vec3 b)
+const t_vec3* vec3_forward()
 {
-	return (vec3_new(a.x / b.x, a.y / b.y, a.z / b.z));
+	static const t_vec3 vec = { 0, 0, -1 };
+	return &vec;
 }
 
-t_vec3 vec3_scale(t_vec3 a, float b)
+const t_vec3* vec3_back()
 {
-	return (vec3_new(a.x * b, a.y * b, a.z * b));
+	static const t_vec3 vec = { 0, 0, 1 };
+	return &vec;
 }
 
-float vec3_magnitude_sqr(t_vec3 a)
+void vec3_init(t_vec3 *result, float x, float y, float z)
 {
-	return (a.x * a.x + a.y * a.y + a.z * a.z);
+	result->x = x;
+	result->y = y;
+	result->z = z;
 }
 
-float vec3_magnitude(t_vec3 a)
+void vec3_clone(t_vec3 *result, const t_vec3 *vec)
+{
+	result->x = vec->x;
+	result->y = vec->y;
+	result->z = vec->z;
+}
+
+void vec3_add(t_vec3 *result, const t_vec3 *a, const t_vec3 *b)
+{
+	result->x = a->x + b->x;
+	result->y = a->y + b->y;
+	result->z = a->z + b->z;
+}
+
+void vec3_subtract(t_vec3 *result, const t_vec3 *a, const t_vec3 *b)
+{
+	result->x = a->x - b->x;
+	result->y = a->y - b->y;
+	result->z = a->z - b->z;
+}
+
+void vec3_multiply(t_vec3 *result, const t_vec3 *a, const t_vec3 *b)
+{
+	result->x = a->x * b->x;
+	result->y = a->y * b->y;
+	result->z = a->z * b->z;
+}
+
+void vec3_divide(t_vec3 *result, const t_vec3 *a, const t_vec3 *b)
+{
+	result->x = a->x / b->x;
+	result->y = a->y / b->y;
+	result->z = a->z / b->z;
+}
+
+void vec3_scale(t_vec3 *result, const t_vec3 *a, float scale)
+{
+	result->x = a->x * scale;
+	result->y = a->y * scale;
+	result->z = a->z * scale;
+}
+
+float vec3_magnitude_sqr(const t_vec3 *a)
+{
+	return (a->x * a->x + a->y * a->y + a->z * a->z);
+}
+
+float vec3_magnitude(const t_vec3 *a)
 {
 	return (sqrtf(vec3_magnitude_sqr(a)));
 }
 
-t_vec3 vec3_normalize(t_vec3 a)
+void vec3_normalize(t_vec3 *result, const t_vec3 *a)
 {
-	return vec3_scale(a, 1/vec3_magnitude(a));
+	vec3_scale(result, a, 1/vec3_magnitude(a));
 }
 
-float vec3_dot(t_vec3 a, t_vec3 b)
+float vec3_dot(const t_vec3 *a, const t_vec3 *b)
 {
-	return (a.x * b.x + a.y * b.y + a.z * b.z);
+	return (a->x * b->x + a->y * b->y + a->z * b->z);
 }
 
-t_vec3 vec3_cross(t_vec3 a, t_vec3 b)
+void vec3_cross(t_vec3 *result, const t_vec3 *a, const t_vec3 *b)
 {
-	return (vec3_new(
-		a.y * b.z - a.z * b.y,
-		a.z * b.x - a.x * b.z,
-		a.x * b.y - a.y * b.x
-	));
+	if (result == a || result == b)
+	{
+		t_vec3 temp;
+		vec3_cross(&temp, a, b);
+		vec3_init(result, temp.x, temp.y, temp.z);
+		return;
+	}
+	result->x = a->y * b->z - a->z * b->y;
+	result->y = a->z * b->x - a->x * b->z;
+	result->z = a->x * b->y - a->y * b->x;
 }

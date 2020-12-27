@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:11:07 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/26 12:26:54 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 15:12:05 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,11 +107,11 @@ bool read_vec3_unit(char* str, int* current, t_vec3 *vec3)
 {
 	if (!read_vec3(str, current, vec3))
 		return false;
-	float magnitude_sqr = vec3_magnitude_sqr(*vec3);
+	float magnitude_sqr = vec3_magnitude_sqr(vec3);
 	//if (magnitude_sqr > 1.1 || magnitude_sqr < 0.9)
 	if (magnitude_sqr < 0.001)
 		return false;
-	*vec3 = vec3_normalize(*vec3);
+	vec3_normalize(vec3, vec3);
 	return true;
 }
 
@@ -123,11 +123,11 @@ bool read_transform(char* str, int* current, t_transform *transform)
 	t_vec3 forward;
 	if (!read_vec3_unit(str, current, &forward))
 		return false;
-	float dot = vec3_dot(forward, vec3_new(0,1,0));
+	float dot = vec3_dot(&forward, vec3_up());
 	if ( dot > 0.999 || dot < -0.999)
-		transform->rotation = quaternion_from_forward_up(forward, vec3_new(1, 0, 0));
+		quaternion_from_forward_up(&transform->rotation, &forward, vec3_right());
 	else
-		transform->rotation = quaternion_from_forward_up(forward, vec3_new(0, 1, 0));
+		quaternion_from_forward_up(&transform->rotation, &forward, vec3_up());
 	return true;
 }
 

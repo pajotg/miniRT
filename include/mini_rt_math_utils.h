@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:09:49 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/23 17:56:59 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 15:11:41 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,30 +112,38 @@ typedef struct	s_light
 **	Vector functions
 */
 
-t_vec3 vec3_new(float x, float y, float z);
-t_vec3 vec3_add(t_vec3 a, t_vec3 b);
-t_vec3 vec3_subtract(t_vec3 a, t_vec3 b);
-t_vec3 vec3_multiply(t_vec3 a, t_vec3 b);
-t_vec3 vec3_divide(t_vec3 a, t_vec3 b);
-t_vec3 vec3_scale(t_vec3 a, float b);
-float vec3_magnitude_sqr(t_vec3 a);
-float vec3_magnitude(t_vec3 a);
-t_vec3 vec3_normalize(t_vec3 a);
-float vec3_dot(t_vec3 a, t_vec3 b);
-t_vec3 vec3_cross(t_vec3 a, t_vec3 b);
+const t_vec3* vec3_left();
+const t_vec3* vec3_right();
+const t_vec3* vec3_up();
+const t_vec3* vec3_down();
+const t_vec3* vec3_forward();
+const t_vec3* vec3_back();
+
+void vec3_init(t_vec3 *result, float x, float y, float z);
+void vec3_clone(t_vec3 *result, const t_vec3 *vec);
+void vec3_add(t_vec3 *result, const t_vec3 *a, const t_vec3 *b);
+void vec3_subtract(t_vec3 *result, const t_vec3 *a, const t_vec3 *b);
+void vec3_multiply(t_vec3 *result, const t_vec3 *a, const t_vec3 *b);
+void vec3_divide(t_vec3 *result, const t_vec3 *a, const t_vec3 *b);
+void vec3_scale(t_vec3 *result, const t_vec3 *a, float scale);
+float vec3_magnitude_sqr(const t_vec3 *a);
+float vec3_magnitude(const t_vec3 *a);
+void vec3_normalize(t_vec3 *result, const t_vec3 *a);
+float vec3_dot(const t_vec3 *a, const t_vec3 *b);
+void vec3_cross(t_vec3 *result, const t_vec3 *a, const t_vec3 *b);
 
 /*
 **	Quaternion functions
 */
 
-t_quaternion quaternion_new(float x, float y, float z, float w);
-t_quaternion quaternion_from_AxisAngle(t_vec3 axis, float angle);
-t_quaternion quaternion_identity();
-t_quaternion quaternion_mult(t_quaternion a, t_quaternion b);
-t_quaternion quaternion_conjugate(t_quaternion a);
-t_quaternion quaternion_normalize(t_quaternion a);
-t_vec3 quaternion_mult_vec3(t_quaternion a, t_vec3 b);
-t_quaternion quaternion_from_matrix(t_matrix3x3 matrix);
-t_quaternion quaternion_from_forward_up(t_vec3 forward, t_vec3 up);
+const t_quaternion* quaternion_identity();
+void quaternion_init(t_quaternion *result, float r, float i, float j, float k);
+void quaternion_from_AxisAngle(t_quaternion *result, const t_vec3 *axis, float angle);
+void quaternion_mult(t_quaternion *result, const t_quaternion *a, const t_quaternion *b);
+void quaternion_conjugate(t_quaternion *result, const t_quaternion *a);
+void quaternion_normalize(t_quaternion *result, const t_quaternion *a);
+void quaternion_mult_vec3(t_vec3 *result, const t_quaternion *a, const t_vec3 *vec);
+void quaternion_from_matrix(t_quaternion *result, const t_matrix3x3 *matrix);
+void quaternion_from_forward_up(t_quaternion *result, const t_vec3 *forward, const t_vec3 *up);
 
 #endif

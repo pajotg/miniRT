@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:28:33 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 17:47:21 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 15:42:38 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,164 +19,151 @@
 **	the website says: x = i, y = j, z = k, w = r
 */
 
-t_quaternion quaternion_new(float r, float i, float j, float k)
+const t_quaternion* quaternion_identity()
 {
-	t_quaternion quat;
-
-	quat.r = r;
-	quat.i = i;
-	quat.j = j;
-	quat.k = k;
-
-	return (quat);
+	static const t_quaternion quat = { 1, 0, 0, 0 };
+	return &quat;
 }
 
-t_quaternion quaternion_from_AxisAngle(t_vec3 axis, float angle)
+void quaternion_init(t_quaternion *result, float r, float i, float j, float k)
+{
+	result->r = r;
+	result->i = i;
+	result->j = j;
+	result->k = k;
+}
+
+void quaternion_from_AxisAngle(t_quaternion *result, const t_vec3 *axis, const float angle)
 {
 	float s = sinf(angle/2);
 	float c = cosf(angle/2);
-	return quaternion_new(
+	return quaternion_init(
+		result,
 		c,
-		axis.x * s,
-		axis.y * s,
-		axis.z * s
+		axis->x * s,
+		axis->y * s,
+		axis->z * s
 	);
 }
 
-t_quaternion quaternion_identity()
+void quaternion_mult(t_quaternion *result, const t_quaternion *a, const t_quaternion *b)
 {
-	return quaternion_new(1,0,0,0);
+	if (result == a || result == b)
+	{
+		t_quaternion temp;
+		quaternion_mult(&temp, a, b);
+		quaternion_init(result, temp.r, temp.i, temp.j, temp.k);
+		return;
+	}
+	result->r = a->r * b->r - a->i * b->i - a->j * b->j - a->k * b->k;
+	result->i = a->r * b->i + a->i * b->r + a->j * b->k - a->k * b->j;
+	result->j = a->r * b->j - a->i * b->k + a->j * b->r + a->k * b->i;
+	result->k = a->r * b->k + a->i * b->j - a->j * b->i + a->k * b->r;
 }
 
-t_quaternion quaternion_mult(t_quaternion a, t_quaternion b)
+void quaternion_conjugate(t_quaternion *result, const t_quaternion *a)
 {
-	t_quaternion quat;
-
-	quat.r = a.r * b.r - a.i * b.i - a.j * b.j - a.k * b.k;
-	quat.i = a.r * b.i + a.i * b.r + a.j * b.k - a.k * b.j;
-	quat.j = a.r * b.j - a.i * b.k + a.j * b.r + a.k * b.i;
-	quat.k = a.r * b.k + a.i * b.j - a.j * b.i + a.k * b.r;
-
-	return (quat);
+	quaternion_init(result, a->r, -a->i, -a->j, -a->k);
 }
 
-t_quaternion quaternion_conjugate(t_quaternion a)
+void quaternion_normalize(t_quaternion *result, const t_quaternion *a)
 {
-	return (quaternion_new(a.r, -a.i, -a.j, -a.k));
-}
-
-t_quaternion quaternion_normalize(t_quaternion a)
-{
-	float Magnitude = sqrtf(a.r * a.r + a.i * a.i + a.j * a.j + a.k * a.k);
-	return (quaternion_new(a.r / Magnitude, a.i / Magnitude, a.j / Magnitude, a.k / Magnitude));
+	float Magnitude = sqrtf(a->r * a->r + a->i * a->i + a->j * a->j + a->k * a->k);
+	quaternion_init(result, a->r / Magnitude, a->i / Magnitude, a->j / Magnitude, a->k / Magnitude);
 }
 
 /*
-** This function can be easily optimized by expanding the equasions and removing the values that aren't needed
-** kinda just discarding the result.x... /shrug
+** This function can be easily optimized by expanding the equation and removing the values that aren't needed
+** kinda just discarding the temp.x... /shrug
 */
 
-t_vec3 quaternion_mult_vec3(t_quaternion a, t_vec3 b)
+void quaternion_mult_vec3(t_vec3 *result, const t_quaternion *a, const t_vec3 *vec)
 {
-	t_quaternion result = quaternion_mult(quaternion_mult(a, quaternion_new(0, b.x, b.y, b.z)), quaternion_conjugate(a));
-	return vec3_new(result.i, result.j, result.k);
+	t_quaternion temp;
+	t_quaternion conjugate;
+
+	quaternion_init(&temp, 0, vec->x, vec->y, vec->z);
+	quaternion_mult(&temp, a, &temp);
+	quaternion_conjugate(&conjugate, a);
+	quaternion_mult(&temp, &temp, &conjugate);
+	vec3_init(result, temp.i, temp.j, temp.k);
 }
 
-#include <stdio.h>	// bad
-
-t_quaternion quaternion_from_matrix(t_matrix3x3 matrix)
+void quaternion_from_matrix(t_quaternion *result, const t_matrix3x3 *matrix)
 {
-	t_quaternion quat;
-
-	/*
-	float tr = matrix.xx + matrix.yy + matrix.zz;
+	float tr = matrix->xx + matrix->yy + matrix->zz;
 	if (tr > 0) {
-		float S = sqrt(tr+1) * 2; // S=4*qr
-		quat.r = 0.25 * S;
-		quat.i = (matrix.zy - matrix.yz) / S;
-		quat.j = (matrix.xz - matrix.zx) / S;
-		quat.k = (matrix.yx - matrix.xy) / S;
-	} else if ((matrix.xx > matrix.yy) && (matrix.xx > matrix.zz)) {
-		float S = sqrtf(1 + matrix.xx - matrix.yy - matrix.zz) * 2; // S=4*qi
-		quat.r = (matrix.zy - matrix.yz) / S;
-		quat.i = 0.25 * S;
-		quat.j = (matrix.xy + matrix.yx) / S;
-		quat.k = (matrix.xz + matrix.zx) / S;
-	} else if (matrix.yy > matrix.zz) {
-		float S = sqrtf(1 + matrix.yy - matrix.xx - matrix.zz) * 2; // S=4*qj
-		quat.r = (matrix.xz - matrix.zx) / S;
-		quat.i = (matrix.xy + matrix.yx) / S;
-		quat.j = 0.25 * S;
-		quat.k = (matrix.yz + matrix.zy) / S;
+		float S = sqrt(tr+1) * 2;
+		result->r = 0.25 * S;
+		result->i = (matrix->yz - matrix->zy) / S;
+		result->j = (matrix->zx - matrix->xz) / S;
+		result->k = (matrix->xy - matrix->yx) / S;
+	} else if ((matrix->xx > matrix->yy) && (matrix->xx > matrix->zz)) {
+		float S = sqrtf(1 + matrix->xx - matrix->yy - matrix->zz) * 2;
+		result->r = (matrix->yz - matrix->zy) / S;
+		result->i = 0.25 * S;
+		result->j = (matrix->yx + matrix->xy) / S;
+		result->k = (matrix->zx + matrix->xz) / S;
+	} else if (matrix->yy > matrix->zz) {
+		float S = sqrtf(1 + matrix->yy - matrix->xx - matrix->zz) * 2;
+		result->r = (matrix->zx - matrix->xz) / S;
+		result->i = (matrix->yx + matrix->xy) / S;
+		result->j = 0.25 * S;
+		result->k = (matrix->zy + matrix->yz) / S;
 	} else {
-		float S = sqrtf(1 + matrix.zz - matrix.xx - matrix.yy) * 2; // S=4*qk
-		quat.r = (matrix.yx - matrix.xy) / S;
-		quat.i = (matrix.xz + matrix.zx) / S;
-		quat.j = (matrix.yz + matrix.zy) / S;
-		quat.k = 0.25 * S;
-	}
-	//*/
-
-	float tr = matrix.xx + matrix.yy + matrix.zz;
-	if (tr > 0) {
-		float S = sqrt(tr+1) * 2; // S=4*qr
-		quat.r = 0.25 * S;
-		quat.i = (matrix.yz - matrix.zy) / S;
-		quat.j = (matrix.zx - matrix.xz) / S;
-		quat.k = (matrix.xy - matrix.yx) / S;
-	} else if ((matrix.xx > matrix.yy) && (matrix.xx > matrix.zz)) {
-		float S = sqrtf(1 + matrix.xx - matrix.yy - matrix.zz) * 2; // S=4*qi
-		quat.r = (matrix.yz - matrix.zy) / S;
-		quat.i = 0.25 * S;
-		quat.j = (matrix.yx + matrix.xy) / S;
-		quat.k = (matrix.zx + matrix.xz) / S;
-	} else if (matrix.yy > matrix.zz) {
-		float S = sqrtf(1 + matrix.yy - matrix.xx - matrix.zz) * 2; // S=4*qj
-		quat.r = (matrix.zx - matrix.xz) / S;
-		quat.i = (matrix.yx + matrix.xy) / S;
-		quat.j = 0.25 * S;
-		quat.k = (matrix.zy + matrix.yz) / S;
-	} else {
-		float S = sqrtf(1 + matrix.zz - matrix.xx - matrix.yy) * 2; // S=4*qk
-		quat.r = (matrix.xy - matrix.yx) / S;
-		quat.i = (matrix.zx + matrix.xz) / S;
-		quat.j = (matrix.zy + matrix.yz) / S;
-		quat.k = 0.25 * S;
+		float S = sqrtf(1 + matrix->zz - matrix->xx - matrix->yy) * 2;
+		result->r = (matrix->xy - matrix->yx) / S;
+		result->i = (matrix->zx + matrix->xz) / S;
+		result->j = (matrix->zy + matrix->yz) / S;
+		result->k = 0.25 * S;
 	}
 
-	// x = i, y = j, z = k, w = r
-	//quat.r = sqrtf(1 + matrix.xx + matrix.yy + matrix.zz)/2;
-	//quat.i = (matrix.zy - matrix.yz) / 4 * quat.r;
+	/* Test code
+	t_vec3 tempA;
+	t_vec3 tempB;
 
-	/*
-	quat.r = sqrt( 1 + matrix.xx + matrix.yy + matrix.zz ) / 2;
-	quat.i = sqrt( 1 + matrix.xx - matrix.yy - matrix.zz ) / 2;
-	quat.j = sqrt( 1 - matrix.xx + matrix.yy - matrix.zz ) / 2;
-	quat.k = sqrt( 1 - matrix.xx - matrix.yy + matrix.zz ) / 2;
+	quaternion_mult_vec3(&tempA, result, vec3_forward());
+	vec3_init(&tempB, matrix->zx, matrix->zy, matrix->zz);
+	vec3_subtract(&tempA, &tempA, &tempB);
+	if (vec3_magnitude_sqr(&tempA) > 0.01)
+		goto err_detected;
+
+	quaternion_mult_vec3(&tempA, result, vec3_up());
+	vec3_init(&tempB, matrix->yx, matrix->yy, matrix->yz);
+	vec3_subtract(&tempA, &tempA, &tempB);
+	if (vec3_magnitude_sqr(&tempA) > 0.01)
+		goto err_detected;
+
+	quaternion_mult_vec3(&tempA, result, vec3_right());
+	vec3_init(&tempB, matrix->xx, matrix->xy, matrix->xz);
+	vec3_subtract(&tempA, &tempA, &tempB);
+	if (vec3_magnitude_sqr(&tempA) > 0.01)
+		goto err_detected;
+
+	return;
+
+	t_vec3 got_forward;
+	t_vec3 got_up;
+	t_vec3 got_side;
+
+	err_detected:
+	return;
+	quaternion_mult_vec3(&got_forward, result, vec3_forward());
+	quaternion_mult_vec3(&got_up, result, vec3_up());
+	quaternion_mult_vec3(&got_side, result, vec3_right());
+
+	fprintf(stderr, "Found quat from matrix err!\n");
+	fprintf(stderr, "	Quaternion: %.2f %.2f %.2f %.2f\n", result->r, result->i, result->j, result->k);
+	fprintf(stderr, "	Forward:\n");
+	fprintf(stderr, "		Matrix: %.2f %.2f %.2f\n", matrix->zx, matrix->zy, matrix->zz);
+	fprintf(stderr, "		Got: %.2f %.2f %.2f\n", got_forward.x, got_forward.y, got_forward.z);
+	fprintf(stderr, "	Up:\n");
+	fprintf(stderr, "		Matrix: %.2f %.2f %.2f\n", matrix->yx, matrix->yy, matrix->yz);
+	fprintf(stderr, "		Got: %.2f %.2f %.2f\n", got_up.x, got_up.y, got_up.z);
+	fprintf(stderr, "	Side:\n");
+	fprintf(stderr, "		Matrix: %.2f %.2f %.2f\n", matrix->xx, matrix->xy, matrix->xz);
+	fprintf(stderr, "		Got: %.2f %.2f %.2f\n", got_side.x, got_side.y, got_side.z);
 	*/
-
-	// Test code
-	if (vec3_magnitude_sqr(vec3_subtract(quaternion_mult_vec3(quat, vec3_new(0,0,1)),vec3_new(matrix.zx, matrix.zy, matrix.zz))) > 0.01
-	 || vec3_magnitude_sqr(vec3_subtract(quaternion_mult_vec3(quat, vec3_new(0,1,0)),vec3_new(matrix.yx, matrix.yy, matrix.yz))) > 0.01
-	 || vec3_magnitude_sqr(vec3_subtract(quaternion_mult_vec3(quat, vec3_new(1,0,0)),vec3_new(matrix.xx, matrix.xy, matrix.xz))) > 0.01)
-	{
-		t_vec3 got_forward = quaternion_mult_vec3(quat, vec3_new(0,0,-1));
-		t_vec3 got_up = quaternion_mult_vec3(quat, vec3_new(0,1,0));
-		t_vec3 got_side = quaternion_mult_vec3(quat, vec3_new(1,0,0));
-
-		fprintf(stderr, "Found quat from matrix err!\n");
-		fprintf(stderr, "	Forward:\n");
-		fprintf(stderr, "		Matrix: %.2f %.2f %.2f\n", matrix.zx, matrix.zy, matrix.zz);
-		fprintf(stderr, "		Got: %.2f %.2f %.2f\n", got_forward.x, got_forward.y, got_forward.z);
-		fprintf(stderr, "	Up:\n");
-		fprintf(stderr, "		Matrix: %.2f %.2f %.2f\n", matrix.yx, matrix.yy, matrix.yz);
-		fprintf(stderr, "		Got: %.2f %.2f %.2f\n", got_up.x, got_up.y, got_up.z);
-		fprintf(stderr, "	Side:\n");
-		fprintf(stderr, "		Matrix: %.2f %.2f %.2f\n", matrix.xx, matrix.xy, matrix.xz);
-		fprintf(stderr, "		Got: %.2f %.2f %.2f\n", got_side.x, got_side.y, got_side.z);
-	}
-
-	return quat;
 }
 
 /*
@@ -185,52 +172,26 @@ t_quaternion quaternion_from_matrix(t_matrix3x3 matrix)
 **	Now we can call quaternion_from_matrix to create a quaternion from it
 */
 
-t_quaternion quaternion_from_forward_up(t_vec3 forward, t_vec3 up)
+void quaternion_from_forward_up(t_quaternion *result, const t_vec3 *forward, const t_vec3 *up)
 {
-	t_vec3 base_up = up;
-	t_vec3 side = vec3_normalize(vec3_cross(forward, up));
-	up = vec3_cross(side, forward);
+	t_vec3 side;
+	t_vec3 a_up;
+	vec3_cross(&side, forward, up);
+	vec3_normalize(&side, &side);
+	vec3_cross(&a_up, &side, forward);
 
 	t_matrix3x3 matrix;
 	matrix.xx = side.x;
 	matrix.xy = side.y;
 	matrix.xz = side.z;
 
-	matrix.yx = up.x;
-	matrix.yy = up.y;
-	matrix.yz = up.z;
+	matrix.yx = a_up.x;
+	matrix.yy = a_up.y;
+	matrix.yz = a_up.z;
 
-	matrix.zx = -forward.x;
-	matrix.zy = -forward.y;
-	matrix.zz = -forward.z;
+	matrix.zx = -forward->x;
+	matrix.zy = -forward->y;
+	matrix.zz = -forward->z;
 
-	t_quaternion quat = quaternion_from_matrix(matrix);
-
-
-	// Error checking code
-	if (vec3_magnitude_sqr(vec3_subtract(quaternion_mult_vec3(quat, vec3_new(0,0,-1)),forward)) > 0.01
-	 || vec3_magnitude_sqr(vec3_subtract(quaternion_mult_vec3(quat, vec3_new(0,1,0)),up)) > 0.01
-	 || vec3_magnitude_sqr(vec3_subtract(quaternion_mult_vec3(quat, vec3_new(1,0,0)),side)) > 0.01)
-	{
-		t_vec3 got_forward = quaternion_mult_vec3(quat, vec3_new(0,0,-1));
-		t_vec3 got_up = quaternion_mult_vec3(quat, vec3_new(0,1,0));
-		t_vec3 got_side = quaternion_mult_vec3(quat, vec3_new(1,0,0));
-
-		fprintf(stderr, "Found quat from forward up err!\n");
-		fprintf(stderr, "	Forward:\n");
-		fprintf(stderr, "		Target: %.2f %.2f %.2f (%.2f)\n", forward.x, forward.y, forward.z, vec3_magnitude(forward));
-		fprintf(stderr, "		Matrix: %.2f %.2f %.2f (%.2f)\n", matrix.zx, matrix.zy, matrix.zz, vec3_magnitude(vec3_new(matrix.zx, matrix.zy, matrix.zz)));
-		fprintf(stderr, "		Got: %.2f %.2f %.2f (%.2f)\n", got_forward.x, got_forward.y, got_forward.z, vec3_magnitude(got_forward));
-		fprintf(stderr, "	Up:\n");
-		fprintf(stderr, "		Base: %.2f %.2f %.2f (%.2f)\n", base_up.x, base_up.y, base_up.z, vec3_magnitude(base_up));
-		fprintf(stderr, "		Target: %.2f %.2f %.2f (%.2f)\n", up.x, up.y, up.z, vec3_magnitude(up));
-		fprintf(stderr, "		Matrix: %.2f %.2f %.2f (%.2f)\n", matrix.yx, matrix.yy, matrix.yz, vec3_magnitude(vec3_new(matrix.yx, matrix.yy, matrix.yz)));
-		fprintf(stderr, "		Got: %.2f %.2f %.2f (%.2f)\n", got_up.x, got_up.y, got_up.z, vec3_magnitude(got_up));
-		fprintf(stderr, "	Side:\n");
-		fprintf(stderr, "		Target: %.2f %.2f %.2f (%.2f)\n", side.x, side.y, side.z, vec3_magnitude(side));
-		fprintf(stderr, "		Matrix: %.2f %.2f %.2f (%.2f)\n", matrix.xx, matrix.xy, matrix.xz, vec3_magnitude(vec3_new(matrix.xx, matrix.xy, matrix.xz)));
-		fprintf(stderr, "		Got: %.2f %.2f %.2f (%.2f)\n", got_side.x, got_side.y, got_side.z, vec3_magnitude(got_side));
-	}
-
-	return quat;
+	quaternion_from_matrix(result, &matrix);
 }

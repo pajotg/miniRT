@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 13:37:54 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 15:08:59 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,11 @@
 bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 {
 	t_object_sphere* data = object->object_data;
-	t_vec3 offset = vec3_subtract(object->transform.position, ray->origin);
+	t_vec3 offset;
+	vec3_subtract(&offset, &object->transform.position, &ray->origin);
 
-	float dot = vec3_dot(ray->direction,offset);
-	float delta = dot * dot - (vec3_magnitude_sqr(offset) - data->radius * data->radius);
+	float dot = vec3_dot(&ray->direction,&offset);
+	float delta = dot * dot - (vec3_magnitude_sqr(&offset) - data->radius * data->radius);
 
 	if (delta < 0)
 		return false;
@@ -49,27 +50,12 @@ bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 		return false;
 	hit->distance = distance;
 	hit->color = data->color;
-	hit->location = vec3_add(ray->origin, vec3_scale(ray->direction, hit->distance));
-	hit->normal = vec3_scale(vec3_subtract(hit->location, object->transform.position), 1 / data->radius);
 
-	/*
-	float sqrmag = vec3_magnitude_sqr(hit->normal);
-	if (sqrmag > 1.01 || sqrmag < 0.99)
-	{
-		printf("Failed to calculate correct normal!\n");
-		ft_printf("	Origin: %v\n", ray->origin);
-		ft_printf("	Direction: %v\n", ray->direction);
-		ft_printf("	Sphere pos: %v\n", object->transform.position);
-		ft_printf("	Sphere radius: %v\n", data->radius);
-		ft_printf("	Got offset: %v\n", offset);
-		printf("	Got dot: %.2f\n", dot);
-		printf("	Got delta: %.2f\n", delta);
-		printf("	Got distance: %f\n", hit->distance);
-		ft_printf("	Got location: %v\n", hit->location);
-		ft_printf("	Got normal: %v\n", hit->normal);
-		exit(1);
-	}
-	*/
+	vec3_scale(&hit->location, &ray->direction, hit->distance);
+	vec3_add(&hit->location, &ray->origin, &hit->location);
+
+	vec3_subtract(&hit->normal, &hit->location, &object->transform.position);
+	vec3_scale(&hit->normal, &hit->normal, 1 / data->radius);
 	return true;
 }
 
@@ -80,21 +66,31 @@ bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
 {
 	t_object_plane* data = object->object_data;
+	t_vec3 normal;
+	t_vec3 temp;
 
-	t_vec3 normal = quaternion_mult_vec3(object->transform.rotation, vec3_new(0, 0, -1));
-	float height = vec3_dot( normal, vec3_subtract(ray->origin, object->transform.position) );
-	float travel_distance = -height / vec3_dot( normal, ray->direction );
+	quaternion_mult_vec3(&normal, &object->transform.rotation, vec3_forward());
+
+	vec3_subtract(&temp, &ray->origin, &object->transform.position);
+	float height = vec3_dot( &normal, &temp );
+	float travel_distance = -height / vec3_dot( &normal, &ray->direction );
 
 	if (travel_distance < 0 || travel_distance > hit->distance)
 		return false;
 
 	hit->distance = travel_distance;
 	hit->color = data->color;
-	hit->location = vec3_add(ray->origin, vec3_scale(ray->direction, travel_distance));
+
+	vec3_scale(&temp, &ray->direction, travel_distance);
+	vec3_add(&hit->location, &ray->origin, &temp);
 	if (height > 0)
 		hit->normal = normal;
 	else
-		hit->normal = vec3_subtract(vec3_new(0,0,0), normal);
+	{
+		hit->normal.x = -normal.x;
+		hit->normal.y = -normal.y;
+		hit->normal.z = -normal.z;
+	}
 	return true;
 }
 
@@ -115,8 +111,14 @@ bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
 	float candidate_plane[3];
 	bool inside = true;
 
-	t_vec3 origin_vec = quaternion_mult_vec3(quaternion_conjugate(object->transform.rotation), vec3_subtract(ray->origin, object->transform.position));
-	t_vec3 dir_vec = quaternion_mult_vec3(quaternion_conjugate(object->transform.rotation), ray->direction);
+	t_quaternion conj;
+	t_vec3 origin_vec;
+	t_vec3 dir_vec;
+	quaternion_conjugate(&conj, &object->transform.rotation);
+	vec3_subtract(&origin_vec, &ray->origin, &object->transform.position);
+	quaternion_mult_vec3(&origin_vec, &conj, &origin_vec);
+	quaternion_mult_vec3(&dir_vec, &conj, &ray->direction);
+
 	float* origin = (float*)&origin_vec;
 	float* dir = (float*)&dir_vec;
 
@@ -195,8 +197,10 @@ bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
 	hit->distance = max_t[which_plane];
 	hit->color = data->color;
 
-	hit->normal = quaternion_mult_vec3(object->transform.rotation, hit->normal);
-	hit->location = vec3_add(quaternion_mult_vec3(object->transform.rotation, hit->location), object->transform.position);
+	quaternion_mult_vec3(&hit->normal, &object->transform.rotation, &hit->normal);
+
+	quaternion_mult_vec3(&hit->location, &object->transform.rotation, &hit->location);
+	vec3_add(&hit->location, &hit->location, &object->transform.position);
 
 	return true;
 }

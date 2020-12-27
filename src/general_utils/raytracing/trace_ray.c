@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/26 14:12:42 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 15:09:25 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,22 @@ void trace_lights(t_mlx_data* data, t_vec3* position, t_vec3* normal, t_color_hd
 {
 	t_ray_hit hit;
 	t_ray ray;
-	ray.origin = vec3_add(*position, vec3_scale(*normal, NORMAL_OFFSET));
+	vec3_scale(&ray.origin, normal, NORMAL_OFFSET);
+	vec3_add(&ray.origin, position, &ray.origin);
 
 	for (size_t i = 0; i < data->scene->lights.count; i++)
 	{
 		t_light* light = darray_index(&data->scene->lights, i);
-		t_vec3 offset = vec3_subtract(light->position, *position);
-		t_vec3 normalized = vec3_normalize(offset);
-		float strength = vec3_dot(*normal, normalized);
+		t_vec3 offset;
+		t_vec3 normalized;
+
+		vec3_subtract(&offset, &light->position, position);
+		vec3_normalize(&normalized, &offset);
+		float strength = vec3_dot(normal, &normalized);
 		if (strength < 0)
 			continue;
 
-		float sqr_dist = vec3_magnitude_sqr(offset);
+		float sqr_dist = vec3_magnitude_sqr(&offset);
 
 		ray.direction = normalized;
 		if (!trace_ray_max(data, &ray, &hit, sqrtf(sqr_dist)))
@@ -128,6 +132,14 @@ void trace_color(t_mlx_data* data, t_ray* ray, t_color_hdr* o_hdr)
 ** 0.5 / sin(cam.fov / 2) = dist
 */
 
+/*
+** dir = normalize(
+**	  rot * { 1, 0, 0} * ox
+** 	+ rot * { 0, 1, 0} * oy
+** 	+ rot * { 0, 0,-1} * dist
+** )
+*/
+
 void pix_to_ray(t_mlx_data* data, int x, int y, t_ray* o_ray)
 {
 	float fov_axis = data->scene->resolution.width;
@@ -139,13 +151,20 @@ void pix_to_ray(t_mlx_data* data, int x, int y, t_ray* o_ray)
 	t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
 	float dist = 0.5 / sin(cam->fov / 2);
 
-	t_vec3 dir = vec3_normalize(vec3_add(
-		vec3_add(
-			vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(1,0,0)), ox),
-			vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(0,1,0)), oy)
-		),
-		vec3_scale(quaternion_mult_vec3(cam->transform.rotation, vec3_new(0,0,-1)), dist)
-	));
+	t_vec3 dir;
+	t_vec3 temp;
+	quaternion_mult_vec3(&temp, &cam->transform.rotation, vec3_right());
+	vec3_scale(&dir, &temp, ox);
+
+	quaternion_mult_vec3(&temp, &cam->transform.rotation, vec3_up());
+	vec3_scale(&temp, &temp, oy);
+	vec3_add(&dir, &dir, &temp);
+
+	quaternion_mult_vec3(&temp, &cam->transform.rotation, vec3_forward());
+	vec3_scale(&temp, &temp, dist);
+	vec3_add(&dir, &dir, &temp);
+
+	vec3_normalize(&dir, &dir);
 
 	o_ray->origin = cam->transform.position;
 	o_ray->direction = dir;

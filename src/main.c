@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 11:57:23 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 15:08:38 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,12 +158,13 @@ int hook_mouse(int button, int x, int y, void* p)
 		pix_to_ray(data, x, y, &ray);
 
 		t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
-		float sqrmag = vec3_magnitude_sqr(ray.direction);
+		float sqrmag = vec3_magnitude_sqr(&ray.direction);
 		if (sqrmag < 0.99 || sqrmag > 1.01)
 		{
 			printf("Bad ray create! %.2f = sqrmag != 1: %.2f %.2f %.2f\n", sqrmag, ray.direction.x, ray.direction.y, ray.direction.z);
 		}
-		t_quaternion new_rot = quaternion_from_forward_up(ray.direction, vec3_new(0,1,0));
+		t_quaternion new_rot;
+		quaternion_from_forward_up(&new_rot, &ray.direction, vec3_up());
 		cam->transform.rotation = new_rot;
 	}
 	if (button == 2)
@@ -180,7 +181,7 @@ int hook_mouse(int button, int x, int y, void* p)
 			ft_printf("	Normal: %v!\n", hit.normal);
 			ft_printf("	Color: %v!\n", *(t_vec3*)&hit.color);
 
-			float sqrmag = vec3_magnitude_sqr(hit.normal);
+			float sqrmag = vec3_magnitude_sqr(&hit.normal);
 			if (sqrmag > 1.01 || sqrmag < 0.99)
 				printf("Normal magnitude != 1, actual: %.2f\n", sqrtf(sqrmag));
 		}
@@ -309,14 +310,16 @@ int	hook_loop(void *p)
 	t_mlx_data* data = p;
 
 	// Input
-	t_vec3 move_dir = vec3_new(0,0,0);
+	t_vec3 move_dir;
+	vec3_init(&move_dir, 0, 0, 0);
 	move_dir.z = (data->input.forward ? -1 : 0) + (data->input.backward ? 1 : 0);
 	move_dir.x = (data->input.right ? -1 : 0) + (data->input.left ? 1 : 0);
 	move_dir.y = (data->input.down ? -1 : 0) + (data->input.up ? 1 : 0);
 
 	t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
-	move_dir = quaternion_mult_vec3(cam->transform.rotation, vec3_scale(move_dir, diff / (float)CLOCKS_PER_SEC * 2.0));
-	cam->transform.position = vec3_add(cam->transform.position, move_dir);
+	quaternion_mult_vec3(&move_dir, &cam->transform.rotation, &move_dir);
+	vec3_scale(&move_dir, &move_dir, diff / (float)CLOCKS_PER_SEC * 2.0);
+	vec3_add(&cam->transform.position, &cam->transform.position, &move_dir);
 
 	// Render
 	trace_next_pixels(data, 1000);
@@ -421,9 +424,13 @@ int main(int argc, char **argv)
 	for (size_t i = 0; i < scene->objects.count; i++)
 	{
 		t_object* obj = darray_index(&scene->objects, i);
-		t_vec3 x = quaternion_mult_vec3(obj->transform.rotation, vec3_new(1,0,0));
-		t_vec3 y = quaternion_mult_vec3(obj->transform.rotation, vec3_new(0,1,0));
-		t_vec3 z = quaternion_mult_vec3(obj->transform.rotation, vec3_new(0,0,1));
+		t_vec3 x;
+		t_vec3 y;
+		t_vec3 z;
+
+		quaternion_mult_vec3(&x, &obj->transform.rotation, vec3_right());
+		quaternion_mult_vec3(&y, &obj->transform.rotation, vec3_up());
+		quaternion_mult_vec3(&z, &obj->transform.rotation, vec3_back());
 		ft_printf("Found object with transform %t with x (%v) y: (%v) z: (%v) \n",
 			obj->transform,
 			x, y, z

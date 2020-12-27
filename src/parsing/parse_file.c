@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/25 12:52:11 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 15:04:58 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		object.object_data = sphere;
 		object.IntersectFunc = (t_object_intersect_func)ray_intersects_sphere;
 		skip_whitespace(line, &curr);
-		object.transform.rotation = quaternion_identity();
+		object.transform.rotation = *quaternion_identity();
 		if (!read_vec3(line, &curr, &object.transform.position))
 		{
 			free(sphere);
@@ -256,7 +256,7 @@ bool parse_line(t_scene_parse_data* parse_data, t_scene* scene, char* line)
 		}
 		object.object_data = triangle;
 		object.IntersectFunc = (t_object_intersect_func)ray_intersects_triangle;
-		object.transform.rotation = quaternion_identity();
+		object.transform.rotation = *quaternion_identity();
 		skip_whitespace(line, &curr);
 		if (!read_vec3(line, &curr, &object.transform.position))
 		{
