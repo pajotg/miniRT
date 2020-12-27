@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/26 17:02:06 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 11:57:23 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,11 @@
 
 t_args* parse_args(int argc, char **argv)
 {
+	if (argc <= 1)
+	{
+		set_error("Usage: miniRT [file] {args}", false);
+		return (NULL);
+	}
 	t_args* data = malloc(sizeof(t_args));
 	if (data == NULL)
 	{
@@ -46,12 +51,6 @@ t_args* parse_args(int argc, char **argv)
 		return NULL;
 	}
 
-	if (argc <= 1)
-	{
-		set_error("Usage: miniRT [file] {args}", false);
-		free(data);
-		return (NULL);
-	}
 
 	data->map_file = argv[1];
 	if (ft_strlen(data->map_file) < 4 || ft_strncmp(data->map_file + ft_strlen(data->map_file) - 3,".rt", 3) != 0 || (data->map_file[ft_strlen(data->map_file)-4] == '/'))	// Checks for: strlen >= 4, ends with .rt, and character before . != /
@@ -61,13 +60,19 @@ t_args* parse_args(int argc, char **argv)
 		return NULL;
 	}
 
-
+	data->save = false;
+	data->save_on_exit = false;
+	data->no_res_cap = false;
 	int i = 2;
 	while (i < argc)
 	{
 		char* arg = argv[i];
 		if (ft_strncmp(arg, "--save", 7) == 0 && data->save == false)
 			data->save = true;
+		else if (ft_strncmp(arg, "--no-res-cap",13) == 0 && data->no_res_cap == false)
+			data->no_res_cap = true;
+		else if (ft_strncmp(arg, "--save-on-exit",15) == 0 && data->save_on_exit == false)
+			data->save_on_exit = true;
 		else
 		{
 			set_error(ft_strjoin("Argument not recognized: ", arg), true);
@@ -76,6 +81,12 @@ t_args* parse_args(int argc, char **argv)
 		}
 		i++;
 	}
+	if (data->save && data->save_on_exit)
+	{
+		set_error("Both save and save-on-exit arguments where specified!", false);
+		free(data);
+		return NULL;
+	}
 
 	return data;
 }
@@ -83,7 +94,7 @@ t_args* parse_args(int argc, char **argv)
 int	hook_key_down(int key,void *p)
 {
 	t_mlx_data* data = p;
-	printf("Key down: %i\n", key);
+	//printf("Key down: %i\n", key);
 
 	if (key == KEY_ESC)
 		mlx_loop_end(data->mlx);
@@ -109,7 +120,7 @@ int	hook_key_down(int key,void *p)
 int	hook_key_up(int key,void *p)
 {
 	t_mlx_data* data = p;
-	printf("Key up: %i\n", key);
+	//printf("Key up: %i\n", key);
 
 	if (key == KEY_W)
 		data->input.forward = false;
@@ -183,6 +194,13 @@ int hook_mouse(int button, int x, int y, void* p)
 			sqrtf(hdr.r * hdr.r + hdr.g * hdr.g + hdr.b * hdr.b)
 		);
 	}
+	return 0;
+}
+
+int hook_client_message(void* p)
+{
+	t_mlx_data* data = p;
+	mlx_loop_end(data->mlx);
 	return 0;
 }
 
@@ -320,18 +338,55 @@ int	hook_loop(void *p)
 	return 0;
 }
 
-int hook_client_message(void* p)
-{
-	t_mlx_data* data = p;
-	mlx_loop_end(data->mlx);
-	return 0;
-}
-
 /*
 **	After reading the code, it seems like mlx_hook only uses the last mask specified for an event, previous values are overridden
 **	I can actually change the source code from mlx to print out the events, so thats a much better solution
 **	After seeing someone else mention the command: "xev"... why did i do that? THERE WAS A COMMAND
 */
+
+bool save_image(t_mlx_image* img, char* path)
+{
+	unsigned char* pixels = malloc(img->width * img->height * 3);
+	if (pixels == NULL)
+	{
+		set_error("Error\nCould not malloc pixels to create screenshot!\n", false);
+		return false;
+	}
+
+	int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC);
+	if (fd == -1)
+	{
+		set_error(ft_strjoin("Could not open/create file: ", path), true);
+		return false;
+	}
+
+	for (int i = 0; i < img->width * img->height; i++)
+	{
+		int x = i % img->width;
+		int y = i / img->width;
+
+		size_t offset = x * (img->bits_per_pixel / 8) + y * img->line_length;
+		unsigned int col = *(unsigned int*)(img->addr + offset);
+		// (rgb.b | rgb.g << 8) | rgb.r << 16;
+		unsigned char r = (col >> 16) & 0xff;
+		unsigned char g = (col >> 8 ) & 0xff;
+		unsigned char b = (col >> 0 ) & 0xff;
+
+		pixels[i * 3] = r;
+		pixels[i * 3 + 1] = g;
+		pixels[i * 3 + 2] = b;
+	}
+
+	if (!write_bmp(fd, pixels, img->width, img->height))
+	{
+		set_error(ft_strjoin("Could not write into file: ", path), true);
+		return false;
+	}
+	free(pixels);
+	close(fd);
+
+	return true;
+}
 
 int main(int argc, char **argv)
 {
@@ -384,12 +439,15 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	int rx, ry;
-	mlx_get_screen_size(mlx, &rx, &ry);
-	//if (scene->resolution.width > rx)
-	//	scene->resolution.width = rx;
-	//if (scene->resolution.height > ry)
-	//	scene->resolution.height = ry;
+	if (!arg_data->no_res_cap)
+	{
+		int rx, ry;
+		mlx_get_screen_size(mlx, &rx, &ry);
+		if (scene->resolution.width > rx)
+			scene->resolution.width = rx;
+		if (scene->resolution.height > ry)
+			scene->resolution.height = ry;
+	}
 
 	void* window = mlx_new_window(mlx, scene->resolution.width, scene->resolution.height, "miniRT");
 	if (!window)
@@ -451,9 +509,6 @@ int main(int argc, char **argv)
 
 	mlx_hook(window, ClientMessage, NoEventMask, hook_client_message, &mlx_data);
 
-	//mlx_do_key_autorepeatoff(mlx);	// TODO: Add to hook mouse enter, or maybe not
-	//mlx_do_key_autorepeaton(mlx);	// TODO: Add to hook mouse leave, or maybe not
-
 	pthread_t thread_ids[NUM_THREADS];
 	for (int i = 0; i < NUM_THREADS; i++)
 		pthread_create(&thread_ids[i], NULL, new_thread, &mlx_data);
@@ -464,45 +519,10 @@ int main(int argc, char **argv)
 	for (int i = 0; i < NUM_THREADS; i++)
 		pthread_join(thread_ids[i], NULL);
 	pthread_mutex_destroy(&mlx_data.lock);
-	//trace_ray(&mlx_data, 0, 0);
 
-	// TODO: if save arg specified, save image here
-	if (arg_data->save)
-	{
-		unsigned char* pixels = malloc(scene->resolution.width * scene->resolution.height * 3);
-		if (pixels != NULL)
-		{
-			for (int i = 0; i < scene->resolution.width * scene->resolution.height; i++)
-			{
-				int x = i % scene->resolution.width;
-				int y = i / scene->resolution.width;
-
-				size_t offset = x * (mlx_data.img.bits_per_pixel / 8) + y * mlx_data.img.line_length;
-				unsigned int col = *(unsigned int*)(mlx_data.img.addr + offset);
-				// (rgb.b | rgb.g << 8) | rgb.r << 16;
-				unsigned char r = (col >> 16) & 0xff;
-				unsigned char g = (col >> 8 ) & 0xff;
-				unsigned char b = (col >> 0 ) & 0xff;
-
-				pixels[i * 3] = r;
-				pixels[i * 3 + 1] = g;
-				pixels[i * 3 + 2] = b;
-			}
-
-			int fd = open("screenshot.bmp", O_WRONLY | O_CREAT | O_TRUNC);
-			if (fd != -1)
-			{
-				if (!write_bmp(fd, pixels, scene->resolution.width, scene->resolution.height))
-					write(STDOUT_FILENO, "Error\nCould not write into screenshot.bmp file!\n", 48);
-				close(fd);
-			}
-			else
-				write(STDOUT_FILENO, "Error\nCould not create screenshot.bmp file!\n", 44);
-			free(pixels);
-		} else {
-			write(STDOUT_FILENO, "Error\nCould not malloc pixels to create screenshot!\n", 52);
-		}
-	}
+	if (arg_data->save_on_exit)
+		if (!save_image(&mlx_data.img, "screenshot.bmp"))
+			ft_printf("Error\nAn error occured while saving the screenshot: \"%s\"!\n", get_last_error());
 
 	mlx_destroy_window(mlx, window);
 	mlx_destroy_image(mlx, mlx_data.img.image);

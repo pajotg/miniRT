@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:22 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/26 16:44:17 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/27 11:49:02 by jasper        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ typedef struct	s_args
 {
 	char* map_file;
 	bool save;
+	bool save_on_exit;
+	bool no_res_cap;
 }				t_args;
 
 void init_ft_printf();
