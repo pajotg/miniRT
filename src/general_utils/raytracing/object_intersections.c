@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:22:00 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:32:18 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,51 @@ bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
 bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
 {
 	t_object_square* data = object->object_data;
-	(void)data;
-	(void)object;
-	(void)ray;
-	(void)hit;
-	return false;
+	t_vec3 normal;
+	t_vec3 temp2;
+	t_vec3 temp;
+
+	quaternion_mult_vec3(&normal, &object->transform.rotation, vec3_forward());
+
+	vec3_subtract(&temp, &ray->origin, &object->transform.position);
+	float height = vec3_dot( &normal, &temp );
+	float travel_distance = -height / vec3_dot( &normal, &ray->direction );
+
+	if (travel_distance < 0 || travel_distance > hit->distance)
+		return (false);
+
+	// Temp contains the offset of the origin to the object
+	vec3_scale(&temp2, &ray->direction, travel_distance);
+	vec3_add(&temp, &temp, &temp2);
+
+	// Temp now contains the hit position for a plane, but we need to ignore if it it outside the bounds
+	t_vec3 side;
+	quaternion_mult_vec3(&side, &object->transform.rotation, vec3_right());
+	float dot = vec3_dot(&side, &temp);
+	if (dot > data->size || dot < -data->size)
+		return (false);
+
+	// Thats one side done, do the other!
+	// Its faster to use the cross product rather than do a secondairy quat * vec3 mult
+	vec3_cross(&side, &side, &normal);
+	dot = vec3_dot(&side, &temp);
+	if (dot > data->size || dot < -data->size)
+		return (false);
+
+	// Alright! we hit!
+	hit->distance = travel_distance;
+	hit->color = data->color;
+	if (height > 0)
+		hit->normal = normal;
+	else
+	{
+		hit->normal.x = -normal.x;
+		hit->normal.y = -normal.y;
+		hit->normal.z = -normal.z;
+	}
+	vec3_add(&hit->location, &temp, &object->transform.position);
+
+	return (true);
 }
 
 bool ray_intersects_cylinder(t_object* object, t_ray* ray, t_ray_hit* hit)
