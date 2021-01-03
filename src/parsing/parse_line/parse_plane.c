@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:47:01 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 16:52:43 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 11:40:07 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ bool		parse_plane(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	object.object_data = plane;
-	object.IntersectFunc = (t_object_intersect_func)ray_intersects_plane;
+	object.intersect_func = (t_object_intersect_func)ray_intersects_plane;
 	skip_whitespace(line, curr);
 	if (!read_transform(line, curr, &object.transform))
 	{

@@ -6,41 +6,42 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 11:26:48 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/24 20:02:56 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 11:50:39 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_RT_UTILS_H
 # define MINI_RT_UTILS_H
 
-#include <stdbool.h>
-#include <stddef.h>
+# include <stdbool.h>
+# include <stddef.h>
 
 /*
 **	This is actually called a "List"
+**		in C# atleast, i think its called a vector in c++, dunno
 **	But libft also has a list defintion, but its not a list, its a linked list!
 **	Darn you libft mandatory naming!
 **	So i called it "Dynamic Array", aka: darray.. stupid mandatory naming..
 */
 
-typedef struct s_darray
+typedef struct	s_darray
 {
-	size_t count;
-	size_t capacity;
-	size_t data_size;
-	void* data;
+	size_t	count;
+	size_t	capacity;
+	size_t	data_size;
+	void	*data;
 }				t_darray;
 
-typedef void (*t_free_values)(void *value);
+typedef void	(*t_free_values)(void *value);
 
-char* get_last_error();
-void set_error(char* error_msg, bool should_free);
-void clear_error();
+char			*get_last_error();
+void			set_error(char *error_msg, bool should_free);
+void			clear_error();
 
-bool darray_init(t_darray *darr, size_t data_size);
-t_darray *darray_new(size_t data_size);
-void darray_un_init(t_darray *darr, t_free_values free_values);
-bool darray_push(t_darray *darr, void *value);
-void* darray_index(t_darray *darr, size_t index);
+bool			darray_init(t_darray *darr, size_t data_size);
+t_darray		*darray_new(size_t data_size);
+void			darray_un_init(t_darray *darr, t_free_values free_values);
+bool			darray_push(t_darray *darr, void *value);
+void			*darray_index(t_darray *darr, size_t index);
 
 #endif

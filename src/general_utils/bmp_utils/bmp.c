@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/26 15:39:55 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/26 17:00:44 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 11:25:31 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@
 ** Super basic BMP file writer, no fancy compression or non 24 bit colors
 ** BMP files are stored in little endian
 */
-
-#include <stdio.h> // bad
 
 static bool	write_value(int fd, int value, int len)
 {
@@ -68,8 +66,8 @@ static bool	write_info_header(int fd, int width, int height)
 
 static bool	write_pixels(int fd, unsigned char *pixels, int width, int height)
 {
-	int		x;
-	int		y;
+	int				x;
+	int				y;
 	unsigned char	*pixel;
 
 	y = 0;

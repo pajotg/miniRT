@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:28:33 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 15:42:38 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 11:45:54 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void quaternion_init(t_quaternion *result, float r, float i, float j, float k)
 	result->k = k;
 }
 
-void quaternion_from_AxisAngle(t_quaternion *result, const t_vec3 *axis, const float angle)
+void quaternion_from_axis_angle(t_quaternion *result, const t_vec3 *axis, const float angle)
 {
 	float s = sinf(angle/2);
 	float c = cosf(angle/2);

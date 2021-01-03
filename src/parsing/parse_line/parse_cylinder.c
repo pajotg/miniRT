@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:05:43 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 17:11:27 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 11:40:10 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ bool		parse_cylinder(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	object.object_data = cylinder;
-	object.IntersectFunc = (t_object_intersect_func)ray_intersects_cylinder;
+	object.intersect_func = (t_object_intersect_func)ray_intersects_cylinder;
 	skip_whitespace(line, curr);
 	if (!read_transform(line, curr, &object.transform))
 	{

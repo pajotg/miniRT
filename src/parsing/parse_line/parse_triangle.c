@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:08:45 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 17:12:32 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 11:40:11 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ bool		parse_triangle(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	object.object_data = triangle;
-	object.IntersectFunc = (t_object_intersect_func)ray_intersects_triangle;
+	object.intersect_func = (t_object_intersect_func)ray_intersects_triangle;
 	object.transform.rotation = *quaternion_identity();
 	skip_whitespace(line, curr);
 	if (!read_vec3(line, curr, &object.transform.position))

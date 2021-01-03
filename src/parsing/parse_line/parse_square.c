@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:59:22 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 17:04:14 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 11:40:08 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ bool		parse_square(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	object.object_data = square;
-	object.IntersectFunc = (t_object_intersect_func)ray_intersects_square;
+	object.intersect_func = (t_object_intersect_func)ray_intersects_square;
 	skip_whitespace(line, curr);
 	if (!read_transform(line, curr, &object.transform))
 	{

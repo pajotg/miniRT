@@ -6,11 +6,11 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 11:37:47 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 16:06:57 by jasper        ########   odam.nl         */
+/*   Updated: 2020/12/30 17:53:34 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "ft_printf_int.h"
 #include "mini_rt_math_utils.h"
 
 // Well, my printf gives me the option to add conversions

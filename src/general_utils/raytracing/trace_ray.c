@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 15:09:25 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 11:40:09 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static bool trace_ray_raw(t_mlx_data* data, t_ray* ray, t_ray_hit* o_hit)
 	for (size_t i = 0; i < data->scene->objects.count; i++)
 	{
 		t_object* obj = darray_index(&data->scene->objects, i);
-		if (obj->IntersectFunc(obj, ray, o_hit))
+		if (obj->intersect_func(obj, ray, o_hit))
 			has_hit = true;
 	}
 	return has_hit;

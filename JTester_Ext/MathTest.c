@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 			tu_ko_message_exit("I * (0,0,1) != (0,0,1) it made: %.2f %.2f %.2f", z.x, z.y, z.z);
 	TEST
 		t_quaternion rotation;
-		quaternion_from_AxisAngle(&rotation, vec3_up(), -M_PI/2);
+		quaternion_from_axis_angle(&rotation, vec3_up(), -M_PI/2);
 
 		t_vec3 x;
 		t_vec3 y;
