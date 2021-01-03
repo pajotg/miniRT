@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:33:48 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 16:36:20 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,6 @@ bool	parse_camera(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	camera.fov = camera.fov / 180 * M_PI;
-	darray_push(&scene->cameras, &camera);
+	list_push(&scene->cameras, &camera);
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 11:40:09 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static bool trace_ray_raw(t_mlx_data* data, t_ray* ray, t_ray_hit* o_hit)
 	bool has_hit = false;
 	for (size_t i = 0; i < data->scene->objects.count; i++)
 	{
-		t_object* obj = darray_index(&data->scene->objects, i);
+		t_object* obj = list_index(&data->scene->objects, i);
 		if (obj->intersect_func(obj, ray, o_hit))
 			has_hit = true;
 	}
@@ -49,7 +49,7 @@ void trace_lights(t_mlx_data* data, t_vec3* position, t_vec3* normal, t_color_hd
 
 	for (size_t i = 0; i < data->scene->lights.count; i++)
 	{
-		t_light* light = darray_index(&data->scene->lights, i);
+		t_light* light = list_index(&data->scene->lights, i);
 		t_vec3 offset;
 		t_vec3 normalized;
 
@@ -148,7 +148,7 @@ void pix_to_ray(t_mlx_data* data, int x, int y, t_ray* o_ray)
 
 	// ox and oy are in the range -0.5 to 0.5
 
-	t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
+	t_camera* cam = list_index(&data->scene->cameras, data->scene->current_camera_index);
 	float dist = 0.5 / sin(cam->fov / 2);
 
 	t_vec3 dir;

@@ -6,16 +6,15 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:19 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 11:48:18 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:07:14 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_RT_PARSE_UTILS_H
 # define MINI_RT_PARSE_UTILS_H
 
-# include "mini_rt_utils.h"
+# include "list.h"
 # include "mini_rt_math_utils.h"
-# include <stdbool.h>
 
 typedef struct	s_resolution
 {
@@ -34,9 +33,9 @@ typedef struct	s_scene
 	t_resolution	resolution;
 	t_color_hdr		ambiant;
 	int				current_camera_index;
-	t_darray		cameras;
-	t_darray		objects;
-	t_darray		lights;
+	t_list			cameras;
+	t_list			objects;
+	t_list			lights;
 }				t_scene;
 
 void			free_scene(t_scene *scene);

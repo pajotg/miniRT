@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/30 19:05:50 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ int hook_mouse(int button, int x, int y, void* p)
 		t_ray ray;
 		pix_to_ray(data, x, y, &ray);
 
-		t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
+		t_camera* cam = list_index(&data->scene->cameras, data->scene->current_camera_index);
 		float sqrmag = vec3_magnitude_sqr(&ray.direction);
 		if (sqrmag < 0.99 || sqrmag > 1.01)
 		{
@@ -316,7 +316,7 @@ int	hook_loop(void *p)
 	move_dir.x = (data->input.right ? -1 : 0) + (data->input.left ? 1 : 0);
 	move_dir.y = (data->input.down ? -1 : 0) + (data->input.up ? 1 : 0);
 
-	t_camera* cam = darray_index(&data->scene->cameras, data->scene->current_camera_index);
+	t_camera* cam = list_index(&data->scene->cameras, data->scene->current_camera_index);
 	quaternion_mult_vec3(&move_dir, &cam->transform.rotation, &move_dir);
 	vec3_scale(&move_dir, &move_dir, diff / (float)CLOCKS_PER_SEC * 2.0);
 	vec3_add(&cam->transform.position, &cam->transform.position, &move_dir);
@@ -438,7 +438,7 @@ int main(int argc, char **argv)
 
 	for (size_t i = 0; i < scene->objects.count; i++)
 	{
-		t_object* obj = darray_index(&scene->objects, i);
+		t_object* obj = list_index(&scene->objects, i);
 		t_vec3 x;
 		t_vec3 y;
 		t_vec3 z;

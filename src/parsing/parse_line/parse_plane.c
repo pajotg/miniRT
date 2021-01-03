@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:47:01 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 11:40:07 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,6 @@ bool		parse_plane(t_scene *scene, char *line, int *curr)
 	skip_whitespace(line, curr);
 	if (!parse_plane_ext(plane, line, curr))
 		return (false);
-	darray_push(&scene->objects, &object);
+	list_push(&scene->objects, &object);
 	return (true);
 }

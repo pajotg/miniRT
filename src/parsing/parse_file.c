@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 17:20:40 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,9 @@ void un_init_object(t_object* object)
 
 void free_scene(t_scene* scene)
 {
-	darray_un_init(&(scene->cameras), NULL);
-	darray_un_init(&(scene->objects), (t_free_values)un_init_object);
-	darray_un_init(&(scene->lights), NULL);
+	list_un_init(&(scene->cameras), NULL);
+	list_un_init(&(scene->objects), (t_free_values)un_init_object);
+	list_un_init(&(scene->lights), NULL);
 	free(scene);
 }
 
@@ -105,13 +105,13 @@ t_scene* parse_scene_file(int fd)
 		return NULL;
 	}
 	bool init_success = true;
-	init_success = darray_init(&scene->cameras, sizeof(t_camera)) && init_success;
-	init_success = darray_init(&scene->objects, sizeof(t_object)) && init_success;
-	init_success = darray_init(&scene->lights, sizeof(t_light)) && init_success;
+	init_success = list_init(&scene->cameras, sizeof(t_camera)) && init_success;
+	init_success = list_init(&scene->objects, sizeof(t_object)) && init_success;
+	init_success = list_init(&scene->lights, sizeof(t_light)) && init_success;
 	if (!init_success)
 	{
 		free_scene(scene);
-		set_error("Malloc failed in darray init!", false);
+		set_error("Malloc failed in list init!", false);
 		return NULL;
 	}
 	char* line;

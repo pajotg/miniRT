@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:08:45 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 11:40:11 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,6 @@ bool		parse_triangle(t_scene *scene, char *line, int *curr)
 	skip_whitespace(line, curr);
 	if (!parse_triangle_ext(triangle, line, curr))
 		return (false);
-	darray_push(&scene->objects, &object);
+	list_push(&scene->objects, &object);
 	return (true);
 }

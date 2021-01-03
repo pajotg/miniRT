@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 		{
 			for (size_t i = 0; i < scene->objects.count; i++)
 			{
-				t_object* obj = darray_index(&scene->objects, i);
+				t_object* obj = list_index(&scene->objects, i);
 				t_quaternion quat = obj->transform.rotation;
 				float sqrmag = quat.r * quat.r + quat.i * quat.i + quat.j * quat.j + quat.k * quat.k;
 				if (sqrmag > 1.01 || sqrmag < 0.99)
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 			}
 			for (size_t i = 0; i < scene->cameras.count; i++)
 			{
-				t_object* obj = darray_index(&scene->cameras, i);
+				t_object* obj = list_index(&scene->cameras, i);
 				t_quaternion quat = obj->transform.rotation;
 				float sqrmag = quat.r * quat.r + quat.i * quat.i + quat.j * quat.j + quat.k * quat.k;
 				if (sqrmag > 1.01 || sqrmag < 0.99)
