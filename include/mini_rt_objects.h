@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 14:36:34 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 11:40:44 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:18:32 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,12 @@ typedef struct	s_object_triangle
 	t_vec3		third_point;
 }				t_object_triangle;
 
+typedef struct	s_object_cube
+{
+	t_color_hdr	color;
+	float		size;
+}				t_object_cube;
+
 bool			ray_intersects_sphere(t_object *object,
 	t_ray *ray, t_ray_hit *hit);
 bool			ray_intersects_plane(t_object *object,
@@ -72,6 +78,9 @@ bool			ray_intersects_square(t_object *object,
 bool			ray_intersects_cylinder(t_object *object,
 	t_ray *ray, t_ray_hit *hit);
 bool			ray_intersects_triangle(t_object *object,
+	t_ray *ray, t_ray_hit *hit);
+
+bool			ray_intersects_cube(t_object *object,
 	t_ray *ray, t_ray_hit *hit);
 
 #endif

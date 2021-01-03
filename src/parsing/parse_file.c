@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:20:58 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ static bool parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *l
 		return parse_cylinder(scene, line, curr);
 	else if (is_object(line, "tr", curr))
 		return parse_triangle(scene, line, curr);
+	else if (is_object(line, "cu", curr))
+		return parse_cube(scene, line, curr);
 	set_error(ft_strjoin("Unknown configuration: ", line), true);
 	return (false);
 }

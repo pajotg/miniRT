@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 15:08:59 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/03 13:22:00 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,16 +94,48 @@ bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
 	return true;
 }
 
+bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
+{
+	t_object_square* data = object->object_data;
+	(void)data;
+	(void)object;
+	(void)ray;
+	(void)hit;
+	return false;
+}
+
+bool ray_intersects_cylinder(t_object* object, t_ray* ray, t_ray_hit* hit)
+{
+	t_object_cylinder* data = object->object_data;
+	(void)data;
+	(void)object;
+	(void)ray;
+	(void)hit;
+	return false;
+}
+
+bool ray_intersects_triangle(t_object* object, t_ray* ray, t_ray_hit* hit)
+{
+	t_object_triangle* data = object->object_data;
+	(void)data;
+	(void)object;
+	(void)ray;
+	(void)hit;
+	return false;
+}
+
 /*
 ** Found this code, read through it, understood it, looks really good, does backface culling
 ** https://web.archive.org/web/20090803054252/http://tog.acm.org/resources/GraphicsGems/gems/RayBox.c
 ** Also learned about the register keyword, seems usefull, will use it more often
 ** I am pretty sure this works in any dimension too, so that is cool, maybe make a 4D raytracer? :)))
+** Welp, i thought a "square" meant a cube, later in the bonus there is a compound cube (6 squares), welp...
+** I made a bonus thinking it was mandatory, oh wells
 */
 
-bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
+bool ray_intersects_cube(t_object* object, t_ray* ray, t_ray_hit* hit)
 {
-	t_object_square* data = object->object_data;
+	t_object_cube* data = object->object_data;
 	register int i;
 	float min_b[3];
 	float max_b[3];
@@ -203,24 +235,4 @@ bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
 	vec3_add(&hit->location, &hit->location, &object->transform.position);
 
 	return true;
-}
-
-bool ray_intersects_cylinder(t_object* object, t_ray* ray, t_ray_hit* hit)
-{
-	t_object_cylinder* data = object->object_data;
-	(void)data;
-	(void)object;
-	(void)ray;
-	(void)hit;
-	return false;
-}
-
-bool ray_intersects_triangle(t_object* object, t_ray* ray, t_ray_hit* hit)
-{
-	t_object_triangle* data = object->object_data;
-	(void)data;
-	(void)object;
-	(void)ray;
-	(void)hit;
-	return false;
 }
