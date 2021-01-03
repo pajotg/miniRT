@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 14:11:21 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/03 14:17:28 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 17:22:07 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #define KEY_D 100
 #define KEY_Q 113
 #define KEY_E 101
+#define KEY_T 116
 
 #define KEY_R 114
 #define KEY_F 102
@@ -30,6 +31,16 @@
 #include <math.h>
 
 #include <stdio.h>	// bad
+
+static void next_cam(t_mlx_data* data)
+{
+	size_t index;
+
+	index = data->scene->current_camera_index + 1;
+	if (index >= data->scene->cameras.count)
+		index = 0;
+	data->scene->current_camera_index = index;
+}
 
 int	hook_key_down(int key,void *p)
 {
@@ -54,6 +65,8 @@ int	hook_key_down(int key,void *p)
 		data->input.white_up = true;
 	else if (key == KEY_F)
 		data->input.white_down = true;
+	else if (key == KEY_T)
+		next_cam(data);
 	return 0;
 }
 
