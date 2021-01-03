@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 18:51:02 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 11:38:21 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 14:15:09 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 # define MINI_RT_MLX_H
 
 # include <pthread.h>
+# include "mini_rt_math_utils.h"
+# include "mini_rt_parse_utils.h"
+# include <stdbool.h>
 
 typedef struct	s_pixel_data
 {

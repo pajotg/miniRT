@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 14:13:17 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,6 @@
 #include <pthread.h>
 
 #include <time.h>	// no-norm
-
-#define KEY_ESC 65307
-#define KEY_W 119
-#define KEY_A 97
-#define KEY_S 115
-#define KEY_D 100
-#define KEY_Q 113
-#define KEY_E 101
-
-#define KEY_R 114
-#define KEY_F 102
 
 #define NUM_THREADS 5
 
@@ -91,120 +80,6 @@ t_args* parse_args(int argc, char **argv)
 	return data;
 }
 
-int	hook_key_down(int key,void *p)
-{
-	t_mlx_data* data = p;
-	//printf("Key down: %i\n", key);
-
-	if (key == KEY_ESC)
-		mlx_loop_end(data->mlx);
-	else if (key == KEY_W)
-		data->input.forward = true;
-	else if (key == KEY_A)
-		data->input.left = true;
-	else if (key == KEY_S)
-		data->input.backward = true;
-	else if (key == KEY_D)
-		data->input.right = true;
-	else if (key == KEY_Q)
-		data->input.up = true;
-	else if (key == KEY_E)
-		data->input.down = true;
-	else if (key == KEY_R)
-		data->input.white_up = true;
-	else if (key == KEY_F)
-		data->input.white_down = true;
-	return 0;
-}
-
-int	hook_key_up(int key,void *p)
-{
-	t_mlx_data* data = p;
-	//printf("Key up: %i\n", key);
-
-	if (key == KEY_W)
-		data->input.forward = false;
-	else if (key == KEY_A)
-		data->input.left = false;
-	else if (key == KEY_S)
-		data->input.backward = false;
-	else if (key == KEY_D)
-		data->input.right = false;
-	else if (key == KEY_Q)
-		data->input.up = false;
-	else if (key == KEY_E)
-		data->input.down = false;
-	else if (key == KEY_R)
-		data->input.white_up = false;
-	else if (key == KEY_F)
-		data->input.white_down = false;
-	return 0;
-}
-
-/*
-**	1 (left click) = look at point
-**	2 (middle click) = gather debug data from pixel
-**	3 (right click) = get HDR color
-*/
-
-int hook_mouse(int button, int x, int y, void* p)
-{
-	t_mlx_data* data = p;
-
-	//printf("mouse hooked! %i at: (%i, %i) %p\n",button, x, y, p);
-	if (button == 1)
-	{
-		t_ray ray;
-		pix_to_ray(data, x, y, &ray);
-
-		t_camera* cam = list_index(&data->scene->cameras, data->scene->current_camera_index);
-		float sqrmag = vec3_magnitude_sqr(&ray.direction);
-		if (sqrmag < 0.99 || sqrmag > 1.01)
-		{
-			printf("Bad ray create! %.2f = sqrmag != 1: %.2f %.2f %.2f\n", sqrmag, ray.direction.x, ray.direction.y, ray.direction.z);
-		}
-		t_quaternion new_rot;
-		quaternion_from_forward_up(&new_rot, &ray.direction, vec3_up());
-		cam->transform.rotation = new_rot;
-	}
-	if (button == 2)
-	{
-		t_ray ray;
-		t_ray_hit hit;
-
-		pix_to_ray(data, x, y, &ray);
-		if (trace_ray(data, &ray, &hit))
-		{
-			printf("Hit!\n");
-			ft_printf("	Location: %v!\n", &hit.location);
-			printf("	Distance: %.2f!\n", hit.distance);
-			ft_printf("	Normal: %v!\n", &hit.normal);
-			ft_printf("	Color: %v!\n", (t_vec3*)&hit.color);
-
-			float sqrmag = vec3_magnitude_sqr(&hit.normal);
-			if (sqrmag > 1.01 || sqrmag < 0.99)
-				printf("Normal magnitude != 1, actual: %.2f\n", sqrtf(sqrmag));
-		}
-		else
-			printf("Miss!\n");
-	}
-	else if (button == 3)
-	{
-		t_color_hdr hdr = data->pixels[x + y * data->scene->resolution.width].color;
-		printf("Color: %.2f %.2f %.2f, mag: %.2f\n", hdr.r, hdr.g, hdr.b,
-			sqrtf(hdr.r * hdr.r + hdr.g * hdr.g + hdr.b * hdr.b)
-		);
-	}
-	return 0;
-}
-
-int hook_client_message(void* p)
-{
-	t_mlx_data* data = p;
-	mlx_loop_end(data->mlx);
-	return 0;
-}
-
 /*
 **	TODO: Sync rendering
 */
@@ -246,10 +121,40 @@ void update_image(t_mlx_data* data)
 
 void trace_pixel(t_mlx_data* data, int x, int y)
 {
+	// I want this pixel to be divided into anti_aliasing^2 equally sized squares
+	// every ray gets 1/anti_aliasing of width
+	// so the final offset = 1/anti_aliasing * i + 0.5/anti_aliasing (pixel space) gets a range of 0 to 1
+	// so, subtract 0.5 from that to get a range from -0.5 to 0.5
 	t_color_hdr* hdr = &data->pixels[x + y * data->scene->resolution.width].color;
 	t_ray ray;
-	pix_to_ray(data, x, y, &ray);
-	trace_color(data, &ray, hdr);
+	t_color_hdr current;
+	hdr->r = 0;
+	hdr->g = 0;
+	hdr->b = 0;
+
+	int aa = data->scene->anti_aliasing;
+	float step = 1.0/aa;
+	float offset = step / 2 - 0.5;
+	for (int ox = 0; ox < aa; ox++)
+	{
+		for (int oy = 0; oy < aa; oy++)
+		{
+			pix_to_ray(data,
+				x + step * ox + offset,
+				y + step * ox + offset,
+				&ray
+			);
+			trace_color(data, &ray, &current);
+			hdr->r += current.r;
+			hdr->g += current.g;
+			hdr->b += current.b;
+		}
+	}
+
+	float total_samples = aa * aa;
+	hdr->r /= total_samples;
+	hdr->g /= total_samples;
+	hdr->b /= total_samples;
 	update_pix(data, x, y);
 }
 

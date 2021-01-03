@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:22 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 11:51:08 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 14:13:26 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "mini_rt_mlx.h"
 # include "mini_rt_objects.h"
 # include "mini_rt_raytracing.h"
+# include "mini_rt_hooks.h"
 # include <stdbool.h>
 
 typedef struct	s_args

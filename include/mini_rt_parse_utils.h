@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:19 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:07:14 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:40:18 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct	s_scene_parse_data
 {
 	bool has_resolution;
 	bool has_ambiant;
+	bool has_anti_aliasing;
 }				t_scene_parse_data;
 
 typedef struct	s_scene
@@ -33,6 +34,7 @@ typedef struct	s_scene
 	t_resolution	resolution;
 	t_color_hdr		ambiant;
 	int				current_camera_index;
+	int				anti_aliasing;
 	t_list			cameras;
 	t_list			objects;
 	t_list			lights;

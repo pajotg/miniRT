@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:43:55 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ void trace_color(t_mlx_data* data, t_ray* ray, t_color_hdr* o_hdr)
 ** )
 */
 
-void pix_to_ray(t_mlx_data* data, int x, int y, t_ray* o_ray)
+void pix_to_ray(t_mlx_data* data, float x, float y, t_ray* o_ray)
 {
 	float fov_axis = data->scene->resolution.width;
 	float ox = (data->scene->resolution.width / 2.0 - x) / fov_axis;

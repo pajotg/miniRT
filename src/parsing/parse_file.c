@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:20:58 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 13:51:48 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ static bool parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *l
 		return parse_resolution(parse_data, scene, line, curr);
 	else if (is_object(line, "A", curr))
 		return parse_ambiant(parse_data, scene, line, curr);
+	else if (is_object(line, "AA", curr))
+		return parse_anti_aliasing(parse_data, scene, line, curr);
 	else if (is_object(line, "c", curr))
 		return parse_camera(scene, line, curr);
 	else if (is_object(line, "l", curr))
@@ -118,10 +120,12 @@ t_scene* parse_scene_file(int fd)
 	}
 	char* line;
 	scene->current_camera_index = 0;
+	scene->anti_aliasing = 1;
 
 	t_scene_parse_data parse_data;
 	parse_data.has_ambiant = false;
 	parse_data.has_resolution = false;
+	parse_data.has_anti_aliasing = false;
 	while (true)
 	{
 		int out = get_next_line(fd, &line);

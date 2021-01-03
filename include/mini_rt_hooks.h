@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   mini_rt_raytracing.h                               :+:    :+:            */
+/*   mini_rt_hooks.h                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/12/25 10:50:51 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:44:11 by jsimonis      ########   odam.nl         */
+/*   Created: 2020/12/23 17:46:54 by jasper        #+#    #+#                 */
+/*   Updated: 2021/01/03 14:13:15 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINI_RT_RAYTRACING_H
-# define MINI_RT_RAYTRACING_H
+#ifndef MINI_RT_HOOKS_H
+# define MINI_RT_HOOKS_H
 
-# include "mini_rt_mlx.h"
-# include "mini_rt_math_utils.h"
-
-bool trace_ray(t_mlx_data *data, t_ray *ray, t_ray_hit *o_hit);
-void trace_color(t_mlx_data *data, t_ray *ray, t_color_hdr *o_hdr);
-void pix_to_ray(t_mlx_data *data, float x, float y, t_ray *o_ray);
+int	hook_key_down(int key,void *p);
+int	hook_key_up(int key,void *p);
+int hook_mouse(int button, int x, int y, void* p);
+int hook_client_message(void* p);
 
 #endif
