@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 14:13:17 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/04 13:19:47 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,64 +21,11 @@
 #include <math.h>
 #include "ft_printf.h"
 #include <pthread.h>
+#include "ft_error.h"
 
 #include <time.h>	// no-norm
 
 #define NUM_THREADS 5
-
-t_args* parse_args(int argc, char **argv)
-{
-	if (argc <= 1)
-	{
-		set_error("Usage: miniRT [file] {args}", false);
-		return (NULL);
-	}
-	t_args* data = malloc(sizeof(t_args));
-	if (data == NULL)
-	{
-		set_error("Malloc failed for parse args!", false);
-		return NULL;
-	}
-
-
-	data->map_file = argv[1];
-	if (ft_strlen(data->map_file) < 4 || ft_strncmp(data->map_file + ft_strlen(data->map_file) - 3,".rt", 3) != 0 || (data->map_file[ft_strlen(data->map_file)-4] == '/'))	// Checks for: strlen >= 4, ends with .rt, and character before . != /
-	{
-		set_error(ft_strjoin("File does not end with \".rt\", got: ", data->map_file), true);
-		free(data);
-		return NULL;
-	}
-
-	data->save = false;
-	data->save_on_exit = false;
-	data->no_res_cap = false;
-	int i = 2;
-	while (i < argc)
-	{
-		char* arg = argv[i];
-		if (ft_strncmp(arg, "--save", 7) == 0 && data->save == false)
-			data->save = true;
-		else if (ft_strncmp(arg, "--no-res-cap",13) == 0 && data->no_res_cap == false)
-			data->no_res_cap = true;
-		else if (ft_strncmp(arg, "--save-on-exit",15) == 0 && data->save_on_exit == false)
-			data->save_on_exit = true;
-		else
-		{
-			set_error(ft_strjoin("Argument not recognized: ", arg), true);
-			free(data);
-			return NULL;
-		}
-		i++;
-	}
-	if (data->save && data->save_on_exit)
-	{
-		set_error("Both save and save-on-exit arguments where specified!", false);
-		free(data);
-		return NULL;
-	}
-
-	return data;
-}
 
 /*
 **	TODO: Sync rendering
@@ -196,6 +143,8 @@ void* new_thread(void* p)
 
 int	hook_loop(void *p)
 {
+	t_mlx_data* data = p;
+
 	// FPS printing
 	static clock_t last_tick = 0;
 	static clock_t time = 0;
@@ -212,8 +161,6 @@ int	hook_loop(void *p)
 		frames = 0;
 	}
 
-	t_mlx_data* data = p;
-
 	// Input
 	t_vec3 move_dir;
 	vec3_init(&move_dir, 0, 0, 0);
@@ -227,7 +174,7 @@ int	hook_loop(void *p)
 	vec3_add(&cam->transform.position, &cam->transform.position, &move_dir);
 
 	// Render
-	trace_next_pixels(data, 1000);
+	trace_next_pixels(data, 1000 / (data->scene->anti_aliasing * data->scene->anti_aliasing));
 
 	if (data->input.white_up != data->input.white_down)
 	{

@@ -6,13 +6,13 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:11:07 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 15:12:05 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/04 13:20:34 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "mini_rt_utils.h"
 #include "mini_rt_math_utils.h"
+#include "ft_error.h"
 
 #include <stdio.h>
 

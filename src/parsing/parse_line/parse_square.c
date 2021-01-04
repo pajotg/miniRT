@@ -6,13 +6,14 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:59:22 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/04 13:21:26 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_parse_line.h"
 #include "mini_rt_objects.h"
 #include <stdlib.h>
+#include "ft_error.h"
 
 static bool	parse_square_ext(t_object_square *square, char *line, int *curr)
 {

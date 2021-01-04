@@ -6,11 +6,12 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:26:17 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/27 16:33:34 by jasper        ########   odam.nl         */
+/*   Updated: 2021/01/04 13:21:32 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_parse_line.h"
+#include "ft_error.h"
 
 bool	parse_ambiant(t_scene_parse_data *parse_data,
 	t_scene *scene, char *line, int *curr)

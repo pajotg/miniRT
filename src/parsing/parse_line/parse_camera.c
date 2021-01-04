@@ -6,12 +6,13 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:33:48 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/04 13:21:17 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_parse_line.h"
 #include <math.h>
+#include "ft_error.h"
 
 bool	parse_camera(t_scene *scene, char *line, int *curr)
 {

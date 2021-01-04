@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:32:18 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/03 17:36:13 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 		return false;
 
 	delta = sqrtf(delta);
+	bool is_inside = delta > dot;
+
 	// Distance is either dot - delta or dot + delta, if we can subtract, subtract
 	if (delta < dot)
 		delta = -delta;
@@ -56,6 +58,9 @@ bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 
 	vec3_subtract(&hit->normal, &hit->location, &object->transform.position);
 	vec3_scale(&hit->normal, &hit->normal, 1 / data->radius);
+
+	if (is_inside)
+		vec3_init(&hit->normal, -hit->normal.x, -hit->normal.y, -hit->normal.z);
 	return true;
 }
 
@@ -93,6 +98,10 @@ bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
 	}
 	return true;
 }
+
+/*
+**	Pure memory
+*/
 
 bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
 {
@@ -220,7 +229,7 @@ bool ray_intersects_cube(t_object* object, t_ray* ray, t_ray_hit* hit)
 		//fprintf(stderr, "axis %i min_b: %.2f max_b: %.2f, side: %i\n", i, min_b[i], max_b[i], side[i]);
 	}
 	if (inside)
-		return false;
+		return false;	// This probably aint good, TODO: Fix it (probably calculate from the 6 planes, not quats)
 
 	// Calculate the distance to the plane
 	float max_t[3];

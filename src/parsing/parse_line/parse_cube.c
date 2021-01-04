@@ -12,6 +12,7 @@
 
 #include "mini_rt_parse_line.h"
 #include "mini_rt_objects.h"
+#include "ft_error.h"
 #include <stdlib.h>
 
 static bool	parse_cube_ext(t_object_cube *cube, char *line, int *curr)

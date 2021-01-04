@@ -6,19 +6,20 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:51:48 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/04 13:20:19 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_parse_line.h"
 #include <stddef.h>
-#include "mini_rt_utils.h"
 #include "mini_rt_objects.h"
 #include "get_next_line.h"
 #include <string.h>
 #include "libft.h"
 #include <math.h>
 #include <errno.h>
+#include "ft_error.h"
+#include <stdlib.h>
 
 #include <stdio.h>	// bad
 

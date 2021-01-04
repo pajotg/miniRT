@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:19 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:40:18 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/04 13:00:27 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,14 @@
 
 # include "list.h"
 # include "mini_rt_math_utils.h"
+
+typedef struct	s_args
+{
+	char *map_file;
+	bool save;
+	bool save_on_exit;
+	bool no_res_cap;
+}				t_args;
 
 typedef struct	s_resolution
 {
@@ -42,6 +50,7 @@ typedef struct	s_scene
 
 void			free_scene(t_scene *scene);
 t_scene			*parse_scene_file(int fd);
+t_args			*parse_args(int argc, char **argv);
 
 bool			skip_char(char *str, int *current, char chr);
 void			skip_whitespace(char *str, int *current);

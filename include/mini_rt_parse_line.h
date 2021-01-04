@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:21:00 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:41:48 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/04 13:19:21 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define MINI_RT_PARSE_LINE_H
 
 # include "mini_rt_parse_utils.h"
-# include "mini_rt_utils.h"
 # include "libft.h"
 
 bool	parse_resolution(t_scene_parse_data *parse_data,

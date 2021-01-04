@@ -6,12 +6,13 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:47:01 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:08:17 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/04 13:20:41 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_parse_line.h"
 #include "mini_rt_objects.h"
+#include "ft_error.h"
 #include <stdlib.h>
 
 static bool	parse_plane_ext(t_object_plane *plane, char *line, int *curr)
