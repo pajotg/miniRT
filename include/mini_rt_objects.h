@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 14:36:34 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/05 16:51:34 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/07 17:27:52 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,12 @@ struct s_object;
 
 typedef bool	(*t_object_intersect_func)(struct s_object* object,
 	t_ray* ray, t_ray_hit* hit);
+
+typedef struct	s_aabb
+{
+	t_vec3 min_b;
+	t_vec3 max_b;
+}				t_aabb;
 
 typedef struct	s_object
 {
@@ -68,6 +74,9 @@ typedef struct	s_object_cube
 	t_color_hdr	color;
 	float		size;
 }				t_object_cube;
+
+bool			ray_intersects_aabb(t_ray* ray,
+	t_aabb *aabb, float max_dist);
 
 bool			ray_intersects_sphere(t_object *object,
 	t_ray *ray, t_ray_hit *hit);

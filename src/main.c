@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/05 16:03:37 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/07 20:10:59 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,9 +248,6 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	ft_printf("File: %s\n", arg_data->map_file);
-	ft_printf("Save: %i\n", arg_data->save);
-
 	int fd = open(arg_data->map_file, O_RDONLY);
 	if (fd == -1)
 	{
@@ -267,6 +264,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	/*
 	for (size_t i = 0; i < scene->objects.count; i++)
 	{
 		t_object* obj = list_index(&scene->objects, i);
@@ -282,6 +280,7 @@ int main(int argc, char **argv)
 			&x, &y, &z
 		);
 	}
+	*/
 
 	void* mlx = mlx_init();
 	if (!mlx)

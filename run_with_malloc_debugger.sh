@@ -1,0 +1,1 @@
+~/inject ~/injections/malloc.so ./miniRT ./scenes/valid/everything.rt

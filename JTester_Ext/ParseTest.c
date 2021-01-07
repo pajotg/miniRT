@@ -28,7 +28,7 @@ void get_next(DIR* ValidDir, DIR* InValidDir, struct dirent** dir, bool* ShouldB
 **	This test main is using the internal structure of the test code to give every file its own test result
 */
 
-// TODO: More tests files
+// TODO: More tests files, and check for NULL mallocs
 //	For every line change every parameter a tiny bit
 //	Alot of objects and cameras and lights (>32)
 

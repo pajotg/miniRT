@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:14:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/07 17:14:35 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/07 20:16:23 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,8 @@ bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
 }
 
 /*
-**	https://www.cl.cam.ac.uk/teaching/1999/AGraphHCI/SMAG/node2.html#SECTION00024000000000000000
+**	Woah, that took FOREVER, so manny mistakes
+**	https://math.stackexchange.com/questions/2613781/line-cylinder-intersection
 */
 
 bool ray_intersects_cylinder_top_and_bottom(float Height, float Radius, t_vec3* origin, t_vec3* dir, t_ray_hit* hit)
@@ -180,11 +181,6 @@ bool ray_intersects_cylinder_top_and_bottom(float Height, float Radius, t_vec3* 
 
 	return (true);
 }
-
-/*
-**	Woah, that took FOREVER, so manny mistakes
-**	https://math.stackexchange.com/questions/2613781/line-cylinder-intersection
-*/
 
 bool ray_intersects_cylinder(t_object* object, t_ray* ray, t_ray_hit* hit)
 {

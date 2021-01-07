@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/04 13:20:19 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/07 20:49:39 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <string.h>
 #include "libft.h"
 #include <math.h>
-#include <errno.h>
 #include "ft_error.h"
 #include <stdlib.h>
 
@@ -132,7 +131,7 @@ t_scene* parse_scene_file(int fd)
 		int out = get_next_line(fd, &line);
 		if (out == -1)
 		{
-			set_error(ft_strjoin("Could not read file: ", strerror(errno)), true);
+			set_error(ft_strjoin("Could not read file: ", get_last_error()), true);
 			free_scene(scene);
 			return NULL;
 		}
