@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/04 13:19:47 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/05 16:03:37 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 #include <pthread.h>
 #include "ft_error.h"
 
-#include <time.h>	// no-norm
+#include <time.h>	// used for movement (bonus)
 
 #define NUM_THREADS 5
 
@@ -193,12 +193,6 @@ int	hook_loop(void *p)
 	return 0;
 }
 
-/*
-**	After reading the code, it seems like mlx_hook only uses the last mask specified for an event, previous values are overridden
-**	I can actually change the source code from mlx to print out the events, so thats a much better solution
-**	After seeing someone else mention the command: "xev"... why did i do that? THERE WAS A COMMAND
-*/
-
 bool save_image(t_mlx_image* img, char* path)
 {
 	unsigned char* pixels = malloc(img->width * img->height * 3);
@@ -241,21 +235,6 @@ bool save_image(t_mlx_image* img, char* path)
 	close(fd);
 
 	return true;
-}
-
-/*
-**	I wanted to use the optimization flags
-**	But then it complained about UNUSED VARIABLES with the write
-**	I CANT USE the variable, IT IS the error message!
-**	It already returns an error!
-**	What does it expect me to do? write an error if it fails?
-*/
-
-void iwrite(int fd, char* str, int count)
-{
-	int out = write(fd, str, count);
-	if (out == 0)
-		return;
 }
 
 int main(int argc, char **argv)
@@ -309,7 +288,7 @@ int main(int argc, char **argv)
 	{
 		free_scene(scene);
 		free(arg_data);
-		iwrite(STDOUT_FILENO, "Error\nCould not init mlx!\n", 26);
+		ft_printf("Error\nCould not init mlx!\n");
 		return 1;
 	}
 
@@ -328,7 +307,7 @@ int main(int argc, char **argv)
 	{
 		free_scene(scene);
 		free(arg_data);
-		iwrite(STDOUT_FILENO, "Error\nCould not create mlx window!\n", 35);
+		ft_printf("Error\nCould not create mlx window!\n");
 		return 1;
 	}
 
@@ -346,7 +325,7 @@ int main(int argc, char **argv)
 		mlx_destroy_window(mlx, window);
 		free_scene(scene);
 		free(arg_data);
-		iwrite(STDOUT_FILENO, "Error\nCould not create pixel array!\n", 36);
+		ft_printf("Error\nCould not create pixel array!\n");
 		return 1;
 	}
 	if (pthread_mutex_init(&mlx_data.lock, NULL) != 0)
@@ -355,7 +334,7 @@ int main(int argc, char **argv)
 		mlx_destroy_window(mlx, window);
 		free_scene(scene);
 		free(arg_data);
-		iwrite(STDOUT_FILENO, "Error\nCould not init pthread mutex!\n", 36);
+		ft_printf("Error\nCould not init pthread mutex!\n");
 		return 1;
 	}
 	init_image(mlx, &mlx_data.img, scene->resolution.width, scene->resolution.height);
@@ -365,7 +344,7 @@ int main(int argc, char **argv)
 		free_scene(scene);
 		free(mlx_data.pixels);
 		free(arg_data);
-		iwrite(STDOUT_FILENO, "Error\nCould not create mlx image!\n", 35);
+		ft_printf("Error\nCould not create mlx image!\n");
 		return 1;
 	}
 	for (int i = 0; i < scene->resolution.width * scene->resolution.height; i++)
@@ -402,6 +381,6 @@ int main(int argc, char **argv)
 	mlx_destroy_image(mlx, mlx_data.img.image);
 	free(arg_data);
 	close(fd);
-	iwrite(STDOUT_FILENO, "Completed!\n", 11);
+	ft_printf("Completed!\n");
 	return 0;
 }

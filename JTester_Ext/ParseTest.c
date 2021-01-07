@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <dirent.h>
 #include "libft.h"
+#include "ft_error.h"
 
 #define ScenesPath "/home/jasper/Desktop/miniRT/scenes"
 

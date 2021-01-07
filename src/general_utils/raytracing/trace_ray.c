@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:43:55 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/07 17:11:20 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,10 @@ void trace_color(t_mlx_data* data, t_ray* ray, t_color_hdr* o_hdr)
 		o_hdr->r = hit.color.r * ambiant.r;
 		o_hdr->g = hit.color.g * ambiant.g;
 		o_hdr->b = hit.color.b * ambiant.b;
+
+		//o_hdr->r = ambiant.r;
+		//o_hdr->g = ambiant.g;
+		//o_hdr->b = ambiant.b;
 	}
 	else
 		*o_hdr = data->scene->ambiant;

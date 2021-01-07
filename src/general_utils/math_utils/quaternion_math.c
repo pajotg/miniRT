@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:28:33 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 13:36:42 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/05 15:17:04 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,20 +73,33 @@ void quaternion_normalize(t_quaternion *result, const t_quaternion *a)
 }
 
 /*
-** This function can be easily optimized by expanding the equation and removing the values that aren't needed
-** kinda just discarding the temp.x... /shrug
+** I wonder if we can simplify more
+** It was originally:
+**		t_quaternion temp;
+**		t_quaternion conjugate;
+**
+**		quaternion_init(&temp, 0, vec->x, vec->y, vec->z);
+**		quaternion_mult(&temp, a, &temp);
+**		quaternion_conjugate(&conjugate, a);
+**		quaternion_mult(&temp, &temp, &conjugate);
+**		vec3_init(result, temp.i, temp.j, temp.k);
 */
 
 void quaternion_mult_vec3(t_vec3 *result, const t_quaternion *a, const t_vec3 *vec)
 {
-	t_quaternion temp;
-	t_quaternion conjugate;
+	t_quaternion con;
+	quaternion_conjugate(&con, a);
 
-	quaternion_init(&temp, 0, vec->x, vec->y, vec->z);
-	quaternion_mult(&temp, a, &temp);
-	quaternion_conjugate(&conjugate, a);
-	quaternion_mult(&temp, &temp, &conjugate);
-	vec3_init(result, temp.i, temp.j, temp.k);
+	float ta = con.i * vec->x + con.j * vec->y + con.k * vec->z;
+	float tb = con.r * vec->x - con.j * vec->z + con.k * vec->y;
+	float tc = con.r * vec->y + con.i * vec->z - con.k * vec->x;
+	float te = con.r * vec->z - con.i * vec->y + con.j * vec->x;
+
+	vec3_init(result,
+		ta * con.i + tb * con.r + tc * con.k - te * con.j,
+		ta * con.j - tb * con.k + tc * con.r + te * con.i,
+		ta * con.k + tb * con.j - tc * con.i + te * con.r
+	);
 }
 
 void quaternion_from_matrix(t_quaternion *result, const t_matrix3x3 *matrix)

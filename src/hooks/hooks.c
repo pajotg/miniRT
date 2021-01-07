@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 14:11:21 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/03 17:22:07 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/07 17:08:55 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,20 @@ int hook_mouse(int button, int x, int y, void* p)
 
 			float sqrmag = vec3_magnitude_sqr(&hit.normal);
 			if (sqrmag > 1.01 || sqrmag < 0.99)
-				printf("Normal magnitude != 1, actual: %.2f\n", sqrtf(sqrmag));
+				printf("		Err: Normal magnitude != 1, actual: %.2f\n", sqrtf(sqrmag));
+
+			t_vec3 expected_loc;
+			vec3_scale(&expected_loc, &ray.direction, hit.distance);
+			vec3_add(&expected_loc, &expected_loc, &ray.origin);
+
+			t_vec3 diff;
+			vec3_subtract(&diff, &expected_loc, &hit.location);
+			sqrmag = vec3_magnitude_sqr(&diff);
+			if (sqrmag > 0.01)
+				ft_printf("		Err: Expected location %v but got: %v!\n", &expected_loc, &hit.location);
+
+			if (vec3_dot(&hit.normal, &ray.direction) > 0)
+				ft_printf("		Err: hit.normal in opposite direction!\n");
 		}
 		else
 			printf("Miss!\n");
