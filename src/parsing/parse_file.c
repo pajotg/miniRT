@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/07 20:49:39 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/08 20:01:47 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <stdlib.h>
 
 #include <stdio.h>	// bad
+#include "ft_printf.h"	// bad
 
 static bool is_object(char *line, char *object, int *curr)
 {
@@ -42,6 +43,7 @@ static bool is_object(char *line, char *object, int *curr)
 
 static bool parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *line, int *curr)
 {
+	//ft_printf("Parsing line: %s\n",line);
 	if (is_object(line, "R", curr))
 		return parse_resolution(parse_data, scene, line, curr);
 	else if (is_object(line, "A", curr))
@@ -109,9 +111,9 @@ t_scene* parse_scene_file(int fd)
 		return NULL;
 	}
 	bool init_success = true;
-	init_success = list_init(&scene->cameras, sizeof(t_camera)) && init_success;
-	init_success = list_init(&scene->objects, sizeof(t_object)) && init_success;
-	init_success = list_init(&scene->lights, sizeof(t_light)) && init_success;
+	init_success = init_success && list_init(&scene->cameras, sizeof(t_camera));
+	init_success = init_success && list_init(&scene->objects, sizeof(t_object));
+	init_success = init_success && list_init(&scene->lights, sizeof(t_light));
 	if (!init_success)
 	{
 		free_scene(scene);
@@ -128,16 +130,19 @@ t_scene* parse_scene_file(int fd)
 	parse_data.has_anti_aliasing = false;
 	while (true)
 	{
+		//ft_printf("Objects capacity: %lu/%lu\n", scene->objects.count,scene->objects.capacity);
 		int out = get_next_line(fd, &line);
 		if (out == -1)
 		{
 			set_error(ft_strjoin("Could not read file: ", get_last_error()), true);
+			clear_gnl_data(fd);
 			free_scene(scene);
 			return NULL;
 		}
 
 		if (!parse_line(&parse_data, scene, line))
 		{
+			ft_printf("Got error: %s\n",get_last_error());
 			clear_gnl_data(fd);
 			free(line);
 			free_scene(scene);

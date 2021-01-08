@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/07 20:10:59 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/08 17:03:27 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,8 @@
 #include "mlx_int.h"
 #include <math.h>
 #include "ft_printf.h"
-#include <pthread.h>
 #include "ft_error.h"
-
+#include <pthread.h>	// used for threading (bonus)
 #include <time.h>	// used for movement (bonus)
 
 #define NUM_THREADS 5
@@ -261,6 +260,7 @@ int main(int argc, char **argv)
 	{
 		ft_printf("Error\nAn error occured while parsing the file: \"%s\"!\n", get_last_error());
 		free(arg_data);
+		close(fd);
 		return 1;
 	}
 
@@ -359,7 +359,7 @@ int main(int argc, char **argv)
 	mlx_loop_hook(mlx, hook_loop, &mlx_data);
 	mlx_mouse_hook(window, hook_mouse, &mlx_data);
 
-	mlx_hook(window, ClientMessage, NoEventMask, hook_client_message, &mlx_data);
+	mlx_hook(window, ClientMessage, StructureNotifyMask, hook_client_message, &mlx_data);
 
 	pthread_t thread_ids[NUM_THREADS];
 	for (int i = 0; i < NUM_THREADS; i++)

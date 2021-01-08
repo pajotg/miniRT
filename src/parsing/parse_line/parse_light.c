@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:37:48 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/04 13:21:11 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/08 13:13:06 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,10 @@ bool	parse_light(t_scene *scene, char *line, int *curr)
 			"Light color incorrectly formatted: ", line), true);
 		return (false);
 	}
-	list_push(&scene->lights, &light);
+	if (!list_push(&scene->lights, &light))
+	{
+		set_error("Could not push light into lights list!", true);
+		return (false);
+	}
 	return (true);
 }

@@ -24,6 +24,8 @@ SOURCE_FILES = $(shell find $(SRC_DIR) -type f -name *.c)	# Really long comment 
 HEADER_FILES = $(shell find $(INCLUDE_DIRS) -type f -name *.h)
 OBJECTS = $(SOURCE_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 
+DEPENDENCIES = Makefile libft/src libft/include
+
 .PHONY: all
 all: $(NAME)
 
@@ -34,12 +36,12 @@ debug:
 
 # Be sure to make libft and minilibx no longer submodules when you want to eval, it dont work when you clone it! REEE
 # Also be sure to find #include <stdio.h>, you never know where i left it in, alright? alright.
-$(NAME): $(OBJECTS) Makefile
+$(NAME): $(OBJECTS) $(DEPENDENCIES)
 	$(MAKE) -C minilibx-linux
 	$(MAKE) -C libft
 	$(CC) $(FLAGS) -o $(NAME) $(OBJECTS) $(LDFLAGS)
 
-$(TEST_BINDER_NAME): $(OBJECTS) Makefile
+$(TEST_BINDER_NAME): $(OBJECTS) $(DEPENDENCIES)
 	$(MAKE) -C minilibx-linux
 	$(MAKE) -C libft
 	rm -f $(TEST_BINDER_NAME)
@@ -49,7 +51,7 @@ $(TEST_BINDER_NAME): $(OBJECTS) Makefile
 $(OBJ_DIR) $(SRC_DIR):
 	mkdir $@
 
-$(OBJECTS): $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES) \
+$(OBJECTS): $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES) $(DEPENDENCIES) \
 	| $(SRC_DIR) $(OBJ_DIR)
 	mkdir -p $(shell dirname $@)
 	$(CC) $(FLAGS) $(INCLUDE) -c -o $@ $<

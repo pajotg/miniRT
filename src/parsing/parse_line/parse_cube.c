@@ -59,6 +59,10 @@ bool		parse_cube(t_scene *scene, char *line, int *curr)
 	skip_whitespace(line, curr);
 	if (!parse_cube_ext(cube, line, curr))
 		return (false);
-	list_push(&scene->objects, &object);
+	if (!list_push(&scene->objects, &object))
+	{
+		set_error("Could not push cube into objects list!", true);
+		return (false);
+	}
 	return (true);
 }

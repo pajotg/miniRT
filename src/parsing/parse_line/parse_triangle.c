@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:08:45 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/04 13:21:29 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/08 13:13:55 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,10 @@ bool		parse_triangle(t_scene *scene, char *line, int *curr)
 	skip_whitespace(line, curr);
 	if (!parse_triangle_ext(triangle, line, curr))
 		return (false);
-	list_push(&scene->objects, &object);
+	if (!list_push(&scene->objects, &object))
+	{
+		set_error("Could not push triangle into objects list!", true);
+		return (false);
+	}
 	return (true);
 }

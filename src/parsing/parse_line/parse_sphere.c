@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:39:05 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/04 13:20:58 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/08 13:13:41 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,10 @@ bool		parse_sphere(t_scene *scene, char *line, int *curr)
 	skip_whitespace(line, curr);
 	if (!parse_sphere_extension(sphere, line, curr))
 		return (false);
-	list_push(&scene->objects, &object);
+	if (!list_push(&scene->objects, &object))
+	{
+		set_error("Could not push sphere into objects list!", true);
+		return (false);
+	}
 	return (true);
 }
