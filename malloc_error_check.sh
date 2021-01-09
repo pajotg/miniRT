@@ -24,6 +24,10 @@ while [[ $i -lt 1000 ]]; do
 	fi
 
 	#echo $i = $current_num_mallocs
+	#echo $i = $exit_code
+	if [[ $exit_code == 139 ]]; then # check for seg fault
+		echo "The $i-th malloc returning null causes a segfault (max mallocs: $max_num_mallocs)"
+	fi
 	if [[ $exit_code == 137 ]]; then # check for timeout by ulimit
 		echo "The $i-th malloc returning null causes a timeout (max mallocs: $max_num_mallocs)"
 		num_timeouts=$(( $num_timeouts + 1 ))
