@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/08 20:01:47 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/15 14:46:09 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,6 @@ t_scene* parse_scene_file(int fd)
 
 		if (!parse_line(&parse_data, scene, line))
 		{
-			ft_printf("Got error: %s\n",get_last_error());
 			clear_gnl_data(fd);
 			free(line);
 			free_scene(scene);

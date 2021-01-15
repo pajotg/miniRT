@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 14:36:34 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/07 17:27:52 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/15 21:52:25 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "mini_rt_color_math_utils.h"
 # include <stdbool.h>
+# include "ft_aabb.h"
 
 /*
 **	Forward declare the t_object struct
@@ -25,15 +26,10 @@ struct s_object;
 typedef bool	(*t_object_intersect_func)(struct s_object* object,
 	t_ray* ray, t_ray_hit* hit);
 
-typedef struct	s_aabb
-{
-	t_vec3 min_b;
-	t_vec3 max_b;
-}				t_aabb;
-
 typedef struct	s_object
 {
 	t_transform				transform;
+	t_aabb					aabb;
 	void					*object_data;
 	t_object_intersect_func	intersect_func;
 }				t_object;

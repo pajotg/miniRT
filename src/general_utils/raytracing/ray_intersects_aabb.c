@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/07 17:18:14 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/07 17:25:00 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/15 21:53:54 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ bool ray_intersects_aabb(t_ray* ray, t_aabb* aabb, float max_dist)
 	float candidate_plane[3];
 	bool inside = true;
 
-	float* min_b = (float*)&aabb->min_b;
-	float* max_b = (float*)&aabb->max_b;
+	float* min_b = (float*)&aabb->min;
+	float* max_b = (float*)&aabb->max;
 
 	float* origin = (float*)&ray->origin;
 	float* dir = (float*)&ray->direction;
