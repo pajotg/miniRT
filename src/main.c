@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/13 13:16:38 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/16 14:30:03 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,8 +161,7 @@ int	hook_loop(void *p)
 	}
 
 	// Input
-	t_vec3 move_dir;
-	vec3_init(&move_dir, 0, 0, 0);
+	t_vec3 move_dir = (t_vec3) { 0, 0, 0 };
 	move_dir.z = (data->input.forward ? -1 : 0) + (data->input.backward ? 1 : 0);
 	move_dir.x = (data->input.right ? -1 : 0) + (data->input.left ? 1 : 0);
 	move_dir.y = (data->input.down ? -1 : 0) + (data->input.up ? 1 : 0);

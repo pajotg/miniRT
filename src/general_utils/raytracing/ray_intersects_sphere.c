@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:57 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/15 21:14:41 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/16 14:29:47 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,6 @@ bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 	vec3_scale(&hit->normal, &hit->normal, 1 / data->radius);
 
 	if (is_inside)
-		vec3_init(&hit->normal, -hit->normal.x, -hit->normal.y, -hit->normal.z);
+		hit->normal = (t_vec3) { -hit->normal.x, -hit->normal.y, -hit->normal.z };
 	return true;
 }

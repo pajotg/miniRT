@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:04 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/15 21:14:48 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/16 14:29:25 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ bool ray_intersects_triangle(t_object* object, t_ray* ray, t_ray_hit* hit)
 	if (vec3_dot(&normal, &ray->direction) < 0)
 		hit->normal = normal;
 	else
-		vec3_init(&hit->normal, -normal.x, -normal.y, -normal.z);
+		hit->normal = (t_vec3) { -normal.x, -normal.y, -normal.z };
 	vec3_scale(&hit->location, &ray->direction, distance);
 	vec3_add(&hit->location, &hit->location, &ray->origin);
 

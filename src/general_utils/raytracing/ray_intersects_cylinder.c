@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:25 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/15 21:14:31 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/16 14:29:03 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ bool ray_intersects_cylinder_top_and_bottom(float Height, float Radius, t_vec3* 
 	hit->distance = Dist;
 	vec3_scale(&hit->location, dir, Dist);
 	vec3_add(&hit->location, &hit->location, origin);
-	vec3_init(&hit->normal, 0, 0, dir->z > 0 ? -1 : 1);
+	hit->normal = (t_vec3) { 0, 0, dir->z > 0 ? -1 : 1 };
 
 	return (true);
 }
@@ -106,11 +106,11 @@ bool ray_intersects_cylinder(t_object* object, t_ray* ray, t_ray_hit* hit)
 	vec3_scale(&hit->location, &ray->direction, dist);
 	vec3_add(&hit->location, &hit->location, &ray->origin);
 
-	vec3_init(&hit->normal,
+	hit->normal = (t_vec3) {
 		(origin.x + dir.x * dist) / data->radius,
 		(origin.y + dir.y * dist) / data->radius,
 		0
-	);
+	};
 	if (is_inside)
 	{
 		hit->normal.x = -hit->normal.x;
