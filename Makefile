@@ -9,7 +9,7 @@ TEST_BINDER_NAME = TestBinder.a
 SRC_DIR = src/
 OBJ_DIR = obj/
 INCLUDE_DIRS = include/
-INCLUDE = -Iinclude -Ilibft/include -Iminilibx-linux -Isrc/get_next_line
+INCLUDE = -Iinclude -Ilibft/include -Iminilibx-linux
 LDFLAGS = -Lminilibx-linux/ -lmlx -Llibft -lft -lXext -lX11 -lm -lbsd -lpthread
 
 FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror

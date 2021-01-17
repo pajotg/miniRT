@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:22 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/04 13:19:30 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 14:05:50 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,11 @@
 # include "mini_rt_objects.h"
 # include "mini_rt_raytracing.h"
 # include "mini_rt_hooks.h"
+# include "mini_rt_render_loop.h"
 # include <stdbool.h>
 
 void			init_ft_printf();
+bool			save_image(t_mlx_image* img, char* path);
 bool			write_bmp(int fd, unsigned char *pixels, int width, int height);
 
 #endif
