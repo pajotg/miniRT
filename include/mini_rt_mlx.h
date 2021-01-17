@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 18:51:02 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 14:15:09 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 13:25:40 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ typedef struct	s_mlx_data
 	t_mlx_image		img;
 	float			white;
 	bool			active;
+	bool			debug_trace_aabb;
 	pthread_mutex_t	lock;
 
 	int				current_pixel;

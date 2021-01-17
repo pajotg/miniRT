@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 14:11:21 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/07 17:08:55 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 13:33:47 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #define KEY_Q 113
 #define KEY_E 101
 #define KEY_T 116
+#define KEY_Z 122
 
 #define KEY_R 114
 #define KEY_F 102
@@ -65,6 +66,8 @@ int	hook_key_down(int key,void *p)
 		data->input.white_up = true;
 	else if (key == KEY_F)
 		data->input.white_down = true;
+	else if (key == KEY_Z)
+		data->debug_trace_aabb = !data->debug_trace_aabb;
 	else if (key == KEY_T)
 		next_cam(data);
 	return 0;

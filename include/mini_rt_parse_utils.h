@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:19 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/04 13:00:27 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/16 18:08:06 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "list.h"
 # include "mini_rt_math_utils.h"
+# include "ft_vec2.h"
 
 typedef struct	s_args
 {
@@ -47,6 +48,30 @@ typedef struct	s_scene
 	t_list			objects;
 	t_list			lights;
 }				t_scene;
+
+/*
+**	Thats alot of info for a face!
+*/
+
+typedef struct	s_face
+{
+	t_vec3 a_pos;
+	t_vec3 b_pos;
+	t_vec3 c_pos;
+
+	t_vec2 a_uv;
+	t_vec2 b_uv;
+	t_vec2 c_uv;
+
+	t_vec3 a_normal;
+	t_vec3 b_normal;
+	t_vec3 c_normal;
+}				t_face;
+
+typedef struct	s_obj
+{
+	t_list	faces;
+}				t_obj;
 
 void			free_scene(t_scene *scene);
 t_scene			*parse_scene_file(int fd);

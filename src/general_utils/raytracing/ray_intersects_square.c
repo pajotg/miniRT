@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:37 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/15 21:14:45 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 13:46:57 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,14 @@ bool ray_intersects_square(t_object* object, t_ray* ray, t_ray_hit* hit)
 	t_vec3 side;
 	quaternion_mult_vec3(&side, &object->transform.rotation, vec3_right());
 	float dot = vec3_dot(&side, &temp);
-	if (dot > data->size || dot < -data->size)
+	if (dot > data->extends || dot < -data->extends)
 		return (false);
 
 	// Thats one side done, do the other!
 	// Its faster to use the cross product rather than do a secondairy quat * vec3 mult
 	vec3_cross(&side, &side, &normal);
 	dot = vec3_dot(&side, &temp);
-	if (dot > data->size || dot < -data->size)
+	if (dot > data->extends || dot < -data->extends)
 		return (false);
 
 	// Alright! we hit!

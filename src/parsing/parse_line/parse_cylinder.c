@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:05:43 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/08 13:13:13 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 13:47:50 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,14 @@ static bool	parse_cylinder_ext(t_object_cylinder *cylinder,
 	}
 	cylinder->radius /= 2;
 	skip_whitespace(line, curr);
-	if (!read_float(line, curr, &cylinder->height))
+	if (!read_float(line, curr, &cylinder->height_extends))
 	{
 		free(cylinder);
 		set_error(ft_strjoin(
 			"cylinder height incorrectly formatted: ", line), true);
 		return (false);
 	}
+	cylinder->height_extends /= 2;
 	skip_whitespace(line, curr);
 	if (!read_color(line, curr, false, &cylinder->color))
 	{
@@ -69,6 +70,12 @@ bool		parse_cylinder(t_scene *scene, char *line, int *curr)
 	skip_whitespace(line, curr);
 	if (!parse_cylinder_ext(cylinder, line, curr))
 		return (false);
+	// Calculate the aabb
+	object.aabb.max = (t_vec3) {  cylinder->radius,  cylinder->height_extends,  cylinder->radius };
+	object.aabb.min = (t_vec3) { -cylinder->radius, -cylinder->height_extends, -cylinder->radius };
+	vec3_add(&object.aabb.min, &object.aabb.min, &object.transform.position);
+	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
+	aabb_rotate(&object.aabb,&object.transform.rotation);
 	if (!list_push(&scene->objects, &object))
 	{
 		set_error("Could not push cylinder into objects list!", true);

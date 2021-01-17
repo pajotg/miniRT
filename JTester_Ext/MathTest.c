@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 		obj.transform.rotation = *quaternion_identity();
 		obj.object_data = &object_data;
 
-		object_data.size = 1;
+		object_data.extends = 1;
 
 		vec3_init(&ray.origin, 0,0,-5);
 		vec3_init(&ray.direction, 0,0,1);

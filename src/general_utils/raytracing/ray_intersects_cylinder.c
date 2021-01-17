@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:25 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/16 14:29:03 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 13:46:57 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ bool ray_intersects_cylinder(t_object* object, t_ray* ray, t_ray_hit* hit)
 	// If we are above or below, first check top/bottom
 	if (origin.x * origin.x + origin.y * origin.y < data->radius * data->radius)
 	{
-		if (ray_intersects_cylinder_top_and_bottom(data->height, data->radius, &origin, &dir, hit))
+		if (ray_intersects_cylinder_top_and_bottom(data->height_extends, data->radius, &origin, &dir, hit))
 		{
 			hit->color = data->color;
 			quaternion_mult_vec3(&hit->location, &object->transform.rotation, &hit->location);
@@ -67,7 +67,7 @@ bool ray_intersects_cylinder(t_object* object, t_ray* ray, t_ray_hit* hit)
 			vec3_add(&hit->location, &hit->location, &object->transform.position);
 			return (true);
 		}
-		if (origin.z > data->height || origin.z < -data->height)
+		if (origin.z > data->height_extends || origin.z < -data->height_extends)
 			return (false);	// We can only return false if we are not inside the cylinder
 	}
 
@@ -87,9 +87,9 @@ bool ray_intersects_cylinder(t_object* object, t_ray* ray, t_ray_hit* hit)
 
 	// If we are above or below the height, raycast to the top and bottom
 	float out_z = origin.z + dir.z * dist;
-	if (out_z > data->height || out_z < -data->height)
+	if (out_z > data->height_extends || out_z < -data->height_extends)
 	{
-		if (ray_intersects_cylinder_top_and_bottom(data->height, data->radius, &origin, &dir, hit))
+		if (ray_intersects_cylinder_top_and_bottom(data->height_extends, data->radius, &origin, &dir, hit))
 		{
 			hit->color = data->color;
 			quaternion_mult_vec3(&hit->location, &object->transform.rotation, &hit->location);

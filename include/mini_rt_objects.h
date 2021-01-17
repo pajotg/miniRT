@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 14:36:34 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/15 21:52:25 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 13:46:53 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,14 @@ typedef struct	s_object_plane
 typedef struct	s_object_square
 {
 	t_color_hdr	color;
-	float		size;
+	float		extends;
 }				t_object_square;
 
 typedef struct	s_object_cylinder
 {
 	t_color_hdr	color;
 	float		radius;
-	float		height;
+	float		height_extends;
 }				t_object_cylinder;
 
 typedef struct	s_object_triangle
@@ -68,7 +68,7 @@ typedef struct	s_object_triangle
 typedef struct	s_object_cube
 {
 	t_color_hdr	color;
-	float		size;
+	float		extends;
 }				t_object_cube;
 
 bool			ray_intersects_aabb(t_ray* ray,

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/16 14:30:03 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 13:26:08 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,6 +317,7 @@ int main(int argc, char **argv)
 	mlx_data.current_pixel = 0;
 	mlx_data.white = 1;
 	mlx_data.active = true;
+	mlx_data.debug_trace_aabb = false;
 	ft_bzero(&mlx_data.input, sizeof(t_input));
 	if (mlx_data.pixels == NULL)
 	{

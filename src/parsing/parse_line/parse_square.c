@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:59:22 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/08 13:13:49 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 13:48:14 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,14 @@
 
 static bool	parse_square_ext(t_object_square *square, char *line, int *curr)
 {
-	if (!read_float(line, curr, &square->size))
+	if (!read_float(line, curr, &square->extends))
 	{
 		free(square);
 		set_error(ft_strjoin(
 			"square size incorrectly formatted: ", line), true);
 		return (false);
 	}
+	square->extends /= 2;
 	skip_whitespace(line, curr);
 	if (!read_color(line, curr, false, &square->color))
 	{
@@ -59,6 +60,12 @@ bool		parse_square(t_scene *scene, char *line, int *curr)
 	skip_whitespace(line, curr);
 	if (!parse_square_ext(square, line, curr))
 		return (false);
+	// Calculate the aabb
+	object.aabb.max = (t_vec3) {  square->extends,  square->extends, 0 };
+	object.aabb.min = (t_vec3) { -square->extends, -square->extends, 0 };
+	vec3_add(&object.aabb.min, &object.aabb.min, &object.transform.position);
+	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
+	aabb_rotate(&object.aabb,&object.transform.rotation);
 	if (!list_push(&scene->objects, &object))
 	{
 		set_error("Could not push square into objects list!", true);

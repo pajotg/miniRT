@@ -17,13 +17,14 @@
 
 static bool	parse_cube_ext(t_object_cube *cube, char *line, int *curr)
 {
-	if (!read_float(line, curr, &cube->size))
+	if (!read_float(line, curr, &cube->extends))
 	{
 		free(cube);
 		set_error(ft_strjoin(
 			"cube size incorrectly formatted: ", line), true);
 		return (false);
 	}
+	cube->extends /= 2;
 	skip_whitespace(line, curr);
 	if (!read_color(line, curr, false, &cube->color))
 	{
@@ -38,7 +39,7 @@ static bool	parse_cube_ext(t_object_cube *cube, char *line, int *curr)
 bool		parse_cube(t_scene *scene, char *line, int *curr)
 {
 	t_object		object;
-	t_object_cube *cube;
+	t_object_cube	*cube;
 
 	cube = malloc(sizeof(t_object_cube));
 	if (!cube)
@@ -59,6 +60,13 @@ bool		parse_cube(t_scene *scene, char *line, int *curr)
 	skip_whitespace(line, curr);
 	if (!parse_cube_ext(cube, line, curr))
 		return (false);
+	// Calculate the aabb
+	object.aabb.max = (t_vec3) {  cube->extends,  cube->extends,  cube->extends };
+	object.aabb.min = (t_vec3) { -cube->extends, -cube->extends, -cube->extends };
+	vec3_add(&object.aabb.min, &object.aabb.min, &object.transform.position);
+	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
+	aabb_rotate(&object.aabb,&object.transform.rotation);
+
 	if (!list_push(&scene->objects, &object))
 	{
 		set_error("Could not push cube into objects list!", true);

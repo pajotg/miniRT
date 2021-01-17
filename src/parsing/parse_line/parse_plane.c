@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:47:01 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/08 13:13:03 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 13:20:07 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "mini_rt_objects.h"
 #include "ft_error.h"
 #include <stdlib.h>
+#include <math.h>
 
 static bool	parse_plane_ext(t_object_plane *plane, char *line, int *curr)
 {
@@ -51,6 +52,9 @@ bool		parse_plane(t_scene *scene, char *line, int *curr)
 	skip_whitespace(line, curr);
 	if (!parse_plane_ext(plane, line, curr))
 		return (false);
+	// Calculate the aabb
+	object.aabb.max = (t_vec3) { INFINITY, INFINITY, INFINITY };
+	object.aabb.min = (t_vec3) { -INFINITY, -INFINITY, -INFINITY };
 	if (!list_push(&scene->objects, &object))
 	{
 		set_error("Could not push plane into objects list!", true);

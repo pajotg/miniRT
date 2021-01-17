@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:12:38 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/15 21:14:36 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 13:46:57 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ bool ray_intersects_cube(t_object* object, t_ray* ray, t_ray_hit* hit)
 
 	for (i = 0; i < 3; i++)
 	{
-		min_b[i] = - data->size;
-		max_b[i] = + data->size;
+		min_b[i] = - data->extends;
+		max_b[i] = + data->extends;
 	}
 
 	// Calculate which three planes we need to intersect
