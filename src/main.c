@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/17 14:13:34 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/17 14:46:41 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	hook_loop(void *p)
 	vec3_add(&cam->transform.position, &cam->transform.position, &move_dir);
 
 	// Render
-	trace_next_pixels(data, 1000 / (data->scene->anti_aliasing * data->scene->anti_aliasing));
+	trace_next_pixels(data, 15000 / (data->scene->anti_aliasing * data->scene->anti_aliasing));
 
 	if (data->input.white_up != data->input.white_down)
 	{
