@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:09:49 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/15 21:53:47 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/18 14:52:04 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,5 +79,11 @@ typedef struct		s_light
 	t_vec3		position;
 	t_color_hdr	color;
 }					t_light;
+
+typedef struct		s_directional_light
+{
+	t_vec3		direction;
+	t_color_hdr	color;
+}					t_directional_light;
 
 #endif

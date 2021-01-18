@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:21:00 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/04 13:19:21 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/18 14:53:36 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,6 @@ bool	parse_square(t_scene *scene, char *line, int *curr);
 bool	parse_cylinder(t_scene *scene, char *line, int *curr);
 bool	parse_triangle(t_scene *scene, char *line, int *curr);
 bool	parse_cube(t_scene *scene, char *line, int *curr);
+bool	parse_directional_light(t_scene *scene, char *line, int *curr);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:19 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/16 18:08:06 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/18 14:53:00 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct	s_scene
 	t_list			cameras;
 	t_list			objects;
 	t_list			lights;
+	t_list			directional_lights;
 }				t_scene;
 
 /*

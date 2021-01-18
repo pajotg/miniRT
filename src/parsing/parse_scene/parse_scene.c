@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   parse_file.c                                       :+:    :+:            */
+/*   parse_scene.c                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/15 14:46:09 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/18 14:54:12 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ static bool parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *l
 		return parse_triangle(scene, line, curr);
 	else if (is_object(line, "cu", curr))
 		return parse_cube(scene, line, curr);
+	else if (is_object(line, "dl", curr))
+		return parse_directional_light(scene, line, curr);
 	set_error(ft_strjoin("Unknown configuration: ", line), true);
 	return (false);
 }
@@ -99,8 +101,17 @@ void free_scene(t_scene* scene)
 	list_un_init(&(scene->cameras), NULL);
 	list_un_init(&(scene->objects), (t_free_values)un_init_object);
 	list_un_init(&(scene->lights), NULL);
+	list_un_init(&(scene->directional_lights), NULL);
 	free(scene);
 }
+
+/*
+**	doing init_success = list_init(&list, sizeof(t_camera)) && init_success;
+**	because otherwise if a malloc fails, init_success gets set to false,
+**		and then the other list_init dont get called, but we DO call list_un_init
+**		causing it to free un-initialized memory, it has not caused a crash for me
+**		because un-initialized memory is zero'd on my system
+*/
 
 t_scene* parse_scene_file(int fd)
 {
@@ -111,9 +122,10 @@ t_scene* parse_scene_file(int fd)
 		return NULL;
 	}
 	bool init_success = true;
-	init_success = init_success && list_init(&scene->cameras, sizeof(t_camera));
-	init_success = init_success && list_init(&scene->objects, sizeof(t_object));
-	init_success = init_success && list_init(&scene->lights, sizeof(t_light));
+	init_success = list_init(&scene->cameras, sizeof(t_camera)) && init_success;
+	init_success = list_init(&scene->objects, sizeof(t_object)) && init_success;
+	init_success = list_init(&scene->lights, sizeof(t_light)) && init_success;
+	init_success = list_init(&scene->directional_lights, sizeof(t_directional_light)) && init_success;
 	if (!init_success)
 	{
 		free_scene(scene);

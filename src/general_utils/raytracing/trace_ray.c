@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/17 14:47:21 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/18 14:56:52 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void trace_lights(t_mlx_data* data, t_vec3* position, t_vec3* normal, t_color_hd
 	vec3_scale(&ray.origin, normal, NORMAL_OFFSET);
 	vec3_add(&ray.origin, position, &ray.origin);
 
+	// Trace point lights
 	for (size_t i = 0; i < data->scene->lights.count; i++)
 	{
 		t_light* light = list_index(&data->scene->lights, i);
@@ -86,9 +87,24 @@ void trace_lights(t_mlx_data* data, t_vec3* position, t_vec3* normal, t_color_hd
 			o_hdr->g += light->color.g * strength;
 			o_hdr->b += light->color.b * strength;
 		}
-
 	}
-	(void)normal;
+
+	// Trace directional lights
+	for (size_t i = 0; i < data->scene->directional_lights.count; i++)
+	{
+		t_directional_light* light = list_index(&data->scene->directional_lights, i);
+		float strength = vec3_dot(normal, &light->direction);
+		if (strength < 0)
+			continue;
+
+		ray.direction = light->direction;
+		if (!trace_ray(data, &ray, &hit))
+		{
+			o_hdr->r += light->color.r * strength;
+			o_hdr->g += light->color.g * strength;
+			o_hdr->b += light->color.b * strength;
+		}
+	}
 }
 
 /* For bounce light
@@ -158,6 +174,10 @@ void trace_color(t_mlx_data* data, t_ray* ray, t_color_hdr* o_hdr)
 ** 	+ rot * { 0, 1, 0} * oy
 ** 	+ rot * { 0, 0,-1} * dist
 ** )
+*/
+
+/*
+**	I can probably pre-calculate the matrix and such for a slight speed boost
 */
 
 void pix_to_ray(t_mlx_data* data, float x, float y, t_ray* o_ray)

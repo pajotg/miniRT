@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/18 14:24:02 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/18 17:53:25 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,8 @@ int	hook_loop(void *p)
 	return 0;
 }
 
+#include "libft.h"
+#include <math.h>
 int main(int argc, char **argv)
 {
 	init_ft_printf();

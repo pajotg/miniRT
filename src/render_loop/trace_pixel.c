@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/17 13:59:56 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/18 13:27:40 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/18 14:32:21 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,28 +81,35 @@ void trace_pixel(t_mlx_data* data, int x, int y)
 void trace_next_pixels(t_mlx_data* data, int desired)
 {
 	pthread_mutex_lock(&data->lock);
+	// Properly init last_frame
+	static t_time last_frame = { 0, 0 };
+	if (last_frame.seconds == 0)
+		last_frame = time_now();
+
+	// Make sure every pixel is only traced once
 	int pix = data->current_pixel;
 	data->current_pixel+=desired;
+
+	// Restarting frame rendering
 	if (data->current_pixel >= data->scene->resolution.width * data->scene->resolution.height)
 	{
-		static t_time last = { 0, 0 };
-		t_time current = time_now();
-		float diff = time_difference(&current, &last);
-		if (last.seconds == 0)
-			diff = -1;
-		last = current;
 		data->current_pixel = 0;
 
+		// Print out how long it took
+		t_time current = time_now();
+		float diff = time_difference(&current, &last_frame);
+		last_frame = current;
 		printf("Completed frame! time taken: %.2fs \n", diff);
 	}
 	pthread_mutex_unlock(&data->lock);
+	// Clamp stop to screen border
 	int stop = pix+desired;
 	if (stop > data->scene->resolution.width * data->scene->resolution.height)
 		stop = data->scene->resolution.width * data->scene->resolution.height;
+
+	// Trace
 	for (int i = pix; i < stop; i++)
-	{
 		trace_pixel(data, i % data->scene->resolution.width, i / data->scene->resolution.width);
-	}
 }
 
 void* new_pixel_render_thread(void* p)
