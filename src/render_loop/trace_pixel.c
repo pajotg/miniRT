@@ -6,15 +6,15 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/17 13:59:56 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/17 14:48:14 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/18 13:27:40 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_mlx.h"
 #include "mini_rt_raytracing.h"
 #include "mini_rt_color_math_utils.h"
+#include "ft_time.h"
 #include <stdio.h>
-#include <sys/time.h>	// bad... maybe?
 
 static void update_pix(t_mlx_data* data, int x, int y)
 {
@@ -78,7 +78,6 @@ void trace_pixel(t_mlx_data* data, int x, int y)
 	update_pix(data, x, y);
 }
 
-typedef struct timeval t_timeval;
 void trace_next_pixels(t_mlx_data* data, int desired)
 {
 	pthread_mutex_lock(&data->lock);
@@ -86,15 +85,15 @@ void trace_next_pixels(t_mlx_data* data, int desired)
 	data->current_pixel+=desired;
 	if (data->current_pixel >= data->scene->resolution.width * data->scene->resolution.height)
 	{
-		static t_timeval last = (t_timeval) { 0, 0 };
-		t_timeval current;
-		gettimeofday(&current, NULL);
-		double diff = (current.tv_sec - last.tv_sec) + 0.000001 * (current.tv_usec -  last.tv_usec);
-		if (last.tv_sec == 0)
+		static t_time last = { 0, 0 };
+		t_time current = time_now();
+		float diff = time_difference(&current, &last);
+		if (last.seconds == 0)
 			diff = -1;
 		last = current;
-		printf("Completed frame! time taken: %.2fs \n", diff);
 		data->current_pixel = 0;
+
+		printf("Completed frame! time taken: %.2fs \n", diff);
 	}
 	pthread_mutex_unlock(&data->lock);
 	int stop = pix+desired;

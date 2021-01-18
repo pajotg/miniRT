@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/17 14:46:41 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/18 14:24:02 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include "ft_printf.h"
 #include "ft_error.h"
 #include <pthread.h>	// used for threading (bonus)
-#include <time.h>	// used for movement (bonus)
+#include "ft_time.h"	// Used for movement (bonus)
 
 #define NUM_THREADS 5
 
@@ -35,6 +35,35 @@ bool init_image(void* mlx, t_mlx_image* img, int width, int height)
 }
 
 /*
+**	returns time since last frame
+*/
+
+static float hook_frame()
+{
+	// 	Get time since last frame
+	static t_time last = { 0, 0 };
+	t_time current = time_now();
+	float diff = time_difference(&current, &last);
+	if (last.seconds == 0)
+		diff = 0;
+	last = current;
+
+	//	Accumulate values
+	static float time = 0;
+	static int frames = 0;
+	time += diff;
+	frames++;
+	//	Print out
+	if (time > 1)
+	{
+		printf("%i fps (%.4fs/f)\n", frames, time / frames);
+		time = 0;
+		frames = 0;
+	}
+	return (diff);
+}
+
+/*
 **	Beware! if you get more than 400 fps it gets REAL LAGGY...
 **	What?
 */
@@ -43,21 +72,7 @@ int	hook_loop(void *p)
 {
 	t_mlx_data* data = p;
 
-	// FPS printing
-	static clock_t last_tick = 0;
-	static clock_t time = 0;
-	static int frames = 0;
-	clock_t current = clock();
-	clock_t diff = current - last_tick;
-	last_tick = current;
-	time += diff;
-	frames++;
-	if (time > CLOCKS_PER_SEC * NUM_THREADS)
-	{
-		printf("%i fps (%.4fs/f)\n", frames, (float)(time / frames) / (CLOCKS_PER_SEC * NUM_THREADS));
-		time = 0;
-		frames = 0;
-	}
+	float diff = hook_frame();
 
 	// Input
 	t_vec3 move_dir = (t_vec3) { 0, 0, 0 };
@@ -67,7 +82,7 @@ int	hook_loop(void *p)
 
 	t_camera* cam = list_index(&data->scene->cameras, data->scene->current_camera_index);
 	quaternion_mult_vec3(&move_dir, &cam->transform.rotation, &move_dir);
-	vec3_scale(&move_dir, &move_dir, diff / (float)CLOCKS_PER_SEC * 2.0);
+	vec3_scale(&move_dir, &move_dir, diff * 5);
 	vec3_add(&cam->transform.position, &cam->transform.position, &move_dir);
 
 	// Render
@@ -77,7 +92,7 @@ int	hook_loop(void *p)
 	{
 		float change = powf(1.1,
 			((data->input.white_down ? -1 : 0) + (data->input.white_up ? 1 : 0))
-			* (diff / (float)CLOCKS_PER_SEC * 10)
+			* (diff * 2)
 		);
 		data->white *= change;
 		if (data->white < 0.001)

@@ -8,9 +8,12 @@ TEST_BINDER_NAME = TestBinder.a
 
 SRC_DIR = src/
 OBJ_DIR = obj/
-INCLUDE_DIRS = include/
+INCLUDE_DIRS = include libft/include minilibx-linux
 INCLUDE = -Iinclude -Ilibft/include -Iminilibx-linux
 LDFLAGS = -Lminilibx-linux/ -lmlx -Llibft -lft -lXext -lX11 -lm -lbsd -lpthread
+
+FOREIGN_TARGETS = minilibx-linux/libmlx.a libft/libft.a
+MAKE_FOREIGN_TARGETS = minilibx-linux/libmlx libft/libft
 
 FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
 
@@ -20,11 +23,9 @@ else
 FLAGS += -O2
 endif
 
-SOURCE_FILES = $(shell find $(SRC_DIR) -type f -name *.c)	# Really long comment so i will fix it once i am done with making it work alright okay this should trigger the norminette+
+SOURCE_FILES = $(shell find $(SRC_DIR) -type f -name *.c)
 HEADER_FILES = $(shell find $(INCLUDE_DIRS) -type f -name *.h)
 OBJECTS = $(SOURCE_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
-
-DEPENDENCIES = Makefile libft/src libft/include
 
 .PHONY: all
 all: $(NAME)
@@ -36,14 +37,13 @@ debug:
 
 # Be sure to make libft and minilibx no longer submodules when you want to eval, it dont work when you clone it! REEE
 # Also be sure to find #include <stdio.h>, you never know where i left it in, alright? alright.
-$(NAME): $(OBJECTS) $(DEPENDENCIES)
-	$(MAKE) -C minilibx-linux
-	$(MAKE) -C libft
+# Making it work with the foreign targets was a nightmare, the phony on the $(MAKE) -C libft make it look always out of date
+# so it would always re-link, so i had to put the MAKE_FOREIGN_TARGETS in the order only dependency so it would not matter if it was "out of date"
+# and then ALSO add the real library in the dependencies so it would update if it actually was out of date... UGH!
+$(NAME): $(OBJECTS) $(FOREIGN_TARGETS) | $(MAKE_FOREIGN_TARGETS)
 	$(CC) $(FLAGS) -o $(NAME) $(OBJECTS) $(LDFLAGS)
 
-$(TEST_BINDER_NAME): $(OBJECTS) $(DEPENDENCIES)
-	$(MAKE) -C minilibx-linux
-	$(MAKE) -C libft
+$(TEST_BINDER_NAME): $(OBJECTS)
 	rm -f $(TEST_BINDER_NAME)
 	ar -rcS $(TEST_BINDER_NAME) $(filter-out %main.o,$(OBJECTS))
 	ar -cs $(TEST_BINDER_NAME)
@@ -51,11 +51,26 @@ $(TEST_BINDER_NAME): $(OBJECTS) $(DEPENDENCIES)
 $(OBJ_DIR) $(SRC_DIR):
 	mkdir $@
 
-$(OBJECTS): $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES) $(DEPENDENCIES) \
+$(OBJECTS): $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES) \
 	| $(SRC_DIR) $(OBJ_DIR)
 	mkdir -p $(shell dirname $@)
 	$(CC) $(FLAGS) $(INCLUDE) -c -o $@ $<
 
+
+# only the other makefile can determine if it needs to be updated, so phony it.
+# kinda annoying that i had to seperate the real target and the "call make target"
+#	i chose to do it by removing the .a at the end
+# maybe not the best way, oh well
+
+.PHONY: $(MAKE_FOREIGN_TARGETS)
+$(MAKE_FOREIGN_TARGETS):
+	$(MAKE) -C $(dir $@) $(notdir $@).a
+
+# also in case the file does not exist yet, add this rule so it wont error
+# we will make the libs with the $(MAKE_FOREIGN_TARGETS) target
+$(FOREIGN_TARGETS):
+
+# cleanup targets
 .PHONY: clean
 clean:
 	rm -rf $(OBJ_DIR)
