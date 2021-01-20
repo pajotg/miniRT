@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/18 17:53:25 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/20 15:24:55 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,9 @@ int	hook_loop(void *p)
 
 	// Input
 	t_vec3 move_dir = (t_vec3) { 0, 0, 0 };
+	data->should_clear = data->should_clear || (data->input.forward != data->input.backward)
+					|| (data->input.right != data->input.left)
+					|| (data->input.down != data->input.up);
 	move_dir.z = (data->input.forward ? -1 : 0) + (data->input.backward ? 1 : 0);
 	move_dir.x = (data->input.right ? -1 : 0) + (data->input.left ? 1 : 0);
 	move_dir.y = (data->input.down ? -1 : 0) + (data->input.up ? 1 : 0);
@@ -85,8 +88,25 @@ int	hook_loop(void *p)
 	vec3_scale(&move_dir, &move_dir, diff * 5);
 	vec3_add(&cam->transform.position, &cam->transform.position, &move_dir);
 
+	if (data->should_clear)
+	{
+		// TODO: This is not %100 thread safe
+		//	Notify all render threads to pause
+		//	Then wait untill all render threads have paused
+		//	Then clear the pixels
+		//	Then notify all render threads to un-pause
+		//pthread_mutex_lock(&data->lock);
+		data->should_clear = false;
+		// If we have moved, we need to clear the pixels
+		for (int i = 0; i < data->img.width * data->img.height; i++)
+		{
+			data->pixels[i].color = (t_color_hdr) { 0,0,0 };
+			data->pixels[i].num_samples = 0;
+		}
+		//pthread_mutex_unlock(&data->lock);
+	}
 	// Render
-	trace_next_pixels(data, 15000 / (data->scene->anti_aliasing * data->scene->anti_aliasing));
+	trace_next_pixels(data, 15000);
 
 	if (data->input.white_up != data->input.white_down)
 	{

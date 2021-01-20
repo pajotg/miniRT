@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:26:17 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/04 13:21:35 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/20 14:30:34 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ bool	parse_anti_aliasing(t_scene_parse_data *parse_data,
 	}
 	parse_data->has_anti_aliasing = true;
 	skip_whitespace(line, curr);
-	if (!read_int(line, curr, &scene->anti_aliasing) || scene->anti_aliasing <= 0)
+	if (!read_int(line, curr, &scene->samples_per_pixel) || scene->samples_per_pixel <= 0)
 	{
 		set_error(ft_strjoin("anti aliasing incorrectly formatted: ", line), true);
 		return (false);

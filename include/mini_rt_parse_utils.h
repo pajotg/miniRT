@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:19 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/18 14:53:00 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/20 14:30:39 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ typedef struct	s_scene
 	t_resolution	resolution;
 	t_color_hdr		ambiant;
 	int				current_camera_index;
-	int				anti_aliasing;
+	int				samples_per_pixel;
 	t_list			cameras;
 	t_list			objects;
 	t_list			lights;

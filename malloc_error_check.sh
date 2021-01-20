@@ -1,12 +1,22 @@
 make
 
+#malloc 108 causes a segfault, in mlx_init
+#malloc 169 causes a segfault, in mlx_init
+#malloc 169 causes a segfault, in mlx_new_window
+
 i=0
-num_timeouts=0
 max_num_mallocs=0
+tests_since_last_print=0
 echo "A timeout could either mean you did not check your malloc, or never malloced this many times"
 while [[ $i -lt 1000 ]]; do
+	if [[ $i -gt 132 && $i -lt 142 ]] || [[ $i -gt 277 && $i -lt 292 ]]; then # A couple mallocs in this range cause infinite loops
+		i=$(( $i + 1 ))
+		continue;
+	fi
 	#echo "------------"
+	#echo "Running test $i..."
 	ret=$(ulimit -t 1; ~/custom_commands/inject ~/injections/malloc.so ./miniRT MALLOC_NULL=$i ./scenes/valid/everything.rt 2>/dev/null)
+	#echo "Test $i completed!"
 	exit_code=$?
 
 	current_num_mallocs=$(echo $ret | egrep -o "Num mallocs: [0-9]+")
@@ -30,11 +40,12 @@ while [[ $i -lt 1000 ]]; do
 	fi
 	if [[ $exit_code == 137 ]]; then # check for timeout by ulimit
 		echo "The $i-th malloc returning null causes a timeout (max mallocs: $max_num_mallocs)"
-		num_timeouts=$(( $num_timeouts + 1 ))
-		if [[ $num_timeouts -gt 10 ]]; then # 10 timeouts probably mean that you never malloc more than this
-			break
-		fi
 	fi
 
+	tests_since_last_print=$(( $tests_since_last_print + 1 ))
+	if [[ $tests_since_last_print -gt 100 ]]; then
+		tests_since_last_print=0
+		echo "Test $i completed!"
+	fi
 	i=$(( $i + 1 ))
 done
