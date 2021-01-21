@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/21 20:19:12 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/21 20:28:07 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,9 +168,12 @@ bool init_renderer(t_mlx_data* data)
 	for (int i = 0; i < data->scene->resolution.width * data->scene->resolution.height; i++)
 	{
 		t_pixel_data* pix = &data->renderer.pixels[i];
+		t_pixel_data* temp_pix = &data->renderer.temp_pixels[i];
 		pix->color = (t_color_hdr) { 0,0,0 };
 		pix->num_samples = 0;
+		*temp_pix = *pix;
 	}
+	update_image(data);
 
 	return (true);
 }
@@ -235,6 +238,7 @@ bool init_mlx_data(t_mlx_data* data, void* mlx, t_scene* scene)
 		mlx_destroy_image(data->mlx, data->img.image);
 		return (false);
 	}
+	update_image(data);
 	return (true);
 }
 
