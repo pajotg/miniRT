@@ -6,7 +6,35 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/16 17:29:33 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/16 17:31:44 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/21 14:06:35 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "mini_rt_mlx.h"
+#include "ft_time.h"
+#include <stdio.h>
+#include "mini_rt_render_loop.h"
+
+static t_time g_start_time;
+
+void hook_frame_start(t_mlx_data *data)
+{
+	g_start_time = time_now();
+	(void)data;
+}
+
+// Warning: can be called from multiple threads at once
+void hook_frame_complete(t_mlx_data *data, bool first_frame)
+{
+	update_image(data);
+
+	// Print out how long it took
+	t_time current = time_now();
+	float diff = time_difference(&current, &g_start_time);
+	if (first_frame)
+		printf("Completed first frame! time taken: %.2fs \n", diff);
+	else
+		printf("Completed AA frame! time taken: %.2fs \n", diff);
+
+	// Here we can check: if not first frame, and --save supplied, save and then exit
+}

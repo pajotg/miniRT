@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/20 15:24:55 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/21 14:22:58 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 #include <math.h>
 #include "ft_printf.h"
 #include "ft_error.h"
-#include <pthread.h>	// used for threading (bonus)
 #include "ft_time.h"	// Used for movement (bonus)
+#include "ft_manual_reset_event.h"
 
 #define NUM_THREADS 5
 
@@ -90,23 +90,19 @@ int	hook_loop(void *p)
 
 	if (data->should_clear)
 	{
-		// TODO: This is not %100 thread safe
-		//	Notify all render threads to pause
-		//	Then wait untill all render threads have paused
-		//	Then clear the pixels
-		//	Then notify all render threads to un-pause
-		//pthread_mutex_lock(&data->lock);
 		data->should_clear = false;
+
 		// If we have moved, we need to clear the pixels
-		for (int i = 0; i < data->img.width * data->img.height; i++)
-		{
-			data->pixels[i].color = (t_color_hdr) { 0,0,0 };
-			data->pixels[i].num_samples = 0;
-		}
-		//pthread_mutex_unlock(&data->lock);
+		pthread_mutex_lock(&data->renderer.start_thread_lock);	// Prevent new threads from starting
+		manual_reset_event_wait(&data->renderer.no_render_threads_mre);	// Wait untill all render threads have stopped
+		//data->renderer.current_pixel = 0;	// restart progress of frame, so we dont have stale pixels
+		data->renderer.dirty_frame = true;	// Instead of resetting the progress of the frame, only getting updated pixels at the top, i mark this frame dirty: aka: next frame will also be a first_frame
+
+		data->renderer.first_frame = true;	// Tell it to render at 1 spp, no sobel
+		pthread_mutex_unlock(&data->renderer.start_thread_lock);
 	}
 	// Render
-	trace_next_pixels(data, 15000);
+	trace_next_pixels(data, 2500);
 
 	if (data->input.white_up != data->input.white_down)
 	{
@@ -125,6 +121,28 @@ int	hook_loop(void *p)
 	return 0;
 }
 
+static t_scene* parse_scene(char* path)
+{
+	t_scene* scene;
+
+	int fd = open(path, O_RDONLY);
+	if (fd == -1)
+	{
+		set_error(ft_strjoin("Could not open file ", path), true);
+		return (NULL);
+	}
+
+	scene = parse_scene_file(fd);
+	if (!scene)
+	{
+		set_error(ft_strjoin("An error occured while parsing the file: ", get_last_error()), true);
+		close(fd);
+		return (NULL);
+	}
+	close(fd);
+	return (scene);
+}
+
 #include "libft.h"
 #include <math.h>
 int main(int argc, char **argv)
@@ -138,40 +156,13 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	int fd = open(arg_data->map_file, O_RDONLY);
-	if (fd == -1)
-	{
-		ft_printf("Error\nCould not open file \"%s\"!\n", arg_data->map_file);
-		free(arg_data);
-		return 1;
-	}
-
-	t_scene* scene = parse_scene_file(fd);
+	t_scene* scene = parse_scene(arg_data->map_file);
 	if (!scene)
 	{
-		ft_printf("Error\nAn error occured while parsing the file: \"%s\"!\n", get_last_error());
 		free(arg_data);
-		close(fd);
+		ft_printf("Error\n%s\n",get_last_error());
 		return 1;
 	}
-
-	/*
-	for (size_t i = 0; i < scene->objects.count; i++)
-	{
-		t_object* obj = list_index(&scene->objects, i);
-		t_vec3 x;
-		t_vec3 y;
-		t_vec3 z;
-
-		quaternion_mult_vec3(&x, &obj->transform.rotation, vec3_right());
-		quaternion_mult_vec3(&y, &obj->transform.rotation, vec3_up());
-		quaternion_mult_vec3(&z, &obj->transform.rotation, vec3_back());
-		ft_printf("Found object with transform %t with x (%v) y: (%v) z: (%v) \n",
-			&obj->transform,
-			&x, &y, &z
-		);
-	}
-	*/
 
 	void* mlx = mlx_init();
 	if (!mlx)
@@ -205,23 +196,60 @@ int main(int argc, char **argv)
 	mlx_data.mlx = mlx;
 	mlx_data.window = window;
 	mlx_data.scene = scene;
-	mlx_data.pixels = malloc(sizeof(*mlx_data.pixels) * scene->resolution.width * scene->resolution.height);
-	mlx_data.current_pixel = 0;
+	mlx_data.renderer.pixels = malloc(sizeof(*mlx_data.renderer.pixels) * scene->resolution.width * scene->resolution.height);
+	mlx_data.renderer.temp_pixels = malloc(sizeof(*mlx_data.renderer.pixels) * scene->resolution.width * scene->resolution.height);
+	mlx_data.renderer.current_pixel = 0;
+	mlx_data.renderer.first_frame = true;
+	mlx_data.renderer.dirty_frame = false;
 	mlx_data.white = 1;
 	mlx_data.active = true;
 	mlx_data.debug_trace_aabb = false;
 	ft_bzero(&mlx_data.input, sizeof(t_input));
-	if (mlx_data.pixels == NULL)
+	if (mlx_data.renderer.pixels == NULL || mlx_data.renderer.temp_pixels == NULL)
 	{
 		mlx_destroy_window(mlx, window);
 		free_scene(scene);
 		free(arg_data);
+		free(mlx_data.renderer.pixels);
+		free(mlx_data.renderer.temp_pixels);
 		ft_printf("Error\nCould not create pixel array!\n");
 		return 1;
 	}
-	if (pthread_mutex_init(&mlx_data.lock, NULL) != 0)
+	// TODO: Destroy mutexes if failed
+	if (pthread_mutex_init(&mlx_data.renderer.start_thread_lock, NULL) != 0)
 	{
-		free(mlx_data.pixels);
+		free(mlx_data.renderer.pixels);
+		free(mlx_data.renderer.temp_pixels);
+		mlx_destroy_window(mlx, window);
+		free_scene(scene);
+		free(arg_data);
+		ft_printf("Error\nCould not init pthread mutex!\n");
+		return 1;
+	}
+	if (pthread_mutex_init(&mlx_data.renderer.hook_thread_lock, NULL) != 0)
+	{
+		free(mlx_data.renderer.pixels);
+		free(mlx_data.renderer.temp_pixels);
+		mlx_destroy_window(mlx, window);
+		free_scene(scene);
+		free(arg_data);
+		ft_printf("Error\nCould not init pthread mutex!\n");
+		return 1;
+	}
+	if (pthread_mutex_init(&mlx_data.renderer.active_render_threads_lock, NULL) != 0)
+	{
+		free(mlx_data.renderer.pixels);
+		free(mlx_data.renderer.temp_pixels);
+		mlx_destroy_window(mlx, window);
+		free_scene(scene);
+		free(arg_data);
+		ft_printf("Error\nCould not init pthread mutex!\n");
+		return 1;
+	}
+	if (manual_reset_event_init(&mlx_data.renderer.no_render_threads_mre) != 0)
+	{
+		free(mlx_data.renderer.pixels);
+		free(mlx_data.renderer.temp_pixels);
 		mlx_destroy_window(mlx, window);
 		free_scene(scene);
 		free(arg_data);
@@ -233,17 +261,17 @@ int main(int argc, char **argv)
 	{
 		mlx_destroy_window(mlx, window);
 		free_scene(scene);
-		free(mlx_data.pixels);
+		free(mlx_data.renderer.pixels);
+		free(mlx_data.renderer.temp_pixels);
 		free(arg_data);
 		ft_printf("Error\nCould not create mlx image!\n");
 		return 1;
 	}
 	for (int i = 0; i < scene->resolution.width * scene->resolution.height; i++)
 	{
-		t_color_hdr* col = &mlx_data.pixels[i].color;
-		col->r = 0;
-		col->g = 0;
-		col->b = 0;
+		t_pixel_data* pix = &mlx_data.renderer.pixels[i];
+		pix->color = (t_color_hdr) { 0,0,0 };
+		pix->num_samples = 0;
 	}
 
 	mlx_hook(window, KeyPress, KeyPressMask, &hook_key_down, &mlx_data);
@@ -262,7 +290,10 @@ int main(int argc, char **argv)
 
 	for (int i = 0; i < NUM_THREADS; i++)
 		pthread_join(thread_ids[i], NULL);
-	pthread_mutex_destroy(&mlx_data.lock);
+	pthread_mutex_destroy(&mlx_data.renderer.start_thread_lock);
+	pthread_mutex_destroy(&mlx_data.renderer.hook_thread_lock);
+	pthread_mutex_destroy(&mlx_data.renderer.active_render_threads_lock);
+	manual_reset_event_destroy(&mlx_data.renderer.no_render_threads_mre);
 
 	if (arg_data->save_on_exit)
 		if (!save_image(&mlx_data.img, "screenshot.bmp"))
@@ -270,8 +301,10 @@ int main(int argc, char **argv)
 
 	mlx_destroy_window(mlx, window);
 	mlx_destroy_image(mlx, mlx_data.img.image);
+	free_scene(scene);
+	free(mlx_data.renderer.pixels);
+	free(mlx_data.renderer.temp_pixels);
 	free(arg_data);
-	close(fd);
 	ft_printf("Completed!\n");
 	return 0;
 }
