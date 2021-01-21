@@ -29,13 +29,12 @@ int main(int argc, char *argv[])
 
 	TEST_START
 		t_vec3 result;
-		vec3_init(&temp, 1,1,1);
+		temp = (t_vec3) { 1, 1, 1};
 		quaternion_mult_vec3(&result, identity, &temp);
 		if (!same_vec(&result, &temp))
 			tu_ko_message_exit("Transforming a vec of 1,1,1 by the identity quaternion did not produce 1,1,1! it made: %.2f %.2f %.2f", result.x, result.y, result.z);
 	TEST
-		t_quaternion random;
-		quaternion_init(&random, ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f);
+		t_quaternion random = (t_quaternion) { ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f };
 		quaternion_normalize(&random, &random);
 
 		t_quaternion resulta;
@@ -46,8 +45,7 @@ int main(int argc, char *argv[])
 		if (!same_quat(&random, &resulta) && same_quat(&random,&resultb))
 			tu_ko_message_exit("Multiplying by the identity quaternion did not produce the input! Input: (%.2f,%.2f,%.2f,%.2f), I*q = (%.2f,%.2f,%.2f,%.2f), q*I = (%.2f,%.2f,%.2f,%.2f)", random.r, random.i, random.j, random.k, resulta.r, resulta.i, resulta.j, resulta.k, resultb.r, resultb.i, resultb.j, resultb.k);
 	TEST
-		t_quaternion random;
-		quaternion_init(&random, ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f);
+		t_quaternion random = (t_quaternion) { ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f };
 		quaternion_normalize(&random, &random);
 
 		t_quaternion resulta;
@@ -121,14 +119,14 @@ int main(int argc, char *argv[])
 		t_ray ray;
 		t_ray_hit hit;
 
-		vec3_init(&obj.transform.position, 0,0,0);
+		obj.transform.position = (t_vec3) { 0,0,0 };
 		obj.transform.rotation = *quaternion_identity();
 		obj.object_data = &object_data;
 
 		object_data.radius = 1;
 
-		vec3_init(&ray.origin, 0,0,-5);
-		vec3_init(&ray.direction, 0,0,1);
+		ray.origin = (t_vec3) { 0,0,-5 };
+		ray.direction = (t_vec3) { 0,0,1 };
 
 		hit.distance = INFINITY;
 		if (!ray_intersects_sphere(&obj, &ray, &hit))
@@ -140,7 +138,7 @@ int main(int argc, char *argv[])
 		if (hit.distance != 4)
 			tu_ko_message_exit("Ray to sphere at 0,0,0 with r=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not procude distance 4!");
 
-		vec3_init(&ray.origin, 0.5,0,-5);
+		ray.origin = (t_vec3) { 0.5,0,-5 };
 		hit.distance = INFINITY;
 		if (!ray_intersects_sphere(&obj, &ray, &hit))
 			tu_ko_message_exit("Ray to sphere at 0,0,0 with r=1 with ray origin = 0.5,0,-5 and dir = 0,0,1 did not hit!");
@@ -148,19 +146,19 @@ int main(int argc, char *argv[])
 		for (int i = 0; i < 100; i++)
 		{
 			t_vec3 vecA;
-			vec3_init(&vecA,
+			vecA = (t_vec3) {
 				ft_randf() * 2 - 1,
 				ft_randf() * 2 - 1,
 				ft_randf() * 2 - 1
-			);
+			};
 			vec3_normalize(&vecA, &vecA);
 
 			t_vec3 vecB;
-			vec3_init(&vecB,
+			vecB = (t_vec3) {
 				ft_randf() * 2 - 1,
 				ft_randf() * 2 - 1,
 				ft_randf() * 2 - 1
-			);
+			};
 			vec3_normalize(&vecB, &vecB);
 
 			t_quaternion rotation;
@@ -181,14 +179,14 @@ int main(int argc, char *argv[])
 		t_ray ray;
 		t_ray_hit hit;
 
-		vec3_init(&obj.transform.position, 0,0,0);
+		obj.transform.position = (t_vec3) { 0,0,0 };
 		obj.transform.rotation = *quaternion_identity();
 		obj.object_data = &object_data;
 
 		object_data.extends = 1;
 
-		vec3_init(&ray.origin, 0,0,-5);
-		vec3_init(&ray.direction, 0,0,1);
+		ray.origin = (t_vec3) { 0,0,-5 };
+		ray.direction = (t_vec3) { 0,0,1 };
 
 		hit.distance = INFINITY;
 		if (!ray_intersects_cube(&obj, &ray, &hit))
@@ -200,7 +198,7 @@ int main(int argc, char *argv[])
 		if (hit.distance != 4)
 			tu_ko_message_exit("Ray to cube at 0,0,0 with s=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not procude distance 4!");
 
-		vec3_init(&ray.origin, 0.5,0,-5);
+		ray.origin = (t_vec3) { 0.5,0,-5 };
 		hit.distance = INFINITY;
 		if (!ray_intersects_cube(&obj, &ray, &hit))
 			tu_ko_message_exit("Ray to cube at 0,0,0 with s=1 with ray origin = 0.5,0,-5 and dir = 0,0,1 did not hit!");

@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/17 13:59:56 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/21 15:02:50 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/21 15:07:02 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,9 @@ void trace_pixel(t_mlx_data* data, int x, int y)
 	t_color_hdr* hdr = &pixel_data->color;
 	t_ray ray;
 
-	if (data->renderer.first_frame)	// first frame = 1spp
+	if (data->renderer.first_frame)
 	{
+		// for the first frame, dont use random scattering
 		pix_to_ray(data, x, y, &ray);
 		trace_color(data, &ray, hdr);
 		pixel_data->num_samples = 1;
