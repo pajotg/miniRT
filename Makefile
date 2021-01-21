@@ -51,8 +51,7 @@ $(NAME): $(OBJECTS) $(FOREIGN_TARGETS) | $(MAKE_FOREIGN_TARGETS) $(OBJ_DIR) $(DE
 
 $(TEST_BINDER_NAME): $(OBJECTS)
 	rm -f $(TEST_BINDER_NAME)
-	ar -rcS $(TEST_BINDER_NAME) $(filter-out %main.o,$(OBJECTS))
-	ar -cs $(TEST_BINDER_NAME)
+	ar -rc $(TEST_BINDER_NAME) $(filter-out %main.o,$(OBJECTS))
 
 $(OBJ_DIR) $(DEBUG_DIR) $(SRC_DIR):
 	mkdir $@

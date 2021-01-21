@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/21 19:43:18 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/21 20:19:12 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,6 @@ int	hook_loop(void *p)
 
 	mlx_put_image_to_window(data->mlx, data->window, data->img.image, 0, 0);
 
-	mlx_loop_end(data->mlx);
 	return 0;
 }
 
