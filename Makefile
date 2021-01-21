@@ -8,6 +8,7 @@ TEST_BINDER_NAME = TestBinder.a
 
 SRC_DIR = src/
 OBJ_DIR = obj/
+DEBUG_DIR = obj_debug/
 INCLUDE_DIRS = include libft/include minilibx-linux
 INCLUDE = -Iinclude -Ilibft/include -Iminilibx-linux
 LDFLAGS = -Lminilibx-linux/ -lmlx -Llibft -lft -lXext -lX11 -lm -lbsd -lpthread
@@ -19,40 +20,45 @@ FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
 
 ifdef DEBUG
 FLAGS += -g
+USE_OBJ_DIR = $(DEBUG_DIR)
+OTHER_OBJ_DIR = $(OBJ_DIR)
 else
 FLAGS += -O2
+USE_OBJ_DIR = $(OBJ_DIR)
+OTHER_OBJ_DIR = $(DEBUG_DIR)
 endif
 
 SOURCE_FILES = $(shell find $(SRC_DIR) -type f -name *.c)
 HEADER_FILES = $(shell find $(INCLUDE_DIRS) -type f -name *.h)
-OBJECTS = $(SOURCE_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
+OBJECTS = $(SOURCE_FILES:$(SRC_DIR)%.c=$(USE_OBJ_DIR)%.o)
 
 .PHONY: all
 all: $(NAME)
 
 .PHONY: debug
 debug:
-	$(MAKE) -C libft debug
-	$(MAKE) DEBUG=1 re
+	$(MAKE) DEBUG=1
 
 # Be sure to make libft and minilibx no longer submodules when you want to eval, it dont work when you clone it! REEE
 # Also be sure to find #include <stdio.h>, you never know where i left it in, alright? alright.
 # Making it work with the foreign targets was a nightmare, the phony on the $(MAKE) -C libft make it look always out of date
 # so it would always re-link, so i had to put the MAKE_FOREIGN_TARGETS in the order only dependency so it would not matter if it was "out of date"
 # and then ALSO add the real library in the dependencies so it would update if it actually was out of date... UGH!
-$(NAME): $(OBJECTS) $(FOREIGN_TARGETS) | $(MAKE_FOREIGN_TARGETS)
+$(NAME): $(OBJECTS) $(FOREIGN_TARGETS) | $(MAKE_FOREIGN_TARGETS) $(OBJ_DIR) $(DEBUG_DIR)
 	$(CC) $(FLAGS) -o $(NAME) $(OBJECTS) $(LDFLAGS)
+	# mark non-debug or debug dirty, after making miniRT
+	touch -c $$(find $(OTHER_OBJ_DIR))
 
 $(TEST_BINDER_NAME): $(OBJECTS)
 	rm -f $(TEST_BINDER_NAME)
 	ar -rcS $(TEST_BINDER_NAME) $(filter-out %main.o,$(OBJECTS))
 	ar -cs $(TEST_BINDER_NAME)
 
-$(OBJ_DIR) $(SRC_DIR):
+$(OBJ_DIR) $(DEBUG_DIR) $(SRC_DIR):
 	mkdir $@
 
-$(OBJECTS): $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES) \
-	| $(SRC_DIR) $(OBJ_DIR)
+$(OBJECTS): $(USE_OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES) \
+	| $(SRC_DIR) $(USE_OBJ_DIR)
 	mkdir -p $(shell dirname $@)
 	$(CC) $(FLAGS) $(INCLUDE) -c -o $@ $<
 
@@ -73,7 +79,7 @@ $(FOREIGN_TARGETS):
 # cleanup targets
 .PHONY: clean
 clean:
-	rm -rf $(OBJ_DIR)
+	rm -rf $(OBJ_DIR) $(DEBUG_DIR)
 
 .PHONY: fclean
 fclean: clean

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/21 19:31:06 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/21 19:43:18 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,8 @@ bool init_renderer(t_mlx_data* data)
 
 	if (data->renderer.pixels == NULL || data->renderer.temp_pixels == NULL)
 	{
+		free(data->renderer.pixels);
+		free(data->renderer.temp_pixels);
 		set_error("Could not allocate pixel array!", false);
 		return (false);
 	}
@@ -193,20 +195,48 @@ bool init_mlx_data(t_mlx_data* data, void* mlx, t_scene* scene)
 	}
 
 	set_error("Could not init pthread mutex!",false);
-	if (pthread_mutex_init(&data->renderer.start_thread_lock, NULL) != 0
-	|| pthread_mutex_init(&data->renderer.hook_thread_lock, NULL) != 0
-	|| pthread_mutex_init(&data->renderer.active_render_threads_lock, NULL) != 0
-	|| manual_reset_event_init(&data->renderer.no_render_threads_mre) != 0)
+	if (pthread_mutex_init(&data->renderer.start_thread_lock, NULL) != 0)
 		return (false);
+	if (pthread_mutex_init(&data->renderer.hook_thread_lock, NULL) != 0)
+	{
+		pthread_mutex_destroy(&data->renderer.start_thread_lock);
+		return (false);
+	}
+	if (pthread_mutex_init(&data->renderer.active_render_threads_lock, NULL) != 0)
+	{
+		pthread_mutex_destroy(&data->renderer.start_thread_lock);
+		pthread_mutex_destroy(&data->renderer.hook_thread_lock);
+		return (false);
+	}
+	if (manual_reset_event_init(&data->renderer.no_render_threads_mre) != 0)
+	{
+		pthread_mutex_destroy(&data->renderer.start_thread_lock);
+		pthread_mutex_destroy(&data->renderer.hook_thread_lock);
+		pthread_mutex_destroy(&data->renderer.active_render_threads_lock);
+		return (false);
+	}
 
 	init_image(mlx, &data->img, scene->resolution.width, scene->resolution.height);
 	if (!data->img.image)
 	{
+		pthread_mutex_destroy(&data->renderer.start_thread_lock);
+		pthread_mutex_destroy(&data->renderer.hook_thread_lock);
+		pthread_mutex_destroy(&data->renderer.active_render_threads_lock);
+		manual_reset_event_destroy(&data->renderer.no_render_threads_mre);
 		set_error("Could not create mlx image!",false);
 		return (false);
 	}
 
-	return (init_renderer(data));
+	if (!init_renderer(data))
+	{
+		pthread_mutex_destroy(&data->renderer.start_thread_lock);
+		pthread_mutex_destroy(&data->renderer.hook_thread_lock);
+		pthread_mutex_destroy(&data->renderer.active_render_threads_lock);
+		manual_reset_event_destroy(&data->renderer.no_render_threads_mre);
+		mlx_destroy_image(data->mlx, data->img.image);
+		return (false);
+	}
+	return (true);
 }
 
 #include "libft.h"
@@ -221,11 +251,18 @@ int main(int argc, char **argv)
 
 	t_scene* scene = parse_scene(arg_data->map_file);
 	if (!scene)
+	{
+		free(arg_data);
 		return do_error();
+	}
 
 	void* mlx = mlx_init();
 	if (!mlx)
+	{
+		free(arg_data);
+		free_scene(scene);
 		return do_error();
+	}
 
 	// Cap resolution
 	if (!arg_data->no_res_cap)
@@ -240,7 +277,13 @@ int main(int argc, char **argv)
 
 	t_mlx_data mlx_data;
 	if (!init_mlx_data(&mlx_data, mlx, scene))
+	{
+		free(arg_data);
+		free_scene(scene);
+		mlx_destroy_display(mlx);
+		free(mlx);
 		return do_error();
+	}
 
 	mlx_hook(mlx_data.window, KeyPress, KeyPressMask, &hook_key_down, &mlx_data);
 	mlx_hook(mlx_data.window, KeyRelease, KeyReleaseMask, &hook_key_up, &mlx_data);
@@ -254,28 +297,34 @@ int main(int argc, char **argv)
 		pthread_create(&thread_ids[i], NULL, new_pixel_render_thread, &mlx_data);
 
 	mlx_loop(mlx);
-	mlx_data.active = false;
 
-	for (int i = 0; i < NUM_THREADS; i++)
+	mlx_data.active = false;	// Notify render threads to stop
+
+	if (arg_data->save_on_exit)	// Save screenshot
+		if (!save_image(&mlx_data.img, "screenshot.bmp"))
+			ft_printf("Error\nAn error occured while saving the screenshot: \"%s\"!\n", get_last_error());
+
+	for (int i = 0; i < NUM_THREADS; i++)	// Wait untill render threads are done
 		pthread_join(thread_ids[i], NULL);
+
+	// free mutexes
 	pthread_mutex_destroy(&mlx_data.renderer.start_thread_lock);
 	pthread_mutex_destroy(&mlx_data.renderer.hook_thread_lock);
 	pthread_mutex_destroy(&mlx_data.renderer.active_render_threads_lock);
 	manual_reset_event_destroy(&mlx_data.renderer.no_render_threads_mre);
 
-	if (arg_data->save_on_exit)
-		if (!save_image(&mlx_data.img, "screenshot.bmp"))
-			ft_printf("Error\nAn error occured while saving the screenshot: \"%s\"!\n", get_last_error());
-
+	// free mlx stuff
 	mlx_destroy_window(mlx, mlx_data.window);
 	mlx_destroy_image(mlx, mlx_data.img.image);
 	mlx_destroy_display(mlx);
 	free(mlx);
+
+	// free other stuff
 	free_scene(scene);
 	free(mlx_data.renderer.pixels);
 	free(mlx_data.renderer.temp_pixels);
 	free(arg_data);
-	ft_printf("Completed!\n");
 
+	ft_printf("Completed!\n");
 	return 0;
 }
