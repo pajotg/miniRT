@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 18:51:02 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/21 14:13:42 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/25 14:31:19 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ typedef struct	s_mlx_data
 	t_scene				*scene;
 	t_input				input;
 	t_mlx_image			img;
+	t_args				*args;
 	float				white;
 	bool				should_clear;
 	bool				active;
@@ -100,5 +101,7 @@ typedef struct	s_mlx_data
 
 	t_pixel_renderer	renderer;
 }				t_mlx_data;
+
+void	correct_exit(t_mlx_data* data);
 
 #endif

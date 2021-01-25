@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/21 20:28:07 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/25 14:37:13 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,12 @@
 #include "ft_manual_reset_event.h"
 
 #define NUM_THREADS 5
+
+void correct_exit(t_mlx_data* data)
+{
+	data->active = false;	// Notify render threads to stop
+	mlx_loop_end(data->mlx);
+}
 
 bool init_image(void* mlx, t_mlx_image* img, int width, int height)
 {
@@ -116,7 +122,8 @@ int	hook_loop(void *p)
 		update_image(data);
 	}
 
-	mlx_put_image_to_window(data->mlx, data->window, data->img.image, 0, 0);
+	if (data->window)
+		mlx_put_image_to_window(data->mlx, data->window, data->img.image, 0, 0);
 
 	return 0;
 }
@@ -154,6 +161,7 @@ bool init_renderer(t_mlx_data* data)
 	data->renderer.pixels = malloc(sizeof(t_pixel_data) * data->scene->resolution.width * data->scene->resolution.height);
 	data->renderer.temp_pixels = malloc(sizeof(t_pixel_data) * data->scene->resolution.width * data->scene->resolution.height);
 	data->renderer.current_pixel = 0;
+	data->renderer.active_render_threads = 0;
 	data->renderer.first_frame = true;
 	data->renderer.dirty_frame = false;
 
@@ -178,23 +186,28 @@ bool init_renderer(t_mlx_data* data)
 	return (true);
 }
 
-bool init_mlx_data(t_mlx_data* data, void* mlx, t_scene* scene)
+bool init_mlx_data(t_mlx_data* data, void* mlx, t_scene* scene, t_args* args)
 {
 	data->mlx = mlx;
 	data->scene = scene;
+	data->args = args;
 	data->should_clear = false;
-	data->renderer.active_render_threads = 0;
 	data->white = 1;
 	data->active = true;
 	data->debug_trace_aabb = false;
 	data->input = (t_input) { false, false, false, false, false, false, false, false };
 
-	data->window = mlx_new_window(mlx, scene->resolution.width, scene->resolution.height, "miniRT");
-	if (!data->window)
+	if (!data->args->save)
 	{
-		set_error("Could not create new mlx window!",false);
-		return (false);
+		data->window = mlx_new_window(mlx, scene->resolution.width, scene->resolution.height, "miniRT");
+		if (!data->window)
+		{
+			set_error("Could not create new mlx window!",false);
+			return (false);
+		}
 	}
+	else
+		data->window = NULL;
 
 	set_error("Could not init pthread mutex!",false);
 	if (pthread_mutex_init(&data->renderer.start_thread_lock, NULL) != 0)
@@ -279,7 +292,7 @@ int main(int argc, char **argv)
 	}
 
 	t_mlx_data mlx_data;
-	if (!init_mlx_data(&mlx_data, mlx, scene))
+	if (!init_mlx_data(&mlx_data, mlx, scene, arg_data))
 	{
 		free(arg_data);
 		free_scene(scene);
@@ -288,12 +301,18 @@ int main(int argc, char **argv)
 		return do_error();
 	}
 
-	mlx_hook(mlx_data.window, KeyPress, KeyPressMask, &hook_key_down, &mlx_data);
-	mlx_hook(mlx_data.window, KeyRelease, KeyReleaseMask, &hook_key_up, &mlx_data);
-	mlx_mouse_hook(mlx_data.window, hook_mouse, &mlx_data);
-	mlx_hook(mlx_data.window, ClientMessage, StructureNotifyMask, hook_client_message, &mlx_data);
+	if (mlx_data.window)
+	{
+		mlx_hook(mlx_data.window, KeyPress, KeyPressMask, &hook_key_down, &mlx_data);
+		mlx_hook(mlx_data.window, KeyRelease, KeyReleaseMask, &hook_key_up, &mlx_data);
+		mlx_mouse_hook(mlx_data.window, hook_mouse, &mlx_data);
+		mlx_hook(mlx_data.window, ClientMessage, StructureNotifyMask, hook_client_message, &mlx_data);
+		mlx_loop_hook(mlx, hook_loop, &mlx_data);
+	}
+	else
+		while (mlx_data.active)
+			trace_next_pixels(&mlx_data, 250);
 
-	mlx_loop_hook(mlx, hook_loop, &mlx_data);
 
 	pthread_t thread_ids[NUM_THREADS];
 	for (int i = 0; i < NUM_THREADS; i++)
@@ -301,7 +320,11 @@ int main(int argc, char **argv)
 
 	mlx_loop(mlx);
 
-	mlx_data.active = false;	// Notify render threads to stop
+	if (mlx_data.active)
+	{
+		ft_printf("Error\nWe called mlx_loop_end but not set active to false!\n");
+		mlx_data.active = false;
+	}
 
 	if (arg_data->save_on_exit)	// Save screenshot
 		if (!save_image(&mlx_data.img, "screenshot.bmp"))
@@ -317,7 +340,8 @@ int main(int argc, char **argv)
 	manual_reset_event_destroy(&mlx_data.renderer.no_render_threads_mre);
 
 	// free mlx stuff
-	mlx_destroy_window(mlx, mlx_data.window);
+	if (mlx_data.window)
+		mlx_destroy_window(mlx, mlx_data.window);
 	mlx_destroy_image(mlx, mlx_data.img.image);
 	mlx_destroy_display(mlx);
 	free(mlx);

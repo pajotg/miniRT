@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/17 14:03:09 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/17 14:06:52 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/25 14:22:44 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ bool save_image(t_mlx_image* img, char* path)
 
 	if (!write_bmp(fd, pixels, img->width, img->height))
 	{
+		free(pixels);
+		close(fd);
 		set_error(ft_strjoin("Could not write into file: ", path), true);
 		return false;
 	}

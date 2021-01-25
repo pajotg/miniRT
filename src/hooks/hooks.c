@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 14:11:21 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/21 14:53:53 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/25 14:31:21 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	hook_key_down(int key,void *p)
 	//printf("Key down: %i\n", key);
 
 	if (key == KEY_ESC)
-		mlx_loop_end(data->mlx);
+		correct_exit(data);
 	else if (key == KEY_W)
 		data->input.forward = true;
 	else if (key == KEY_A)
@@ -180,6 +180,6 @@ int hook_mouse(int button, int x, int y, void* p)
 int hook_client_message(void* p)
 {
 	t_mlx_data* data = p;
-	mlx_loop_end(data->mlx);
+	correct_exit(data);
 	return 0;
 }
