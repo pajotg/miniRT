@@ -1,20 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   mini_rt_math_utils.h                               :+:    :+:            */
+/*   mini_rt_color.h                                    :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: jasper <jasper@student.codam.nl>             +#+                     */
+/*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/12/22 16:09:49 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/18 14:52:04 by jsimonis      ########   odam.nl         */
+/*   Created: 2021/01/26 17:19:12 by jsimonis      #+#    #+#                 */
+/*   Updated: 2021/01/26 18:01:02 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINI_RT_MATH_UTILS_H
-# define MINI_RT_MATH_UTILS_H
-
-# include "ft_quaternion.h"
-# include "ft_aabb.h"
+#ifndef MINI_RT_COLOR_H
+# define MINI_RT_COLOR_H
 
 /*
 **	I could have use unsigned chars, but i think having a HDR image is better
@@ -48,42 +45,25 @@ typedef struct		s_color_hdr
 	float b;
 }					t_color_hdr;
 
-typedef struct		s_ray_hit
-{
-	t_vec3		location;
-	t_vec3		normal;
-	t_color_hdr	color;
-	float		distance;
-}					t_ray_hit;
+/*
+**typedef struct	s_color_hdr_to_rgb_jh
+**{
+**	float a;
+**	float b;
+**	float c;
+**	float d;
+**	float e;
+**	float f;
+**	float w;
+**}					t_color_hdr_to_rgb_jh;
+*/
 
-typedef struct		s_ray
-{
-	t_vec3 origin;
-	t_vec3 direction;
-}					t_ray;
+t_color_rgb			color_hdr_to_rgb_reindard(t_color_hdr hdr);
+t_color_rgb			color_hdr_to_rgb_reindard_white(t_color_hdr hdr,
+	float white_point);
 
-typedef struct		s_transform
-{
-	t_vec3			position;
-	t_quaternion	rotation;
-}					t_transform;
-
-typedef struct		s_camera
-{
-	t_transform	transform;
-	float		fov;
-}					t_camera;
-
-typedef struct		s_light
-{
-	t_vec3		position;
-	t_color_hdr	color;
-}					t_light;
-
-typedef struct		s_directional_light
-{
-	t_vec3		direction;
-	t_color_hdr	color;
-}					t_directional_light;
+/*
+**t_color_rgb color_hdr_to_rgb_jh(t_color_hdr hdr, t_color_hdr_to_rgb_jh* m);
+*/
 
 #endif

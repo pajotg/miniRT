@@ -6,13 +6,12 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:57 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/16 14:29:47 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 17:52:11 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_objects.h"
-#include "mini_rt_color_math_utils.h"
-#include <stdbool.h>
+#include "mini_rt_object.h"
+#include "mini_rt_object_data.h"
 #include <math.h>
 
 /*

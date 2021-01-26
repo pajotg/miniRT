@@ -6,12 +6,16 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:37:48 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/08 13:13:06 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:29:27 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_parse_line.h"
+#include "mini_rt_object.h"
 #include "ft_error.h"
+#include <stdlib.h>
+#include "libft.h"
+#include "ft_parse.h"
+#include "mini_rt_parse_utils.h"
 
 bool	parse_light(t_scene *scene, char *line, int *curr)
 {

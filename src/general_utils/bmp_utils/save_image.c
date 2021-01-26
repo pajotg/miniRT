@@ -6,11 +6,11 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/17 14:03:09 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/25 14:22:44 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:08:49 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt.h"
+#include "mini_rt_bmp.h"
 #include "ft_error.h"
 #include "libft.h"
 #include <unistd.h>

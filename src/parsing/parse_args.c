@@ -6,14 +6,14 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/04 12:59:25 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/04 13:19:08 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:26:20 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_parse_utils.h"
 #include "ft_error.h"
 #include "libft.h"
 #include <stdlib.h>
+#include "mini_rt_args.h"
 
 t_args* parse_args(int argc, char **argv)
 {

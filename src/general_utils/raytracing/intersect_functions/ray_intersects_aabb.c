@@ -6,13 +6,12 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/07 17:18:14 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/19 14:48:24 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 17:52:16 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
-#include <mini_rt_math_utils.h>
-#include <mini_rt_objects.h>
+#include "mini_rt_object.h"
+#include "mini_rt_object_data.h"
 
 bool ray_intersects_aabb(t_ray* ray, t_aabb* aabb, float max_dist)
 {

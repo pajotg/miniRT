@@ -1,24 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   mini_rt_render_loop.h                              :+:    :+:            */
+/*   mini_rt_pixel.h                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/01/17 14:01:15 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/17 14:08:23 by jsimonis      ########   odam.nl         */
+/*   Created: 2021/01/26 17:21:58 by jsimonis      #+#    #+#                 */
+/*   Updated: 2021/01/26 18:11:52 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINI_RT_RENDER_LOOP_H
-# define MINI_RT_RENDER_LOOP_H
+#ifndef MINI_RT_PIXEL_H
+# define MINI_RT_PIXEL_H
 
-# include "mini_rt_mlx.h"
+typedef struct	s_pixel_data
+{
+	t_color_hdr		color;
+	unsigned int	num_samples;
+}				t_pixel_data;
 
-void trace_pixel(t_mlx_data* data, int x, int y);
-void trace_next_pixels(t_mlx_data* data, int desired);
-void* new_pixel_render_thread(void* p);
-
-void update_image(t_mlx_data* data);
+t_color_hdr		convert_to_hdr(t_pixel_data *pixel);
 
 #endif

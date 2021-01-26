@@ -6,14 +6,18 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:08:45 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/17 13:22:58 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:30:18 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_parse_line.h"
-#include "mini_rt_objects.h"
-#include <stdlib.h>
+#include "mini_rt_object_data.h"
+#include "mini_rt_ray_intersects.h"
+#include "mini_rt_object.h"
 #include "ft_error.h"
+#include <stdlib.h>
+#include "libft.h"
+#include "ft_parse.h"
+#include "mini_rt_parse_utils.h"
 
 static bool	parse_triangle_ext(t_object_triangle *triangle,
 	char *line, int *curr)

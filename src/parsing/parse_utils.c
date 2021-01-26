@@ -6,113 +6,13 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:11:07 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/15 14:46:32 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:26:53 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include "mini_rt_math_utils.h"
 #include "ft_error.h"
-
-#include <stdio.h>
-
-bool skip_char(char* str, int* current, char chr)
-{
-	if (str[*current] == chr)
-	{
-		(*current)++;
-		return (true);
-	}
-	return (false);
-}
-
-void skip_whitespace(char* str, int* current)
-{
-	while (ft_isspace(str[*current]))
-		(*current)++;
-}
-
-bool read_int(char* str, int* current, int* value)
-{
-	int start = *current;
-	*value = 0;
-
-	// Handle negatives
-	bool IsNegative = skip_char(str, current, '-');
-
-	// Basic atoi
-	while (ft_isdigit(str[*current]))
-	{
-		*value = (*value) * 10 + str[*current] - '0';
-		if (*value < 0)
-		{
-			set_error("Value out of range!", false);
-			if (IsNegative)
-				*value = -2147483648;
-			*value = 2147483647;
-			return false;
-		}
-		(*current)++;
-	}
-
-	if (IsNegative)
-		*value = -*value;
-	return (start != *current);
-}
-
-bool read_float(char* str, int* current, float* value)
-{
-	int start = *current;
-	*value = 0;
-
-	// Handle negatives
-	bool IsNegative = skip_char(str, current, '-');
-
-	// Basic atoi
-	while (ft_isdigit(str[*current]))
-	{
-		*value = *value * 10 + str[*current] - '0';
-		(*current)++;
-	}
-
-	// Handle decimal point
-	if (skip_char(str, current, '.'))
-	{
-		float Worth = 0.1f;
-		while (ft_isdigit(str[*current]))
-		{
-			*value += (str[*current] - '0') * Worth;
-			Worth /= 10;
-			(*current)++;
-		}
-	}
-
-	if (IsNegative)
-		*value = -*value;
-	return (start != *current);
-}
-
-bool read_vec3(char* str, int* current, t_vec3 *vec3)
-{
-	if (!read_float(str, current, &vec3->x) || !skip_char(str, current, ','))
-		return false;
-	if (!read_float(str, current, &vec3->y) || !skip_char(str, current, ','))
-		return false;
-	if (!read_float(str, current, &vec3->z))
-		return false;
-	return true;
-}
-
-bool read_vec3_unit(char* str, int* current, t_vec3 *vec3)
-{
-	if (!read_vec3(str, current, vec3))
-		return false;
-	float magnitude_sqr = vec3_magnitude_sqr(vec3);
-	if (magnitude_sqr < 0.001)
-		return false;
-	vec3_normalize(vec3, vec3);
-	return true;
-}
+#include "ft_parse.h"
+#include "mini_rt_object.h"
 
 bool read_transform(char* str, int* current, t_transform *transform)
 {

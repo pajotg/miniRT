@@ -6,11 +6,11 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:38:38 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/03 11:33:18 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:09:34 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_color_math_utils.h"
+#include "mini_rt_color.h"
 #include <math.h>
 
 /*

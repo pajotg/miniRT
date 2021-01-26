@@ -6,22 +6,18 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/20 14:30:35 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:24:49 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_parse_line.h"
-#include <stddef.h>
-#include "mini_rt_objects.h"
-#include "get_next_line.h"
-#include <string.h>
-#include "libft.h"
-#include <math.h>
+#include "mini_rt_scene.h"
+#include "mini_rt_parse_scene_line.h"
 #include "ft_error.h"
+#include "libft.h"
+#include "ft_get_next_line.h"
+#include "mini_rt_object.h"
+#include "ft_parse.h"
 #include <stdlib.h>
-
-#include <stdio.h>	// bad
-#include "ft_printf.h"	// bad
 
 static bool is_object(char *line, char *object, int *curr)
 {
@@ -134,7 +130,7 @@ t_scene* parse_scene_file(int fd)
 	}
 	char* line;
 	scene->current_camera_index = 0;
-	scene->samples_per_pixel = 1;
+	scene->samples_per_pixel = 0;	// Default to no AA
 
 	t_scene_parse_data parse_data;
 	parse_data.has_ambiant = false;

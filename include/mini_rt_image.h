@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   mini_rt_parse_utils.h                              :+:    :+:            */
+/*   mini_rt_image.h                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/01/26 17:11:44 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:58:26 by jsimonis      ########   odam.nl         */
+/*   Created: 2021/01/26 18:17:40 by jsimonis      #+#    #+#                 */
+/*   Updated: 2021/01/26 18:19:23 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINI_RT_PARSE_UTILS_H
-# define MINI_RT_PARSE_UTILS_H
+#ifndef MINI_RT_IMAGE_H
+# define MINI_RT_IMAGE_H
 
-# include "mini_rt_object.h"
+# include "mini_rt_mlx.h"
 
-bool			read_transform(char *str, int *current, t_transform *transform);
-bool			read_color(char *str, int *current, bool has_ratio,
-	t_color_hdr *color);
+void	write_pix(t_mlx_data *data, int x, int y, t_color_hdr hdr);
+void	update_pix(t_mlx_data *data, int x, int y);
+void	update_image(t_mlx_data *data);
+float	get_edgyness(t_mlx_data* data, int x, int y);
 
 #endif

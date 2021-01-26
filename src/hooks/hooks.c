@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 14:11:21 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/25 14:31:21 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:32:34 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,11 @@
 #define KEY_F 102
 
 #include "mini_rt_mlx.h"
-#include "mini_rt_math_utils.h"
-#include "mini_rt_raytracing.h"
-#include "mlx.h"
-#include "ft_printf.h"
-#include <stdbool.h>
+#include "mini_rt_object.h"
+#include <stdio.h>
 #include <math.h>
-
-#include <stdio.h>	// bad
+#include "ft_printf.h"
+#include "mini_rt_render_pixel.h"
 
 static void next_cam(t_mlx_data* data)
 {
@@ -68,7 +65,10 @@ int	hook_key_down(int key,void *p)
 	else if (key == KEY_F)
 		data->input.white_down = true;
 	else if (key == KEY_Z)
+	{
 		data->debug_trace_aabb = !data->debug_trace_aabb;
+		data->should_clear = true;
+	}
 	else if (key == KEY_T)
 		next_cam(data);
 	return 0;
@@ -131,7 +131,7 @@ int hook_mouse(int button, int x, int y, void* p)
 		t_ray_hit hit;
 
 		pix_to_ray(data, x, y, &ray);
-		if (trace_ray(data, &ray, &hit))
+		if (cast_ray(data->scene, &ray, &hit))
 		{
 			ft_printf("Hit!\n");
 			ft_printf("	Location: %v!\n", &hit.location);

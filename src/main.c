@@ -6,11 +6,18 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/25 14:37:13 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:23:41 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt.h"
+#include "mini_rt_mlx.h"
+#include "mini_rt_hooks.h"
+#include "mini_rt_render_pixel.h"
+#include "mini_rt_init.h"
+#include "mini_rt_object.h"
+
+#include "ft_printf.h"
+#include "mini_rt_bmp.h"
 #include "libft.h"
 #include "mlx.h"
 #include "mlx_int.h"
@@ -108,7 +115,7 @@ int	hook_loop(void *p)
 		pthread_mutex_unlock(&data->renderer.start_thread_lock);
 	}
 	// Render
-	trace_next_pixels(data, 250);
+	render_next_pixels(data, 250);
 
 	if (data->input.white_up != data->input.white_down)
 	{
@@ -311,7 +318,7 @@ int main(int argc, char **argv)
 	}
 	else
 		while (mlx_data.active)
-			trace_next_pixels(&mlx_data, 250);
+			render_next_pixels(&mlx_data, 250);
 
 
 	pthread_t thread_ids[NUM_THREADS];

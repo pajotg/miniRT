@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
 	TEST_START
 		t_vec3 result;
-		temp = (t_vec3) { 1, 1, 1};
+		temp = (t_vec3) { .x=1, .y=1, .z=1};
 		quaternion_mult_vec3(&result, identity, &temp);
 		if (!same_vec(&result, &temp))
 			tu_ko_message_exit("Transforming a vec of 1,1,1 by the identity quaternion did not produce 1,1,1! it made: %.2f %.2f %.2f", result.x, result.y, result.z);
@@ -119,14 +119,14 @@ int main(int argc, char *argv[])
 		t_ray ray;
 		t_ray_hit hit;
 
-		obj.transform.position = (t_vec3) { 0,0,0 };
+		obj.transform.position = (t_vec3) { .x=0, .y=0, .z=0 };
 		obj.transform.rotation = *quaternion_identity();
 		obj.object_data = &object_data;
 
 		object_data.radius = 1;
 
-		ray.origin = (t_vec3) { 0,0,-5 };
-		ray.direction = (t_vec3) { 0,0,1 };
+		ray.origin = (t_vec3) { .x=0, .y=0, .z=-5 };
+		ray.direction = (t_vec3) { .x=0, .y=0, .z=1 };
 
 		hit.distance = INFINITY;
 		if (!ray_intersects_sphere(&obj, &ray, &hit))
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 		if (hit.distance != 4)
 			tu_ko_message_exit("Ray to sphere at 0,0,0 with r=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not procude distance 4!");
 
-		ray.origin = (t_vec3) { 0.5,0,-5 };
+		ray.origin = (t_vec3) { .x=0.5, .y=0, .z=-5 };
 		hit.distance = INFINITY;
 		if (!ray_intersects_sphere(&obj, &ray, &hit))
 			tu_ko_message_exit("Ray to sphere at 0,0,0 with r=1 with ray origin = 0.5,0,-5 and dir = 0,0,1 did not hit!");
@@ -147,17 +147,17 @@ int main(int argc, char *argv[])
 		{
 			t_vec3 vecA;
 			vecA = (t_vec3) {
-				ft_randf() * 2 - 1,
-				ft_randf() * 2 - 1,
-				ft_randf() * 2 - 1
+				.x=ft_randf() * 2 - 1,
+				.y=ft_randf() * 2 - 1,
+				.z=ft_randf() * 2 - 1
 			};
 			vec3_normalize(&vecA, &vecA);
 
 			t_vec3 vecB;
 			vecB = (t_vec3) {
-				ft_randf() * 2 - 1,
-				ft_randf() * 2 - 1,
-				ft_randf() * 2 - 1
+				.x=ft_randf() * 2 - 1,
+				.y=ft_randf() * 2 - 1,
+				.z=ft_randf() * 2 - 1
 			};
 			vec3_normalize(&vecB, &vecB);
 
@@ -179,14 +179,14 @@ int main(int argc, char *argv[])
 		t_ray ray;
 		t_ray_hit hit;
 
-		obj.transform.position = (t_vec3) { 0,0,0 };
+		obj.transform.position = (t_vec3) { .x=0, .y=0, .z=0 };
 		obj.transform.rotation = *quaternion_identity();
 		obj.object_data = &object_data;
 
 		object_data.extends = 1;
 
-		ray.origin = (t_vec3) { 0,0,-5 };
-		ray.direction = (t_vec3) { 0,0,1 };
+		ray.origin = (t_vec3) { .x=0, .y=0, .z=-5 };
+		ray.direction = (t_vec3) { .x=0, .y=0, .z=1 };
 
 		hit.distance = INFINITY;
 		if (!ray_intersects_cube(&obj, &ray, &hit))
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 		if (hit.distance != 4)
 			tu_ko_message_exit("Ray to cube at 0,0,0 with s=1 with ray origin = 0,0,-5 and dir = 0,0,1 did not procude distance 4!");
 
-		ray.origin = (t_vec3) { 0.5,0,-5 };
+		ray.origin = (t_vec3) { .x=0.5, .y=0, .z=-5 };
 		hit.distance = INFINITY;
 		if (!ray_intersects_cube(&obj, &ray, &hit))
 			tu_ko_message_exit("Ray to cube at 0,0,0 with s=1 with ray origin = 0.5,0,-5 and dir = 0,0,1 did not hit!");

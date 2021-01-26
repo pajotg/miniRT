@@ -10,10 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_parse_line.h"
-#include "mini_rt_objects.h"
+#include "mini_rt_object_data.h"
+#include "mini_rt_ray_intersects.h"
+#include "mini_rt_object.h"
 #include "ft_error.h"
 #include <stdlib.h>
+#include "libft.h"
+#include "ft_parse.h"
+#include "mini_rt_parse_utils.h"
 
 static bool	parse_cube_ext(t_object_cube *cube, char *line, int *curr)
 {

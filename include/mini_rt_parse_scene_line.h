@@ -1,20 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   mini_rt_parse_line.h                               :+:    :+:            */
+/*   mini_rt_parse_scene_line.h                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: jasper <jasper@student.codam.nl>             +#+                     */
+/*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/12/27 16:21:00 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/18 14:53:36 by jsimonis      ########   odam.nl         */
+/*   Created: 2021/01/26 17:14:02 by jsimonis      #+#    #+#                 */
+/*   Updated: 2021/01/26 17:58:18 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINI_RT_PARSE_LINE_H
-# define MINI_RT_PARSE_LINE_H
+#ifndef MINI_RT_PARSE_SCENE_LINE_H
+# define MINI_RT_PARSE_SCENE_LINE_H
 
-# include "mini_rt_parse_utils.h"
-# include "libft.h"
+# include "mini_rt_scene.h"
 
 bool	parse_resolution(t_scene_parse_data *parse_data,
 	t_scene *scene, char *line, int *curr);

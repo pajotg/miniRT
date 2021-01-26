@@ -1,22 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   mini_rt_parse_utils.h                              :+:    :+:            */
+/*   mini_rt_bmp.h                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/01/26 17:11:44 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:58:26 by jsimonis      ########   odam.nl         */
+/*   Created: 2021/01/26 17:14:35 by jsimonis      #+#    #+#                 */
+/*   Updated: 2021/01/26 17:58:38 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINI_RT_PARSE_UTILS_H
-# define MINI_RT_PARSE_UTILS_H
+#ifndef MINI_RT_BMP_H
+# define MINI_RT_BMP_H
 
-# include "mini_rt_object.h"
+# include "mini_rt_mlx.h"
 
-bool			read_transform(char *str, int *current, t_transform *transform);
-bool			read_color(char *str, int *current, bool has_ratio,
-	t_color_hdr *color);
+bool	save_image(t_mlx_image *img, char *path);
+bool	write_bmp(int fd, unsigned char *pixels, int width, int height);
 
 #endif

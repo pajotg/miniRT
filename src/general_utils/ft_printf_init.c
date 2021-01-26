@@ -6,12 +6,12 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 11:37:47 by jasper        #+#    #+#                 */
-/*   Updated: 2020/12/30 17:53:34 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:09:21 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf_int.h"
-#include "mini_rt_math_utils.h"
+#include "mini_rt_object.h"
 
 // Well, my printf gives me the option to add conversions
 // So i might as well use it, but i dont have conversions for floating points...
