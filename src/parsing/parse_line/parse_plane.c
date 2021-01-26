@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:47:01 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:28:14 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:37:32 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "ft_error.h"
 #include <stdlib.h>
 #include "libft.h"
-#include "ft_parse.h"
+#include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
 #include <math.h>
 

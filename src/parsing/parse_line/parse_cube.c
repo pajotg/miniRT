@@ -16,7 +16,7 @@
 #include "ft_error.h"
 #include <stdlib.h>
 #include "libft.h"
-#include "ft_parse.h"
+#include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
 
 static bool	parse_cube_ext(t_object_cube *cube, char *line, int *curr)

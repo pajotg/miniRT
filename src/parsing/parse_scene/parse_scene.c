@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:24:49 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:37:24 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "libft.h"
 #include "ft_get_next_line.h"
 #include "mini_rt_object.h"
-#include "ft_parse.h"
+#include "ft_parse_utils.h"
 #include <stdlib.h>
 
 static bool is_object(char *line, char *object, int *curr)

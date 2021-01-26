@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:05:43 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:30:06 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:37:56 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "ft_error.h"
 #include <stdlib.h>
 #include "libft.h"
-#include "ft_parse.h"
+#include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
 
 static bool	parse_cylinder_ext(t_object_cylinder *cylinder,

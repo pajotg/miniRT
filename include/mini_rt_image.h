@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 18:17:40 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:19:23 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:35:51 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,6 @@
 void	write_pix(t_mlx_data *data, int x, int y, t_color_hdr hdr);
 void	update_pix(t_mlx_data *data, int x, int y);
 void	update_image(t_mlx_data *data);
-float	get_edgyness(t_mlx_data* data, int x, int y);
+float	get_edgyness(t_mlx_data *data, int x, int y);
 
 #endif

@@ -6,12 +6,12 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:11:07 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:26:53 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/26 18:37:28 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_error.h"
-#include "ft_parse.h"
+#include "ft_parse_utils.h"
 #include "mini_rt_object.h"
 
 bool read_transform(char* str, int* current, t_transform *transform)
