@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:12:15 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:01:43 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/27 17:25:57 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,6 @@ typedef struct	s_scene
 
 void			free_scene(t_scene *scene);
 t_scene			*parse_scene_file(int fd);
+t_scene			*parse_scene(char *path);
 
 #endif
