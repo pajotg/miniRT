@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:44 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:51:28 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:24:57 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 **	Pure memory
 */
 
-bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
+bool ray_intersects_plane(const t_object* object, const t_ray* ray, t_ray_hit* o_hit)
 {
-	t_object_plane* data = object->object_data;
+	//t_object_plane* data = object->object_data;
 	t_vec3 normal;
 	t_vec3 temp;
 
@@ -29,21 +29,21 @@ bool ray_intersects_plane(t_object* object, t_ray* ray, t_ray_hit* hit)
 	float height = vec3_dot( &normal, &temp );
 	float travel_distance = -height / vec3_dot( &normal, &ray->direction );
 
-	if (travel_distance < 0 || travel_distance > hit->distance)
+	if (travel_distance < 0 || travel_distance > o_hit->distance)
 		return false;
 
-	hit->distance = travel_distance;
-	hit->color = data->color;
+	o_hit->distance = travel_distance;
+	o_hit->object = (t_object*)object;
 
 	vec3_scale(&temp, &ray->direction, travel_distance);
-	vec3_add(&hit->location, &ray->origin, &temp);
+	vec3_add(&o_hit->location, &ray->origin, &temp);
 	if (height > 0)
-		hit->normal = normal;
+		o_hit->normal = normal;
 	else
 	{
-		hit->normal.x = -normal.x;
-		hit->normal.y = -normal.y;
-		hit->normal.z = -normal.z;
+		o_hit->normal.x = -normal.x;
+		o_hit->normal.y = -normal.y;
+		o_hit->normal.z = -normal.z;
 	}
 	return true;
 }

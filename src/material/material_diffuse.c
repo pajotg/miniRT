@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   trace_ray.c                                        :+:    :+:            */
+/*   material_diffuse.c                                 :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: jasper <jasper@student.codam.nl>             +#+                     */
+/*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:14:57 by jsimonis      ########   odam.nl         */
+/*   Created: 2021/01/28 15:25:35 by jsimonis      #+#    #+#                 */
+/*   Updated: 2021/01/28 16:01:33 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_raycast.h"
+#include "mini_rt_material_data.h"
 #include "mini_rt_object.h"
+#include <stdlib.h>
 #include <math.h>
 
-// Things dont go well when we are EXACTLY on the bounds of a object, so just move the ray origin a bit away
-#define NORMAL_OFFSET 0.01
+#define NORMAL_OFFSET 0.0001
 
-static void trace_lights(t_scene* scene, t_vec3* position, t_vec3* normal, t_color_hdr* o_hdr)
+static void add_diffuse_lighting(const t_scene* scene, t_vec3* position, t_vec3* normal, t_color_hdr* o_hdr)
 {
 	t_ray_hit hit;
 	t_ray ray;
@@ -68,19 +68,32 @@ static void trace_lights(t_scene* scene, t_vec3* position, t_vec3* normal, t_col
 	}
 }
 
-void trace_color(t_scene* scene, t_ray* ray, t_color_hdr* o_hdr)
+static void material_diffuse(const t_scene* scene, const void* material_data, const t_material_trace_data* trace_data, t_color_hdr* o_hdr)
 {
-	t_ray_hit hit;
-	t_color_hdr ambiant;
-	if (cast_ray(scene, ray, &hit))
-	{
-		ambiant = scene->ambiant;
-		trace_lights(scene, &hit.location, &hit.normal, &ambiant);
+	const t_material_diffuse* diffuse = material_data;
 
-		o_hdr->r = hit.color.r * ambiant.r;
-		o_hdr->g = hit.color.g * ambiant.g;
-		o_hdr->b = hit.color.b * ambiant.b;
+	*o_hdr = scene->ambiant;
+	add_diffuse_lighting(scene, &trace_data->hit->location, &trace_data->hit->normal, o_hdr);
+
+	o_hdr->r = o_hdr->r * diffuse->color.r;
+	o_hdr->g = o_hdr->g * diffuse->color.g;
+	o_hdr->b = o_hdr->b * diffuse->color.b;
+}
+
+t_material* material_diffuse_new(const t_color_hdr* color)
+{
+	t_material* material = malloc(sizeof(t_material));
+	if (material == NULL)
+		return (NULL);
+	t_material_diffuse* diffuse = malloc(sizeof(t_material_diffuse));
+	if (diffuse == NULL)
+	{
+		free(material);
+		return (NULL);
 	}
-	else
-		*o_hdr = scene->ambiant;
+	diffuse->color = *color;
+
+	material->material_data = diffuse;
+	material->material_func = material_diffuse;
+	return (material);
 }

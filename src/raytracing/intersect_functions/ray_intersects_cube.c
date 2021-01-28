@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:12:38 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:50:33 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:24:59 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 ** I made a bonus thinking it was mandatory, oh wells
 */
 
-bool ray_intersects_cube(t_object* object, t_ray* ray, t_ray_hit* hit)
+bool ray_intersects_cube(const t_object* object, const t_ray* ray, t_ray_hit* o_hit)
 {
 	t_object_cube* data = object->object_data;
 	register int i;
@@ -87,7 +87,7 @@ bool ray_intersects_cube(t_object* object, t_ray* ray, t_ray_hit* hit)
 		if (max_t[which_plane] < max_t[i])
 			which_plane = i;
 	// In case we are facing away from the cube
-	if (max_t[which_plane] < 0. || max_t[which_plane] > hit->distance)
+	if (max_t[which_plane] < 0. || max_t[which_plane] > o_hit->distance)
 		return false;
 	// Check if our hit is on the cube or not
 	for (i = 0; i < 3; i++)
@@ -106,22 +106,22 @@ bool ray_intersects_cube(t_object* object, t_ray* ray, t_ray_hit* hit)
 		if (which_plane != i)
 		{
 			float coord = origin[i] + dir[i] * max_t[which_plane];
-			((float*)&hit->location)[i] = coord;
-			((float*)&hit->normal)[i] = 0;
+			((float*)&o_hit->location)[i] = coord;
+			((float*)&o_hit->normal)[i] = 0;
 		}
 		else
 		{
-			((float*)&hit->location)[i] = candidate_plane[i];
-			((float*)&hit->normal)[i] = side[i];
+			((float*)&o_hit->location)[i] = candidate_plane[i];
+			((float*)&o_hit->normal)[i] = side[i];
 		}
 	}
-	hit->distance = max_t[which_plane];
-	hit->color = data->color;
+	o_hit->distance = max_t[which_plane];
+	o_hit->object = (t_object*)object;
 
-	quaternion_mult_vec3(&hit->normal, &object->transform.rotation, &hit->normal);
+	quaternion_mult_vec3(&o_hit->normal, &object->transform.rotation, &o_hit->normal);
 
-	quaternion_mult_vec3(&hit->location, &object->transform.rotation, &hit->location);
-	vec3_add(&hit->location, &hit->location, &object->transform.position);
+	quaternion_mult_vec3(&o_hit->location, &object->transform.rotation, &o_hit->location);
+	vec3_add(&o_hit->location, &o_hit->location, &object->transform.position);
 
 	return true;
 }

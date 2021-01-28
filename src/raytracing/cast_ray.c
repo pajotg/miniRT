@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 14:52:36 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:08:09 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 14:57:43 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@
 #include <stdbool.h>
 #include <math.h>
 
-static bool cast_ray_raw(t_scene* scene, t_ray* ray, t_ray_hit* o_hit)
+#define MIN_DIST 0.0001
+
+static bool cast_ray_raw(const t_scene* scene, const t_ray* ray, t_ray_hit* o_hit)
 {
 	bool has_hit = false;
 	for (size_t i = 0; i < scene->objects.count; i++)
@@ -28,13 +30,13 @@ static bool cast_ray_raw(t_scene* scene, t_ray* ray, t_ray_hit* o_hit)
 	return has_hit;
 }
 
-bool cast_ray(t_scene* scene, t_ray* ray, t_ray_hit* o_hit)
+bool cast_ray(const t_scene* scene, const t_ray* ray, t_ray_hit* o_hit)
 {
 	o_hit->distance = INFINITY;
 	return cast_ray_raw(scene, ray, o_hit);
 }
 
-bool cast_ray_max(t_scene* scene, t_ray* ray, t_ray_hit* o_hit, float max_dist)
+bool cast_ray_max(const t_scene* scene, const t_ray* ray, t_ray_hit* o_hit, float max_dist)
 {
 	o_hit->distance = max_dist;
 	return cast_ray_raw(scene, ray, o_hit);

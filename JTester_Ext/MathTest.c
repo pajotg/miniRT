@@ -1,9 +1,29 @@
-#include "mini_rt.h"
 #include "test_utils.h"
 #include <math.h>
 #include "libft.h"
 
 #include <stdio.h>
+
+#include "mini_rt_object.h"
+#include "mini_rt_mlx.h"
+#include "mini_rt_material.h"
+#include "mini_rt_pixel.h"
+#include "mini_rt_scene.h"
+#include "mini_rt_init.h"
+#include "mini_rt_hooks.h"
+#include "mini_rt_ray_intersects.h"
+#include "mini_rt_parse_scene_line.h"
+#include "mini_rt_parse_utils.h"
+#include "mini_rt_bmp.h"
+#include "mini_rt_image.h"
+#include "mini_rt_renderer.h"
+#include "mini_rt_material_data.h"
+#include "mini_rt_parse_obj.h"
+#include "mini_rt_color.h"
+#include "mini_rt_render_pixel.h"
+#include "mini_rt_args.h"
+#include "mini_rt_raycast.h"
+#include "mini_rt_object_data.h"
 
 bool same_vec(const t_vec3* a, const t_vec3* b)
 {

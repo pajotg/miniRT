@@ -17,7 +17,9 @@
 			"test_utils.h": "c",
 			"typeinfo": "c",
 			"limits": "c",
-			"type_traits": "cpp"
+			"type_traits": "cpp",
+			"*.tcc": "c",
+			"mini_rt_material_data.h": "c"
 		},
 	}
 }

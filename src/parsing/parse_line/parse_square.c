@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:59:22 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:38:08 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:50:29 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,27 +18,7 @@
 #include "libft.h"
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
-
-static bool	parse_square_ext(t_object_square *square, char *line, int *curr)
-{
-	if (!read_float(line, curr, &square->extends))
-	{
-		free(square);
-		set_error(ft_strjoin(
-			"square size incorrectly formatted: ", line), true);
-		return (false);
-	}
-	square->extends /= 2;
-	skip_whitespace(line, curr);
-	if (!read_color(line, curr, false, &square->color))
-	{
-		free(square);
-		set_error(ft_strjoin(
-			"square color incorrectly formatted: ", line), true);
-		return (false);
-	}
-	return (true);
-}
+#include "mini_rt_material_data.h"
 
 bool		parse_square(t_scene *scene, char *line, int *curr)
 {
@@ -62,8 +42,36 @@ bool		parse_square(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	skip_whitespace(line, curr);
-	if (!parse_square_ext(square, line, curr))
+
+	// read extends
+	if (!read_float(line, curr, &square->extends))
+	{
+		free(square);
+		set_error(ft_strjoin(
+			"square size incorrectly formatted: ", line), true);
 		return (false);
+	}
+	square->extends /= 2;
+
+	// Read material
+	skip_whitespace(line, curr);
+	t_color_hdr color;
+	if (!read_color(line, curr, false, &color))
+	{
+		free(square);
+		set_error(ft_strjoin(
+			"sphere color incorrectly formatted: ", line), true);
+		return (false);
+	}
+	object.material = material_diffuse_new(&color);
+	if (object.material == NULL)
+	{
+		free(square);
+		set_error(ft_strjoin(
+			"Failed to init diffuse material! ", line), true);
+		return (false);
+	}
+
 	// Calculate the aabb
 	object.aabb.max = (t_vec3) {  square->extends,  square->extends, 0 };
 	object.aabb.min = (t_vec3) { -square->extends, -square->extends, 0 };
@@ -72,6 +80,8 @@ bool		parse_square(t_scene *scene, char *line, int *curr)
 	aabb_rotate(&object.aabb,&object.transform.rotation);
 	if (!list_push(&scene->objects, &object))
 	{
+		free(square);
+		material_free(object.material);
 		set_error("Could not push square into objects list!", true);
 		return (false);
 	}

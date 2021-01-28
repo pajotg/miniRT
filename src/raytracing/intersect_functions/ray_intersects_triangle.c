@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:04 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:51:54 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:24:58 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 **	Möller–Trumbore intersection
 */
 
-bool ray_intersects_triangle(t_object* object, t_ray* ray, t_ray_hit* hit)
+bool ray_intersects_triangle(t_object* object, t_ray* ray, t_ray_hit* o_hit)
 {
 	const float EPSILON = 0.0000001;
 
@@ -71,17 +71,17 @@ bool ray_intersects_triangle(t_object* object, t_ray* ray, t_ray_hit* hit)
 	vec3_normalize(&normal, &normal);
 
 	float distance = f * vec3_dot(&edge2, &q);
-	if (distance < 0 || distance > hit->distance)
+	if (distance < 0 || distance > o_hit->distance)
 		return (false);
 
-	hit->distance = distance;
-	hit->color = data->color;
+	o_hit->distance = distance;
+	o_hit->object = (t_object*)object;
 	if (vec3_dot(&normal, &ray->direction) < 0)
-		hit->normal = normal;
+		o_hit->normal = normal;
 	else
-		hit->normal = (t_vec3) { -normal.x, -normal.y, -normal.z };
-	vec3_scale(&hit->location, &ray->direction, distance);
-	vec3_add(&hit->location, &hit->location, &ray->origin);
+		o_hit->normal = (t_vec3) { -normal.x, -normal.y, -normal.z };
+	vec3_scale(&o_hit->location, &ray->direction, distance);
+	vec3_add(&o_hit->location, &o_hit->location, &ray->origin);
 
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:05:43 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:37:56 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:49:08 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,37 +18,7 @@
 #include "libft.h"
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
-
-static bool	parse_cylinder_ext(t_object_cylinder *cylinder,
-	char *line, int *curr)
-{
-	if (!read_float(line, curr, &cylinder->radius))
-	{
-		free(cylinder);
-		set_error(ft_strjoin(
-			"cylinder diameter incorrectly formatted: ", line), true);
-		return (false);
-	}
-	cylinder->radius /= 2;
-	skip_whitespace(line, curr);
-	if (!read_float(line, curr, &cylinder->height_extends))
-	{
-		free(cylinder);
-		set_error(ft_strjoin(
-			"cylinder height incorrectly formatted: ", line), true);
-		return (false);
-	}
-	cylinder->height_extends /= 2;
-	skip_whitespace(line, curr);
-	if (!read_color(line, curr, false, &cylinder->color))
-	{
-		free(cylinder);
-		set_error(ft_strjoin(
-			"cylinder color incorrectly formatted: ", line), true);
-		return (false);
-	}
-	return (true);
-}
+#include "mini_rt_material_data.h"
 
 bool		parse_cylinder(t_scene *scene, char *line, int *curr)
 {
@@ -72,8 +42,48 @@ bool		parse_cylinder(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	skip_whitespace(line, curr);
-	if (!parse_cylinder_ext(cylinder, line, curr))
+
+
+	// Read radius
+	if (!read_float(line, curr, &cylinder->radius))
+	{
+		free(cylinder);
+		set_error(ft_strjoin(
+			"cylinder diameter incorrectly formatted: ", line), true);
 		return (false);
+	}
+	cylinder->radius /= 2;
+
+	// Read extends
+	skip_whitespace(line, curr);
+	if (!read_float(line, curr, &cylinder->height_extends))
+	{
+		free(cylinder);
+		set_error(ft_strjoin(
+			"cylinder height incorrectly formatted: ", line), true);
+		return (false);
+	}
+	cylinder->height_extends /= 2;
+
+	// Read material
+	skip_whitespace(line, curr);
+	t_color_hdr color;
+	if (!read_color(line, curr, false, &color))
+	{
+		free(cylinder);
+		set_error(ft_strjoin(
+			"sphere color incorrectly formatted: ", line), true);
+		return (false);
+	}
+	object.material = material_diffuse_new(&color);
+	if (object.material == NULL)
+	{
+		free(cylinder);
+		set_error(ft_strjoin(
+			"Failed to init diffuse material! ", line), true);
+		return (false);
+	}
+
 	// Calculate the aabb
 	object.aabb.max = (t_vec3) {  cylinder->radius,  cylinder->height_extends,  cylinder->radius };
 	object.aabb.min = (t_vec3) { -cylinder->radius, -cylinder->height_extends, -cylinder->radius };

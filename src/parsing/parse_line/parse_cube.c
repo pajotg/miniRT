@@ -18,27 +18,7 @@
 #include "libft.h"
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
-
-static bool	parse_cube_ext(t_object_cube *cube, char *line, int *curr)
-{
-	if (!read_float(line, curr, &cube->extends))
-	{
-		free(cube);
-		set_error(ft_strjoin(
-			"cube size incorrectly formatted: ", line), true);
-		return (false);
-	}
-	cube->extends /= 2;
-	skip_whitespace(line, curr);
-	if (!read_color(line, curr, false, &cube->color))
-	{
-		free(cube);
-		set_error(ft_strjoin(
-			"cube color incorrectly formatted: ", line), true);
-		return (false);
-	}
-	return (true);
-}
+#include "mini_rt_material_data.h"
 
 bool		parse_cube(t_scene *scene, char *line, int *curr)
 {
@@ -53,6 +33,7 @@ bool		parse_cube(t_scene *scene, char *line, int *curr)
 	}
 	object.object_data = cube;
 	object.intersect_func = (t_object_intersect_func)ray_intersects_cube;
+
 	skip_whitespace(line, curr);
 	if (!read_transform(line, curr, &object.transform))
 	{
@@ -61,9 +42,35 @@ bool		parse_cube(t_scene *scene, char *line, int *curr)
 			"cube position and normal incorrectly formatted: ", line), true);
 		return (false);
 	}
+
 	skip_whitespace(line, curr);
-	if (!parse_cube_ext(cube, line, curr))
+	if (!read_float(line, curr, &cube->extends))
+	{
+		free(cube);
+		set_error(ft_strjoin(
+			"cube size incorrectly formatted: ", line), true);
 		return (false);
+	}
+	cube->extends /= 2;
+
+	skip_whitespace(line, curr);
+	t_color_hdr color;
+	if (!read_color(line, curr, false, &color))
+	{
+		free(cube);
+		set_error(ft_strjoin(
+			"cube color incorrectly formatted: ", line), true);
+		return (false);
+	}
+	object.material = material_diffuse_new(&color);
+	if (object.material == NULL)
+	{
+		free(cube);
+		set_error(ft_strjoin(
+			"Failed to init diffuse material! ", line), true);
+		return (false);
+	}
+
 	// Calculate the aabb
 	object.aabb.max = (t_vec3) {  cube->extends,  cube->extends,  cube->extends };
 	object.aabb.min = (t_vec3) { -cube->extends, -cube->extends, -cube->extends };
@@ -73,6 +80,8 @@ bool		parse_cube(t_scene *scene, char *line, int *curr)
 
 	if (!list_push(&scene->objects, &object))
 	{
+		free(cube);
+		material_free(object.material);
 		set_error("Could not push cube into objects list!", true);
 		return (false);
 	}

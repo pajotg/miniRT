@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   parse_scene.c                                      :+:    :+:            */
+/*   parse_scene_file.c                                 :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:37:24 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:53:54 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "mini_rt_object.h"
 #include "ft_parse_utils.h"
 #include <stdlib.h>
+#include "mini_rt_material_data.h"
 
 static bool is_object(char *line, char *object, int *curr)
 {
@@ -90,6 +91,7 @@ static bool parse_line(t_scene_parse_data *parse_data, t_scene *scene, char *lin
 void un_init_object(t_object* object)
 {
 	free(object->object_data);
+	material_free(object->material);
 }
 
 void free_scene(t_scene* scene)

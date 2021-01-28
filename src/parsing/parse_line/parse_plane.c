@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:47:01 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:37:32 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:44:04 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,7 @@
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
 #include <math.h>
-
-static bool	parse_plane_ext(t_object_plane *plane, char *line, int *curr)
-{
-	if (!read_color(line, curr, false, &plane->color))
-	{
-		free(plane);
-		set_error(ft_strjoin(
-			"plane color incorrectly formatted: ", line), true);
-		return (false);
-	}
-	return (true);
-}
+#include "mini_rt_material_data.h"
 
 bool		parse_plane(t_scene *scene, char *line, int *curr)
 {
@@ -54,13 +43,31 @@ bool		parse_plane(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	skip_whitespace(line, curr);
-	if (!parse_plane_ext(plane, line, curr))
+
+	t_color_hdr color;
+	if (!read_color(line, curr, false, &color))
+	{
+		free(plane);
+		set_error(ft_strjoin(
+			"plane color incorrectly formatted: ", line), true);
 		return (false);
+	}
+	object.material = material_diffuse_new(&color);
+	if (object.material == NULL)
+	{
+		free(plane);
+		set_error(ft_strjoin(
+			"Failed to init diffuse material! ", line), true);
+		return (false);
+	}
+
 	// Calculate the aabb
 	object.aabb.max = (t_vec3) { INFINITY, INFINITY, INFINITY };
 	object.aabb.min = (t_vec3) { -INFINITY, -INFINITY, -INFINITY };
 	if (!list_push(&scene->objects, &object))
 	{
+		free(plane);
+		material_free(object.material);
 		set_error("Could not push plane into objects list!", true);
 		return (false);
 	}

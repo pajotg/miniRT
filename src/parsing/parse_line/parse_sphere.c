@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:39:05 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:37:40 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:47:26 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,27 +18,7 @@
 #include "libft.h"
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
-
-static bool	parse_sphere_extension(t_object_sphere *sphere,
-	char *line, int *curr)
-{
-	if (!read_float(line, curr, &sphere->radius))
-	{
-		free(sphere);
-		set_error(ft_strjoin("sphere missing diameter: ", line), true);
-		return (false);
-	}
-	sphere->radius /= 2;
-	skip_whitespace(line, curr);
-	if (!read_color(line, curr, false, &sphere->color))
-	{
-		free(sphere);
-		set_error(ft_strjoin(
-			"sphere color incorrectly formatted: ", line), true);
-		return (false);
-	}
-	return (true);
-}
+#include "mini_rt_material_data.h"
 
 bool		parse_sphere(t_scene *scene, char *line, int *curr)
 {
@@ -62,9 +42,35 @@ bool		parse_sphere(t_scene *scene, char *line, int *curr)
 			"sphere position incorrectly formatted: ", line), true);
 		return (false);
 	}
+
 	skip_whitespace(line, curr);
-	if (!parse_sphere_extension(sphere, line, curr))
+	if (!read_float(line, curr, &sphere->radius))
+	{
+		free(sphere);
+		set_error(ft_strjoin("sphere missing diameter: ", line), true);
 		return (false);
+	}
+	sphere->radius /= 2;
+
+	skip_whitespace(line, curr);
+	t_color_hdr color;
+	if (!read_color(line, curr, false, &color))
+	{
+		free(sphere);
+		set_error(ft_strjoin(
+			"sphere color incorrectly formatted: ", line), true);
+		return (false);
+	}
+	object.material = material_diffuse_new(&color);
+	if (object.material == NULL)
+	{
+		free(sphere);
+		set_error(ft_strjoin(
+			"Failed to init diffuse material! ", line), true);
+		return (false);
+	}
+
+
 	// Calculate the aabb
 	object.aabb.max = (t_vec3) {  sphere->radius,  sphere->radius,  sphere->radius };
 	object.aabb.min = (t_vec3) { -sphere->radius, -sphere->radius, -sphere->radius };
@@ -72,6 +78,8 @@ bool		parse_sphere(t_scene *scene, char *line, int *curr)
 	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
 	if (!list_push(&scene->objects, &object))
 	{
+		free(sphere);
+		material_free(object.material);
 		set_error("Could not push sphere into objects list!", true);
 		return (false);
 	}

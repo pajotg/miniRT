@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   hooks.c                                            :+:    :+:            */
+/*   hooks_input.c                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 14:11:21 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:32:34 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:51:35 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ int hook_mouse(int button, int x, int y, void* p)
 			ft_printf("	Location: %v!\n", &hit.location);
 			printf("	Distance: %.2f!\n", hit.distance);
 			ft_printf("	Normal: %v!\n", &hit.normal);
-			ft_printf("	Color: %v!\n", (t_vec3*)&hit.color);
+			ft_printf("	Object: %p!\n", hit.object);
 
 			float sqrmag = vec3_magnitude_sqr(&hit.normal);
 			if (sqrmag > 1.01 || sqrmag < 0.99)

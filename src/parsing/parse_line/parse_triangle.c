@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:08:45 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:38:11 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:51:12 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,35 +18,7 @@
 #include "libft.h"
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
-
-static bool	parse_triangle_ext(t_object_triangle *triangle,
-	char *line, int *curr)
-{
-	if (!read_vec3(line, curr, &triangle->second_point))
-	{
-		free(triangle);
-		set_error(ft_strjoin(
-			"triangle second position incorrectly formatted: ", line), true);
-		return (false);
-	}
-	skip_whitespace(line, curr);
-	if (!read_vec3(line, curr, &triangle->third_point))
-	{
-		free(triangle);
-		set_error(ft_strjoin(
-			"triangle third position incorrectly formatted: ", line), true);
-		return (false);
-	}
-	skip_whitespace(line, curr);
-	if (!read_color(line, curr, false, &triangle->color))
-	{
-		free(triangle);
-		set_error(ft_strjoin(
-			"triangle color incorrectly formatted: ", line), true);
-		return (false);
-	}
-	return (true);
-}
+#include "mini_rt_material_data.h"
 
 bool		parse_triangle(t_scene *scene, char *line, int *curr)
 {
@@ -71,14 +43,49 @@ bool		parse_triangle(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	skip_whitespace(line, curr);
-	if (!parse_triangle_ext(triangle, line, curr))
+	if (!read_vec3(line, curr, &triangle->second_point))
+	{
+		free(triangle);
+		set_error(ft_strjoin(
+			"triangle second position incorrectly formatted: ", line), true);
 		return (false);
+	}
+	skip_whitespace(line, curr);
+	if (!read_vec3(line, curr, &triangle->third_point))
+	{
+		free(triangle);
+		set_error(ft_strjoin(
+			"triangle third position incorrectly formatted: ", line), true);
+		return (false);
+	}
+
+	// Read material
+	skip_whitespace(line, curr);
+	t_color_hdr color;
+	if (!read_color(line, curr, false, &color))
+	{
+		free(triangle);
+		set_error(ft_strjoin(
+			"sphere color incorrectly formatted: ", line), true);
+		return (false);
+	}
+	object.material = material_diffuse_new(&color);
+	if (object.material == NULL)
+	{
+		free(triangle);
+		set_error(ft_strjoin(
+			"Failed to init diffuse material! ", line), true);
+		return (false);
+	}
+
 	// Calculate the aabb
 	aabb_init(&object.aabb, &object.transform.position);
 	aabb_extend_point(&object.aabb, &triangle->second_point);
 	aabb_extend_point(&object.aabb, &triangle->third_point);
 	if (!list_push(&scene->objects, &object))
 	{
+		free(triangle);
+		material_free(object.material);
 		set_error("Could not push triangle into objects list!", true);
 		return (false);
 	}

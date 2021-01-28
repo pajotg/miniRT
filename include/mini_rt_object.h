@@ -6,17 +6,18 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:15:03 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:55:47 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:40:24 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_RT_OBJECT_H
 # define MINI_RT_OBJECT_H
 
-# include "mini_rt_raycast.h"
 # include "ft_vec3.h"
 # include "ft_quaternion.h"
 # include "ft_aabb.h"
+# include "mini_rt_material.h"
+# include "mini_rt_raycast.h"
 
 /*
 **	Forward declare the t_object struct
@@ -24,8 +25,8 @@
 
 struct s_object;
 
-typedef bool		(*t_object_intersect_func)(struct s_object* object,
-	t_ray* ray, t_ray_hit* hit);
+typedef bool		(*t_object_intersect_func)(const struct s_object* object,
+	const struct s_ray* ray, struct s_ray_hit* o_hit);
 
 typedef struct		s_transform
 {
@@ -39,6 +40,7 @@ typedef struct		s_object
 	t_aabb					aabb;
 	void					*object_data;
 	t_object_intersect_func	intersect_func;
+	t_material				*material;
 }					t_object;
 
 typedef struct		s_camera

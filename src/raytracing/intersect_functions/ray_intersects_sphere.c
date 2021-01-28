@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:57 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:52:11 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/28 15:24:56 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 **	delta > -dot should make it work from inside the sphere too
 */
 
-bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
+bool ray_intersects_sphere(const t_object* object, const t_ray* ray, t_ray_hit* o_hit)
 {
 	t_object_sphere* data = object->object_data;
 	t_vec3 offset;
@@ -39,18 +39,18 @@ bool ray_intersects_sphere(t_object* object, t_ray* ray, t_ray_hit* hit)
 	if (delta < dot)
 		delta = -delta;
 	float distance = dot + delta;
-	if (hit->distance < distance || distance < 0)
+	if (o_hit->distance < distance || distance < 0)
 		return false;
-	hit->distance = distance;
-	hit->color = data->color;
+	o_hit->distance = distance;
+	o_hit->object = (t_object*)object;
 
-	vec3_scale(&hit->location, &ray->direction, hit->distance);
-	vec3_add(&hit->location, &ray->origin, &hit->location);
+	vec3_scale(&o_hit->location, &ray->direction, o_hit->distance);
+	vec3_add(&o_hit->location, &ray->origin, &o_hit->location);
 
-	vec3_subtract(&hit->normal, &hit->location, &object->transform.position);
-	vec3_scale(&hit->normal, &hit->normal, 1 / data->radius);
+	vec3_subtract(&o_hit->normal, &o_hit->location, &object->transform.position);
+	vec3_scale(&o_hit->normal, &o_hit->normal, 1 / data->radius);
 
 	if (is_inside)
-		hit->normal = (t_vec3) { -hit->normal.x, -hit->normal.y, -hit->normal.z };
+		o_hit->normal = (t_vec3) { -o_hit->normal.x, -o_hit->normal.y, -o_hit->normal.z };
 	return true;
 }
