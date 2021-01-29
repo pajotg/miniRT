@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 14:52:36 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/28 14:57:43 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/29 16:49:18 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 #include "mini_rt_ray_intersects.h"
 #include <stdbool.h>
 #include <math.h>
-
-#define MIN_DIST 0.0001
 
 static bool cast_ray_raw(const t_scene* scene, const t_ray* ray, t_ray_hit* o_hit)
 {

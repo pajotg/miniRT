@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/17 13:59:56 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 19:02:50 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/29 19:10:48 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ void render_pixel(t_mlx_data* data, int x, int y)
 	{
 		// for the first frame, dont use random scattering
 		pix_to_ray(data, x, y, &ray);
-		trace_color(data->scene, &ray, hdr);
+		trace_color(data->scene, &ray, 0, hdr);
 		pixel_data->num_samples = 1;
 		// Fast render update for first frame
 		write_pix(data, x, y, convert_to_hdr(pixel_data));
 	}
 	else
 	{
-		float edgyness = get_edgyness(data, x,y) * 5;
+		float edgyness = get_edgyness(data, x,y) * 15;
 		if (edgyness > 1)
 			edgyness = 1;
 		int spp = data->scene->samples_per_pixel * edgyness;
@@ -51,7 +51,7 @@ void render_pixel(t_mlx_data* data, int x, int y)
 				&ray
 			);
 			t_color_hdr current;
-			trace_color(data->scene, &ray, &current);
+			trace_color(data->scene, &ray, 0, &current);
 			hdr->r += current.r;
 			hdr->g += current.g;
 			hdr->b += current.b;

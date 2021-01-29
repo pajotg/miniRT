@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/29 15:08:44 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/29 15:17:24 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/29 16:52:44 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,40 @@ static t_shared_pt8 *read_additive(const char* str, int* current)
 	return (create_shared_ptr_from_material(&material));
 }
 
+static t_shared_pt8 *read_checkerboard(const char* str, int* current)
+{
+	float checker_size = 0;
+	if (!read_float(str, current, &checker_size))
+	{
+		set_error("Failed to read checker size of checkerboard material!", false);
+		return (NULL);
+	}
+	skip_whitespace(str, current);
+	t_color_hdr color;
+	if (!read_color(str, current, false, &color))
+	{
+		set_error("Failed to read color of checkerboard material!", false);
+		return (NULL);
+	}
+	skip_whitespace(str, current);
+	t_shared_pt8 *base_material = read_material(str, current);
+	if (!base_material)
+	{
+		set_error(ft_strjoin("Failed to read base material of checkerboard material!\nReason: ", get_last_error()), true);
+		return (NULL);
+	}
+	t_material material;
+	if (!material_checkerboard_init(&material, checker_size, &color, base_material))
+	{
+		shared_pt8_release_and_free(base_material);
+		set_error("Failed to create checkerboard material!", false);
+		return (NULL);
+	}
+	// checkerboard material now has a hold onto a&b
+	shared_pt8_release_and_free(base_material);
+	return (create_shared_ptr_from_material(&material));
+}
+
 /*
 ** A material is either
 ** a plain color, aka: diffuse only
@@ -145,6 +179,7 @@ static t_shared_pt8 *read_additive(const char* str, int* current)
 
 t_shared_pt8 *read_material(const char* str, int* current)
 {
+	// Try default material
 	t_color_hdr color;
 	t_material material;
 	if (read_color(str, current, false, &color))
@@ -156,25 +191,25 @@ t_shared_pt8 *read_material(const char* str, int* current)
 		}
 		return (create_shared_ptr_from_material(&material));
 	}
+
+	// Get what type of material it is
+	t_shared_pt8 *(*read_ptr)(const char* str, int* current);
+
 	if (str[*current] == 'D')
-	{
-		*current+=1;
-		skip_whitespace(str, current);
-		return (read_diffuse(str, current));
-	}
-	if (str[*current] == 'M')
-	{
-		*current+=1;
-		skip_whitespace(str, current);
-		return (read_mix(str, current));
-	}
-	if (str[*current] == 'A')
-	{
-		*current+=1;
-		skip_whitespace(str, current);
-		return (read_additive(str, current));
+		read_ptr = read_diffuse;
+	else if (str[*current] == 'M')
+		read_ptr = read_mix;
+	else if (str[*current] == 'A')
+		read_ptr = read_additive;
+	else if (str[*current] == 'C')
+		read_ptr = read_checkerboard;
+	else {
+		set_error("Failed to detect type of material!", false);
+		return (NULL);
 	}
 
-	set_error("Failed to detect type of material!", false);
-	return (NULL);
+	// Read the material
+	*current+=1;
+	skip_whitespace(str, current);
+	return (read_ptr(str, current));
 }

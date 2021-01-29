@@ -21,7 +21,8 @@
 			"*.tcc": "c",
 			"mini_rt_material_data.h": "c",
 			"mini_rt_material.h": "c",
-			"ft_shared_ptr.h": "c"
+			"ft_shared_ptr.h": "c",
+			"mini_rt_object.h": "c"
 		},
 	}
 }
