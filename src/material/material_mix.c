@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 15:25:35 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/29 14:38:45 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/29 15:05:16 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ bool material_mix_init(t_material* material, float ratio, t_shared_pt8* a, t_sha
 	if (mix == NULL)
 		return (false);
 	mix->ratio = ratio;
+	shared_pt8_get(a);
+	shared_pt8_get(b);
 	mix->a = a;
 	mix->b = b;
 
