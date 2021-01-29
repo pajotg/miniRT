@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 14:34:48 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/28 15:39:26 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/29 13:18:15 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,13 @@ typedef void		(*t_material_func)(const t_scene* scene,
 	const void* material_data, const t_material_trace_data* trace_data,
 	t_color_hdr* o_out);
 
+typedef void		(*t_material_free_data_func)(void* data);
+
 typedef struct s_material
 {
-	void*			material_data;
-	t_material_func	material_func;
+	void*						material_data;
+	t_material_func				material_func;
+	t_material_free_data_func	material_free_data_func;
 }				t_material;
 
 #endif

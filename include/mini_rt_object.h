@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:15:03 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/28 15:40:24 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/29 13:22:26 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include "ft_aabb.h"
 # include "mini_rt_material.h"
 # include "mini_rt_raycast.h"
+# include "ft_shared_ptr.h"
 
 /*
 **	Forward declare the t_object struct
@@ -40,7 +41,7 @@ typedef struct		s_object
 	t_aabb					aabb;
 	void					*object_data;
 	t_object_intersect_func	intersect_func;
-	t_material				*material;
+	t_shared_pt8			*material;
 }					t_object;
 
 typedef struct		s_camera

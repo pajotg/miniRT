@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 15:42:51 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/28 15:44:27 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/29 13:26:51 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,6 @@
 
 void	material_free(t_material* material)
 {
-	free(material->material_data);
+	material->material_free_data_func(material->material_data);
 	free(material);
 }

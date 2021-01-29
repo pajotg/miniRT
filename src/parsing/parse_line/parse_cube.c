@@ -54,20 +54,11 @@ bool		parse_cube(t_scene *scene, char *line, int *curr)
 	cube->extends /= 2;
 
 	skip_whitespace(line, curr);
-	t_color_hdr color;
-	if (!read_color(line, curr, false, &color))
+	object.material = read_material(line, curr);
+	if (!object.material)
 	{
 		free(cube);
-		set_error(ft_strjoin(
-			"cube color incorrectly formatted: ", line), true);
-		return (false);
-	}
-	object.material = material_diffuse_new(&color);
-	if (object.material == NULL)
-	{
-		free(cube);
-		set_error(ft_strjoin(
-			"Failed to init diffuse material! ", line), true);
+		set_error(ft_strjoin_va(4, "cube material incorrectly formatted: ", line, "\nReason: ", get_last_error()), true);
 		return (false);
 	}
 
@@ -81,7 +72,7 @@ bool		parse_cube(t_scene *scene, char *line, int *curr)
 	if (!list_push(&scene->objects, &object))
 	{
 		free(cube);
-		material_free(object.material);
+		shared_pt8_release_and_free(object.material);
 		set_error("Could not push cube into objects list!", true);
 		return (false);
 	}

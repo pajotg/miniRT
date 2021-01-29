@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:05:43 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/28 15:49:08 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/29 14:38:51 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,20 +67,11 @@ bool		parse_cylinder(t_scene *scene, char *line, int *curr)
 
 	// Read material
 	skip_whitespace(line, curr);
-	t_color_hdr color;
-	if (!read_color(line, curr, false, &color))
+	object.material = read_material(line, curr);
+	if (!object.material)
 	{
 		free(cylinder);
-		set_error(ft_strjoin(
-			"sphere color incorrectly formatted: ", line), true);
-		return (false);
-	}
-	object.material = material_diffuse_new(&color);
-	if (object.material == NULL)
-	{
-		free(cylinder);
-		set_error(ft_strjoin(
-			"Failed to init diffuse material! ", line), true);
+		set_error(ft_strjoin_va(4, "cylinder material incorrectly formatted: ", line, "\nReason: ", get_last_error()), true);
 		return (false);
 	}
 
@@ -92,6 +83,8 @@ bool		parse_cylinder(t_scene *scene, char *line, int *curr)
 	aabb_rotate(&object.aabb,&object.transform.rotation);
 	if (!list_push(&scene->objects, &object))
 	{
+		free(cylinder);
+		shared_pt8_release_and_free(object.material);
 		set_error("Could not push cylinder into objects list!", true);
 		return (false);
 	}

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:39:05 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/28 15:47:26 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/29 14:38:56 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,20 +53,11 @@ bool		parse_sphere(t_scene *scene, char *line, int *curr)
 	sphere->radius /= 2;
 
 	skip_whitespace(line, curr);
-	t_color_hdr color;
-	if (!read_color(line, curr, false, &color))
+	object.material = read_material(line, curr);
+	if (!object.material)
 	{
 		free(sphere);
-		set_error(ft_strjoin(
-			"sphere color incorrectly formatted: ", line), true);
-		return (false);
-	}
-	object.material = material_diffuse_new(&color);
-	if (object.material == NULL)
-	{
-		free(sphere);
-		set_error(ft_strjoin(
-			"Failed to init diffuse material! ", line), true);
+		set_error(ft_strjoin_va(4, "sphere material incorrectly formatted: ", line, "\nReason: ", get_last_error()), true);
 		return (false);
 	}
 
@@ -79,7 +70,7 @@ bool		parse_sphere(t_scene *scene, char *line, int *curr)
 	if (!list_push(&scene->objects, &object))
 	{
 		free(sphere);
-		material_free(object.material);
+		shared_pt8_release_and_free(object.material);
 		set_error("Could not push sphere into objects list!", true);
 		return (false);
 	}

@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 15:25:35 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/28 16:01:33 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/29 13:27:09 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,20 +80,18 @@ static void material_diffuse(const t_scene* scene, const void* material_data, co
 	o_hdr->b = o_hdr->b * diffuse->color.b;
 }
 
-t_material* material_diffuse_new(const t_color_hdr* color)
+bool material_diffuse_init(t_material* material, const t_color_hdr* color)
 {
-	t_material* material = malloc(sizeof(t_material));
-	if (material == NULL)
-		return (NULL);
 	t_material_diffuse* diffuse = malloc(sizeof(t_material_diffuse));
 	if (diffuse == NULL)
-	{
-		free(material);
-		return (NULL);
-	}
+		return (false);
 	diffuse->color = *color;
 
-	material->material_data = diffuse;
-	material->material_func = material_diffuse;
-	return (material);
+	*material = (t_material)
+	{
+		.material_data = diffuse,
+		.material_func = material_diffuse,
+		.material_free_data_func = free
+	};
+	return (true);
 }
