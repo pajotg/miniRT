@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:11:07 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/29 15:09:07 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 13:57:37 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ bool read_color(const char* str, int* current, bool has_ratio, t_color_hdr *o_co
 	{
 		if (!read_float(str, current, &ratio))
 			return false;
-		if (ratio < 0 || ratio > 1)
+		//if (ratio < 0 || ratio > 1)
+		if (ratio < 0)
 			return false;
 		ratio /= 255;
 		skip_whitespace(str, current);

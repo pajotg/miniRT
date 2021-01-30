@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:23:03 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/27 17:57:18 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 18:56:43 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,8 @@ bool	mlx_data_init(t_mlx_data* data, void* mlx, t_scene* scene, t_args* args)
 	data->scene = scene;
 	data->args = args;
 	data->should_clear = false;
-	data->white = 1;
+	data->white = 15;
 	data->active = true;
-	data->debug_trace_aabb = false;
 	data->input = (t_input) { false, false, false, false, false, false, false, false };
 
 	if (!data->args->save)

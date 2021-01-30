@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   hooks1.c                                           :+:    :+:            */
+/*   hooks_frame.c                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/16 17:29:33 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:33:32 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 19:40:13 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,27 @@ void hook_frame_start(t_mlx_data *data)
 	(void)data;
 }
 
-// Warning: can be called from multiple threads at once
-void hook_frame_complete(t_mlx_data *data, bool first_frame)
+void hook_frame_complete(t_mlx_data *data, int total_samples, float avg_noise)
 {
 	update_image(data);
 
 	// Print out how long it took
 	t_time current = time_now();
 	float diff = time_difference(&current, &g_start_time);
-	if (first_frame)
-		printf("Completed first frame! time taken: %.2fs \n", diff);
-	else
-		printf("Completed AA frame! time taken: %.2fs \n", diff);
-
-	// Check if we should save the frame
-	if (data->args->save
-		&& (!first_frame || data->scene->samples_per_pixel == 0))
+	if (is_first_frame(&data->renderer))
+		printf("Completed first frame! time taken: %.2fs, samples: %i\n", diff, total_samples);
+	else if (get_aa_frame(&data->renderer, data->scene) != -1)
 	{
-		correct_exit(data);	// call first, so the rendering stops
-		save_image(&data->img, "screenshot.bmp");
+		printf("Completed AA frame! time taken: %.2fs, samples: %i, avg noise: %.8f\n", diff, total_samples, avg_noise);
+	}
+	else
+	{
+		printf("Completed NR frame! time taken: %.2fs, samples: %i, avg noise: %.8f\n", diff, total_samples, avg_noise);
+		// Check if we should save the frame
+		if (data->args->save && avg_noise < 0.0035)
+		{
+			correct_exit(data);	// call first, so the rendering stops
+			save_image(&data->img, "screenshot.bmp");
+		}
 	}
 }

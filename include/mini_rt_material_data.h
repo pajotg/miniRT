@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 14:34:48 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/29 16:58:47 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 19:58:59 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,16 @@ typedef struct	s_material_diffuse
 {
 	t_color_hdr color;
 }				t_material_diffuse;
+
+typedef struct	s_material_emissive
+{
+	t_color_hdr color;
+}				t_material_emissive;
+
+typedef struct	s_material_perfect_mirror
+{
+	t_color_hdr color;
+}				t_material_perfect_mirror;
 
 typedef struct	s_material_checkerboard
 {
@@ -55,6 +65,8 @@ typedef struct	s_material_additive
 void			material_free(t_material* material);
 
 bool			material_diffuse_init(t_material* material, const t_color_hdr* color);
+bool			material_emissive_init(t_material* material, const t_color_hdr* color);
+bool			material_perfect_mirror_init(t_material* material, const t_color_hdr* color);
 bool			material_additive_init(t_material* material, t_shared_pt8* a, t_shared_pt8 *b);
 bool			material_mix_init(t_material* material, float ratio, t_shared_pt8* a, t_shared_pt8 *b);
 bool			material_checkerboard_init(t_material* material, float checker_size, const t_color_hdr* color, t_shared_pt8* mat);

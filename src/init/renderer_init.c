@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:21:48 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/27 17:46:37 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 12:13:07 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,10 @@ bool	renderer_init(t_mlx_data* data)
 	}
 
 	data->renderer.pixels = malloc(sizeof(t_pixel_data) * data->scene->resolution.width * data->scene->resolution.height);
-	data->renderer.temp_pixels = malloc(sizeof(t_pixel_data) * data->scene->resolution.width * data->scene->resolution.height);
+	data->renderer.temp_pixels = malloc(sizeof(t_temp_pixel_data) * data->scene->resolution.width * data->scene->resolution.height);
 	data->renderer.current_pixel = 0;
 	data->renderer.active_render_threads = 0;
-	data->renderer.first_frame = true;
-	data->renderer.dirty_frame = false;
+	data->renderer.frame_num = 1;
 
 	if (data->renderer.pixels == NULL || data->renderer.temp_pixels == NULL)
 	{
@@ -61,10 +60,10 @@ bool	renderer_init(t_mlx_data* data)
 	for (int i = 0; i < data->scene->resolution.width * data->scene->resolution.height; i++)
 	{
 		t_pixel_data* pix = &data->renderer.pixels[i];
-		t_pixel_data* temp_pix = &data->renderer.temp_pixels[i];
+		//t_temp_pixel_data* temp_pix = &data->renderer.temp_pixels[i];
 		pix->color = (t_color_hdr) { 0,0,0 };
 		pix->num_samples = 0;
-		*temp_pix = *pix;
+		//*temp_pix = *pix;
 	}
 	update_image(data);
 

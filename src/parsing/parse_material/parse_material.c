@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/29 15:08:44 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/29 16:52:44 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 20:00:15 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,40 @@ static t_shared_pt8 *read_diffuse(const char* str, int* current)
 	if (!material_diffuse_init(&material, &color))
 	{
 		set_error("Failed to create diffuse material!", false);
+		return (NULL);
+	}
+	return (create_shared_ptr_from_material(&material));
+}
+
+static t_shared_pt8 *read_emissive(const char* str, int* current)
+{
+	t_color_hdr color;
+	if (!read_color(str, current, true, &color))
+	{
+		set_error("Failed to read color of emissive material!", false);
+		return (NULL);
+	}
+	t_material material;
+	if (!material_emissive_init(&material, &color))
+	{
+		set_error("Failed to create emissive material!", false);
+		return (NULL);
+	}
+	return (create_shared_ptr_from_material(&material));
+}
+
+static t_shared_pt8 *read_perfect_mirror(const char* str, int* current)
+{
+	t_color_hdr color;
+	if (!read_color(str, current, false, &color))
+	{
+		set_error("Failed to read color of perfect mirror material!", false);
+		return (NULL);
+	}
+	t_material material;
+	if (!material_perfect_mirror_init(&material, &color))
+	{
+		set_error("Failed to create perfect mirror material!", false);
 		return (NULL);
 	}
 	return (create_shared_ptr_from_material(&material));
@@ -197,12 +231,16 @@ t_shared_pt8 *read_material(const char* str, int* current)
 
 	if (str[*current] == 'D')
 		read_ptr = read_diffuse;
+	else if (str[*current] == 'E')
+		read_ptr = read_emissive;
 	else if (str[*current] == 'M')
 		read_ptr = read_mix;
 	else if (str[*current] == 'A')
 		read_ptr = read_additive;
 	else if (str[*current] == 'C')
 		read_ptr = read_checkerboard;
+	else if (str[*current] == 'P')
+		read_ptr = read_perfect_mirror;
 	else {
 		set_error("Failed to detect type of material!", false);
 		return (NULL);

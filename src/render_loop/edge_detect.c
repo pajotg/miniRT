@@ -6,13 +6,13 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 16:48:56 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:10:01 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 12:15:10 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_mlx.h"
 
-static float get_difference(t_color_hdr* col_a, t_color_hdr* col_b)
+float get_difference(t_color_hdr* col_a, t_color_hdr* col_b)
 {
 	float r = col_a->r - col_b->r;
 	float g = col_a->g - col_b->g;

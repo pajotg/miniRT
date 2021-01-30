@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/29 17:31:29 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 12:41:25 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static bool parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *l
 	else if (is_object(line, "A", curr))
 		return parse_ambiant(parse_data, scene, line, curr);
 	else if (is_object(line, "AA", curr))
-		return parse_anti_aliasing(parse_data, scene, line, curr);
+		return parse_anti_aliasing(scene, line, curr);
 	else if (is_object(line, "c", curr))
 		return parse_camera(scene, line, curr);
 	else if (is_object(line, "l", curr))
@@ -101,6 +101,7 @@ void free_scene(t_scene* scene)
 	list_un_init(&(scene->objects), (t_free_values)un_init_object);
 	list_un_init(&(scene->lights), NULL);
 	list_un_init(&(scene->directional_lights), NULL);
+	list_un_init(&(scene->samples_per_pixel), NULL);
 	free(scene);
 }
 
@@ -125,6 +126,7 @@ t_scene* parse_scene_file(int fd)
 	init_success = list_init(&scene->objects, sizeof(t_object)) && init_success;
 	init_success = list_init(&scene->lights, sizeof(t_light)) && init_success;
 	init_success = list_init(&scene->directional_lights, sizeof(t_directional_light)) && init_success;
+	init_success = list_init(&scene->samples_per_pixel, sizeof(int)) && init_success;
 	if (!init_success)
 	{
 		free_scene(scene);
@@ -133,12 +135,10 @@ t_scene* parse_scene_file(int fd)
 	}
 	char* line;
 	scene->current_camera_index = 0;
-	scene->samples_per_pixel = 0;	// Default to no AA
 
 	t_scene_parse_data parse_data;
 	parse_data.has_ambiant = false;
 	parse_data.has_resolution = false;
-	parse_data.has_anti_aliasing = false;
 	while (true)
 	{
 		//ft_printf("Objects capacity: %lu/%lu\n", scene->objects.count,scene->objects.capacity);
@@ -163,6 +163,18 @@ t_scene* parse_scene_file(int fd)
 		if (out == 0)
 			break;
 	}
+	/*
+	if (scene->samples_per_pixel.count == 0)
+	{
+		const int default_spp = 16;
+		if (!list_push(&scene->samples_per_pixel, &default_spp))
+		{
+			set_error("Failed to add default AA", false);
+			free_scene(scene);
+			return NULL;
+		}
+	}
+	*/
 
 	if (!parse_data.has_ambiant || !parse_data.has_resolution || scene->cameras.count == 0)
 	{
@@ -172,6 +184,8 @@ t_scene* parse_scene_file(int fd)
 			set_error("No resolution in configuration!", false);
 		else if (scene->cameras.count == 0)
 			set_error("No cameras in configuration", false);
+		else
+			set_error("Wait, what?", false);
 		free_scene(scene);
 		return NULL;
 	}

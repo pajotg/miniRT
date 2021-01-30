@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 14:11:21 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/28 15:51:35 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 15:02:00 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,6 @@ int	hook_key_down(int key,void *p)
 		data->input.white_up = true;
 	else if (key == KEY_F)
 		data->input.white_down = true;
-	else if (key == KEY_Z)
-	{
-		data->debug_trace_aabb = !data->debug_trace_aabb;
-		data->should_clear = true;
-	}
 	else if (key == KEY_T)
 		next_cam(data);
 	return 0;
@@ -162,16 +157,16 @@ int hook_mouse(int button, int x, int y, void* p)
 	else if (button == 3)
 	{
 		t_pixel_data* pixel_data = &data->renderer.pixels[x + y * data->scene->resolution.width];
-		t_pixel_data* temp_pixel_data = &data->renderer.temp_pixels[x + y * data->scene->resolution.width];
+		t_temp_pixel_data* temp_pixel_data = &data->renderer.temp_pixels[x + y * data->scene->resolution.width];
 		t_color_hdr hdr = pixel_data->color;
-		t_color_hdr temp_hdr = temp_pixel_data->color;
+		t_color_hdr temp_hdr = temp_pixel_data->pixel_data.color;
 		printf("pixel: Color: %.2f %.2f %.2f, mag: %.2f, num samples: %i\n", hdr.r, hdr.g, hdr.b,
 			sqrtf(hdr.r * hdr.r + hdr.g * hdr.g + hdr.b * hdr.b),
 			pixel_data->num_samples
 		);
-		printf("temp pixel: Color: %.2f %.2f %.2f, mag: %.2f, num samples: %i\n", temp_hdr.r, temp_hdr.g, temp_hdr.b,
+		printf("temp pixel: Color: %.2f %.2f %.2f, mag: %.2f, num samples: %i, noise: %.8f\n", temp_hdr.r, temp_hdr.g, temp_hdr.b,
 			sqrtf(temp_hdr.r * temp_hdr.r + temp_hdr.g * temp_hdr.g + temp_hdr.b * temp_hdr.b),
-			temp_pixel_data->num_samples
+			temp_pixel_data->pixel_data.num_samples, temp_pixel_data->aa_difference
 		);
 	}
 	return 0;

@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:22:16 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:22:33 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 12:32:50 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,14 @@
 **		unlock start_thread_lock
 */
 
+/*
+**	frame_num:
+**		0: dirty frame
+**		1: first frame
+**		2 to (1+samples_per_pixel.count): AA frame
+**		else: Noise reduction frame
+*/
+
 typedef struct	s_pixel_renderer
 {
 	pthread_mutex_t			active_render_threads_lock;
@@ -49,10 +57,12 @@ typedef struct	s_pixel_renderer
 
 	pthread_mutex_t			hook_thread_lock;
 	pthread_mutex_t			start_thread_lock;
-	bool					first_frame;
-	bool					dirty_frame;
+	int						frame_num;
 	int						current_pixel;
-	t_pixel_data			*temp_pixels;
+	t_temp_pixel_data		*temp_pixels;
 }				t_pixel_renderer;
+
+bool	is_first_frame(t_pixel_renderer *renderer);
+int		get_aa_frame(t_pixel_renderer *renderer, t_scene* scene);
 
 #endif

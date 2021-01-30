@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:14:02 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:58:18 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 12:41:17 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@ bool	parse_resolution(t_scene_parse_data *parse_data,
 	t_scene *scene, char *line, int *curr);
 bool	parse_ambiant(t_scene_parse_data *parse_data,
 	t_scene *scene, char *line, int *curr);
-bool	parse_anti_aliasing(t_scene_parse_data *parse_data,
-	t_scene *scene, char *line, int *curr);
+bool	parse_anti_aliasing(t_scene *scene, char *line, int *curr);
 
 bool	parse_camera(t_scene *scene, char *line, int *curr);
 bool	parse_light(t_scene *scene, char *line, int *curr);

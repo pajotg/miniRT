@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:24:52 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:06:03 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 12:10:51 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ typedef struct	s_mlx_data
 	float				white;
 	bool				should_clear;
 	bool				active;
-	bool				debug_trace_aabb;
 
 	t_pixel_renderer	renderer;
 }				t_mlx_data;

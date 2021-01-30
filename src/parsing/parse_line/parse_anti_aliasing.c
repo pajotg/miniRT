@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:26:17 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:38:00 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 12:40:51 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,33 @@
 #include "libft.h"
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
+#include "ft_list.h"
 
-bool	parse_anti_aliasing(t_scene_parse_data *parse_data,
-	t_scene *scene, char *line, int *curr)
+#include <stdio.h>	// bad
+bool	parse_anti_aliasing(t_scene *scene, char *line, int *curr)
 {
-	if (parse_data->has_anti_aliasing)
+	if (scene->samples_per_pixel.count != 0)
 	{
+		printf("Prev count: %lu\nline: %s\n", scene->samples_per_pixel.count, line);
 		set_error(ft_strjoin("Duplicate anti aliasing: ", line), true);
 		return (false);
 	}
-	parse_data->has_anti_aliasing = true;
 	skip_whitespace(line, curr);
-	if (!read_int(line, curr, &scene->samples_per_pixel) || scene->samples_per_pixel < 0)
+	while (true)
 	{
-		set_error(ft_strjoin("anti aliasing incorrectly formatted: ", line), true);
-		return (false);
+		int spp;
+		if (!read_int(line, curr, &spp) || spp <= 0)
+		{
+			set_error(ft_strjoin("anti aliasing incorrectly formatted: ", line), true);
+			return (false);
+		}
+		if (!list_push(&scene->samples_per_pixel, &spp))
+		{
+			set_error("Failed to push AA into list!", false);
+			return (false);
+		}
+		if (!skip_char(line, curr, ','))
+			break;
 	}
 	return (true);
 }

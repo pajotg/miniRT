@@ -16,7 +16,8 @@ LDFLAGS = -Lminilibx-linux/ -lmlx -Llibft -lft -lXext -lX11 -lm -lbsd -lpthread
 FOREIGN_TARGETS = minilibx-linux/libmlx.a libft/libft.a
 MAKE_FOREIGN_TARGETS = minilibx-linux/libmlx libft/libft
 
-FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
+#FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
+FLAGS = -DBUFFER_SIZE=128	# warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning
 
 ifdef DEBUG
 FLAGS += -g

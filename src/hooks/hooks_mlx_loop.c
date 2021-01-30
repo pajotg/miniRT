@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:28:12 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/27 17:31:50 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 14:10:45 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ static float hook_frame()
 	last = current;
 
 	//	Accumulate values
+	/*
 	static float time = 0;
 	static int frames = 0;
 	time += diff;
@@ -45,6 +46,7 @@ static float hook_frame()
 		time = 0;
 		frames = 0;
 	}
+	*/
 	return (diff);
 }
 
@@ -81,14 +83,13 @@ int	hook_loop(void *p)
 		pthread_mutex_lock(&data->renderer.start_thread_lock);	// Prevent new threads from starting
 		manual_reset_event_wait(&data->renderer.no_render_threads_mre);	// Wait untill all render threads have stopped
 		//data->renderer.current_pixel = 0;	// restart progress of frame, so we dont have stale pixels
-		data->renderer.dirty_frame = true;	// Instead of resetting the progress of the frame, only getting updated pixels at the top, i mark this frame dirty: aka: next frame will also be a first_frame
-
-		data->renderer.first_frame = true;	// Tell it to render at 1 spp, no sobel
+		data->renderer.frame_num = 0;	// Instead of resetting the progress of the frame, only getting updated pixels at the top, i mark this frame dirty
 		pthread_mutex_unlock(&data->renderer.start_thread_lock);
 	}
 	// Render
 	render_next_pixels(data, 250);
 
+	bool should_update = false;
 	if (data->input.white_up != data->input.white_down)
 	{
 		float change = powf(1.1,
@@ -99,10 +100,15 @@ int	hook_loop(void *p)
 		if (data->white < 0.001)
 			data->white = 0.001;
 		update_image(data);
+		should_update = true;
 	}
 
-	if (data->window)
+	static int last_frame = 0;
+	if (data->window || last_frame != data->renderer.frame_num || is_first_frame(&data->renderer) || should_update)
+	{
+		last_frame = data->renderer.frame_num;
 		mlx_put_image_to_window(data->mlx, data->window, data->img.image, 0, 0);
+	}
 
 	return 0;
 }

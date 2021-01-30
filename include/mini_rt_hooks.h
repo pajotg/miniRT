@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:18:33 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/27 17:28:47 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 15:04:12 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int		hook_mouse(int button, int x, int y, void *p);
 int		hook_client_message(void *p);
 
 void	hook_frame_start(t_mlx_data *data);
-void	hook_frame_complete(t_mlx_data *mlx, bool first_frame);
+void	hook_frame_complete(t_mlx_data *mlx, int total_samples, float avg_noise);
 
 int		hook_loop(void *p);
 

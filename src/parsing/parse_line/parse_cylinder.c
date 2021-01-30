@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:05:43 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/29 14:38:51 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/30 14:24:09 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,8 @@ bool		parse_cylinder(t_scene *scene, char *line, int *curr)
 	}
 
 	// Calculate the aabb
-	object.aabb.max = (t_vec3) {  cylinder->radius,  cylinder->height_extends,  cylinder->radius };
-	object.aabb.min = (t_vec3) { -cylinder->radius, -cylinder->height_extends, -cylinder->radius };
+	object.aabb.max = (t_vec3) {  cylinder->radius,  cylinder->radius,  cylinder->height_extends };
+	object.aabb.min = (t_vec3) { -cylinder->radius, -cylinder->radius, -cylinder->height_extends };
 	vec3_add(&object.aabb.min, &object.aabb.min, &object.transform.position);
 	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
 	aabb_rotate(&object.aabb,&object.transform.rotation);
