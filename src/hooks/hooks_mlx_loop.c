@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:28:12 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/30 14:10:45 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/31 13:52:36 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static float hook_frame()
 		time = 0;
 		frames = 0;
 	}
-	*/
+	//*/
 	return (diff);
 }
 
@@ -83,7 +83,13 @@ int	hook_loop(void *p)
 		pthread_mutex_lock(&data->renderer.start_thread_lock);	// Prevent new threads from starting
 		manual_reset_event_wait(&data->renderer.no_render_threads_mre);	// Wait untill all render threads have stopped
 		//data->renderer.current_pixel = 0;	// restart progress of frame, so we dont have stale pixels
-		data->renderer.frame_num = 0;	// Instead of resetting the progress of the frame, only getting updated pixels at the top, i mark this frame dirty
+
+		// Instead of resetting the progress of the frame, only getting updated pixels at the top, i mark this frame dirty
+		if (data->renderer.rendering_done_mre.is_set)
+			data->renderer.frame_num = 0;	// dirty frame
+		else
+			data->renderer.frame_num = 1;
+		manual_reset_event_set(&data->renderer.rendering_done_mre);	// in case we have stopped rendering, start again
 		pthread_mutex_unlock(&data->renderer.start_thread_lock);
 	}
 	// Render
@@ -104,7 +110,8 @@ int	hook_loop(void *p)
 	}
 
 	static int last_frame = 0;
-	if (data->window || last_frame != data->renderer.frame_num || is_first_frame(&data->renderer) || should_update)
+	if (data->window &&
+		(last_frame != data->renderer.frame_num || (is_first_frame(&data->renderer) && data->renderer.rendering_done_mre.is_set) || should_update))
 	{
 		last_frame = data->renderer.frame_num;
 		mlx_put_image_to_window(data->mlx, data->window, data->img.image, 0, 0);

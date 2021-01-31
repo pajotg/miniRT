@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:26:17 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/30 12:40:51 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/31 13:04:30 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ bool	parse_anti_aliasing(t_scene *scene, char *line, int *curr)
 {
 	if (scene->samples_per_pixel.count != 0)
 	{
-		printf("Prev count: %lu\nline: %s\n", scene->samples_per_pixel.count, line);
 		set_error(ft_strjoin("Duplicate anti aliasing: ", line), true);
 		return (false);
 	}

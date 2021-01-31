@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:21:48 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/30 12:13:07 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/31 13:21:08 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,15 @@ bool	renderer_init(t_mlx_data* data)
 		pthread_mutex_destroy(&data->renderer.active_render_threads_lock);
 		return (false);
 	}
+	if (manual_reset_event_init(&data->renderer.rendering_done_mre) != 0)
+	{
+		pthread_mutex_destroy(&data->renderer.start_thread_lock);
+		pthread_mutex_destroy(&data->renderer.hook_thread_lock);
+		pthread_mutex_destroy(&data->renderer.active_render_threads_lock);
+		manual_reset_event_destroy(&data->renderer.no_render_threads_mre);
+		return (false);
+	}
+	manual_reset_event_set(&data->renderer.rendering_done_mre);
 
 	data->renderer.pixels = malloc(sizeof(t_pixel_data) * data->scene->resolution.width * data->scene->resolution.height);
 	data->renderer.temp_pixels = malloc(sizeof(t_temp_pixel_data) * data->scene->resolution.width * data->scene->resolution.height);
@@ -53,6 +62,7 @@ bool	renderer_init(t_mlx_data* data)
 		pthread_mutex_destroy(&data->renderer.hook_thread_lock);
 		pthread_mutex_destroy(&data->renderer.active_render_threads_lock);
 		manual_reset_event_destroy(&data->renderer.no_render_threads_mre);
+		manual_reset_event_destroy(&data->renderer.rendering_done_mre);
 		set_error("Could not allocate pixel array!", false);
 		return (false);
 	}

@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/17 13:59:56 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/30 15:25:03 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/31 14:01:15 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void render_pixel(t_mlx_data* data, int x, int y)
 			float noise = get_noisyness(data, x,y) * (7 + nr_frame * 0.7);
 			if (noise > 1)
 				noise = 1;
-			spp = 64 * noise;	// Gotta make a seperated NR property
+			spp = data->scene->noise_reduction * noise;
 		}
 
 		*hdr = (t_color_hdr) { 0,0,0 };
@@ -79,7 +79,11 @@ void render_pixel(t_mlx_data* data, int x, int y)
 void render_next_pixels(t_mlx_data* data, int desired)
 {
 	pthread_mutex_lock(&data->renderer.start_thread_lock);
-
+	if (!data->renderer.rendering_done_mre.is_set)
+	{
+		pthread_mutex_unlock(&data->renderer.start_thread_lock);
+		return;
+	}
 	// Make sure every pixel is only traced once
 	int pix = data->renderer.current_pixel;
 	data->renderer.current_pixel+=desired;
@@ -161,6 +165,8 @@ void render_next_pixels(t_mlx_data* data, int desired)
 
 					t_color_hdr after = convert_to_hdr(pixel);
 					temp->aa_difference = get_difference(&before, &after);
+					// divide by magnitide of color, small differences in light spots dont matter, but in dark spots they matter alot!
+					temp->aa_difference /= (after.r * after.r + after.g * after.g + after.b * after.b);
 					total_samples += temp->pixel_data.num_samples;
 				}
 				avg_noise += temp->aa_difference;
@@ -171,8 +177,8 @@ void render_next_pixels(t_mlx_data* data, int desired)
 		pthread_mutex_unlock(&data->renderer.hook_thread_lock);
 
 		data->renderer.frame_num++;
-		if (data->scene->samples_per_pixel.count <= 0)	// We dont go into a AA frame if there is no AA to be done
-			data->renderer.frame_num = 1;
+		if (data->renderer.frame_num > 1 && get_aa_frame(&data->renderer, data->scene) == -1 && data->scene->noise_reduction == 0 && data->active)
+			manual_reset_event_reset(&data->renderer.rendering_done_mre);
 		pthread_mutex_unlock(&data->renderer.start_thread_lock);
 	}
 }
@@ -183,6 +189,9 @@ void* new_pixel_render_thread(void* p)
 
 	data = p;
 	while (data->active)
+	{
 		render_next_pixels(data, 2500);
+		manual_reset_event_wait(&data->renderer.rendering_done_mre);	// in case the rendering is done, wait!
+	}
 	return (NULL);
 }

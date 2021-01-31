@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:12:15 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/30 12:23:26 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/31 13:04:13 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct	s_scene
 	t_resolution	resolution;
 	t_color_hdr		ambiant;
 	int				current_camera_index;
+	int				noise_reduction;
 	t_list			samples_per_pixel;
 	t_list			cameras;
 	t_list			objects;

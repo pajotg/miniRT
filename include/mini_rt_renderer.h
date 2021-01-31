@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:22:16 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/30 12:32:50 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/31 13:12:45 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ typedef struct	s_pixel_renderer
 	int						frame_num;
 	int						current_pixel;
 	t_temp_pixel_data		*temp_pixels;
+	t_manual_reset_event	rendering_done_mre;
 }				t_pixel_renderer;
 
 bool	is_first_frame(t_pixel_renderer *renderer);

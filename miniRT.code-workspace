@@ -23,7 +23,9 @@
 			"mini_rt_material.h": "c",
 			"ft_shared_ptr.h": "c",
 			"mini_rt_object.h": "c",
-			"mini_rt_image.h": "c"
+			"mini_rt_image.h": "c",
+			"ft_error.h": "c",
+			"ft_parse_utils.h": "c"
 		},
 	}
 }
