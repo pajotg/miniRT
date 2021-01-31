@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/17 13:59:56 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/31 14:01:15 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/31 14:29:41 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,10 @@ void render_pixel(t_mlx_data* data, int x, int y)
 		pixel_data->pixel_data.num_samples = spp;
 	}
 }
+
+/*
+**	What a absolute abomination of a function, i guess this is why there is a norm
+*/
 
 void render_next_pixels(t_mlx_data* data, int desired)
 {
@@ -172,13 +176,20 @@ void render_next_pixels(t_mlx_data* data, int desired)
 				avg_noise += temp->aa_difference;
 			}
 		avg_noise /= data->scene->resolution.width * data->scene->resolution.height;
+
+		if (data->renderer.frame_num > 0 &&	// must not be a dirty frame
+		((size_t)(data->renderer.frame_num - 1) >= data->scene->samples_per_pixel.count)	// next frame is not a AA frame
+		&& data->scene->noise_reduction == 0	// there is no noise reduction
+		&& data->active)	// we must not want to exit
+			manual_reset_event_reset(&data->renderer.rendering_done_mre);
+
 		pthread_mutex_lock(&data->renderer.hook_thread_lock);
 		hook_frame_complete(data, total_samples, avg_noise);
 		pthread_mutex_unlock(&data->renderer.hook_thread_lock);
 
 		data->renderer.frame_num++;
-		if (data->renderer.frame_num > 1 && get_aa_frame(&data->renderer, data->scene) == -1 && data->scene->noise_reduction == 0 && data->active)
-			manual_reset_event_reset(&data->renderer.rendering_done_mre);
+		//if (data->renderer.frame_num > 1 && get_aa_frame(&data->renderer, data->scene) == -1 && data->scene->noise_reduction == 0 && data->active)
+		//	manual_reset_event_reset(&data->renderer.rendering_done_mre);
 		pthread_mutex_unlock(&data->renderer.start_thread_lock);
 	}
 }

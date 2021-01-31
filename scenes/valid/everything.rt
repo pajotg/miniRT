@@ -5,7 +5,7 @@ R 960 540
 #R 480 270
 A 0.2 127,127,127
 # AA goes in passes
-AA 4,8,16,32,64
+AA 4,4
 # Extra Noise reduction (was added for GI, but also works really well for AA!)
 NR 4
 
