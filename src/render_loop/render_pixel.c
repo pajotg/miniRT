@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/17 13:59:56 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/31 14:29:41 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/31 14:51:41 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void render_pixel(t_mlx_data* data, int x, int y)
 			//float noise = pixel_data->aa_difference * 150;
 			//float noise = get_noisyness(data, x,y) * 25;
 			int nr_frame = data->renderer.frame_num - 2 - data->scene->samples_per_pixel.count;
-			float noise = get_noisyness(data, x,y) * (7 + nr_frame * 0.7);
+			float noise = get_noisyness(data, x,y) * (7 + nr_frame * nr_frame * 0.25) * 3;
 			if (noise > 1)
 				noise = 1;
 			spp = data->scene->noise_reduction * noise;
@@ -171,6 +171,9 @@ void render_next_pixels(t_mlx_data* data, int desired)
 					temp->aa_difference = get_difference(&before, &after);
 					// divide by magnitide of color, small differences in light spots dont matter, but in dark spots they matter alot!
 					temp->aa_difference /= (after.r * after.r + after.g * after.g + after.b * after.b);
+					// divide by number of samples, to get a more accurate "how much noise does one sample give?"
+					temp->aa_difference /= temp->pixel_data.num_samples;
+
 					total_samples += temp->pixel_data.num_samples;
 				}
 				avg_noise += temp->aa_difference;

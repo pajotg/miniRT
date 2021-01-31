@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/16 17:29:33 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/31 14:20:19 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/31 14:41:35 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void hook_frame_complete(t_mlx_data *data, int total_samples, float avg_noise)
 
 	// Check if we should save the frame
 	if ( data->args->save && (
-		(avg_noise < 0.0035 && !is_first_frame(&data->renderer) && get_aa_frame(&data->renderer, data->scene) == -1) ||
+		(avg_noise < 0.00035 && !is_first_frame(&data->renderer) && get_aa_frame(&data->renderer, data->scene) == -1) ||
 		(!data->renderer.rendering_done_mre.is_set)
 	) )
 	{
