@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/16 17:29:33 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/31 13:56:08 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/01/31 14:12:16 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ static t_time g_start_time;
 
 void hook_frame_start(t_mlx_data *data)
 {
-	printf("Start frame!\n");
 	g_start_time = time_now();
 	(void)data;
 }
