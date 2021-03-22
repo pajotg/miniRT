@@ -35,7 +35,9 @@
 			"mini_rt_pixel.h": "c",
 			"mini_rt_hooks.h": "c",
 			"mini_rt_raycast.h": "c",
-			"iterator": "c"
+			"iterator": "c",
+			"mini_rt_bvh.h": "c",
+			"chrono": "c"
 		},
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/02/05 15:54:05 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/02/05 16:45:39 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/22 14:42:31 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,11 @@ typedef struct s_bvh
 void	bvh_free(t_bvh *bvh);
 t_bvh	*bvh_combine_bvh(t_bvh *a, t_bvh *b);
 t_bvh	*bvh_combine_leaf(void *a, t_aabb *a_aabb, void *b, t_aabb *b_aabb);
+
 t_bvh	*bvh_build(t_list *objects);
+t_bvh	*bvh_build_from_indexes(t_list *objects, t_list* valid_indexes);
+t_bvh	*bvh_build_from_indexes_raw(t_list *objects, t_list* valid_indexes);
+
+bool	split_objects(const t_list* base, const t_list* valid_indexes, t_list* valid_indexes_a, t_list* valid_indexes_b);
 
 #endif

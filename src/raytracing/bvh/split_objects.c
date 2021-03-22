@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "mini_rt_object.h"
+#include "ft_ternary.h"
 
 #include <stdio.h>	// bad
 
@@ -29,7 +30,6 @@ static void	get_center_and_biggest_dir(t_aabb aabb, t_vec3 *center, t_vec3 *dir)
 	int		i;
 	float	biggest_size;
 	float	size;
-	t_vec3	center;
 	int		biggest_axis;
 
 	biggest_axis = -1;
@@ -45,13 +45,11 @@ static void	get_center_and_biggest_dir(t_aabb aabb, t_vec3 *center, t_vec3 *dir)
 		}
 		i++;
 	}
-	vec3_add(&center, &aabb.max, &aabb.min);
-	vec3_scale(&center, &center, 0.5);
+	vec3_add(center, &aabb.max, &aabb.min);
+	vec3_scale(center, center, 0.5);
 	*dir = (t_vec3){0, 0, 0};
 	((float *)dir)[biggest_axis] = 1;
 }
-
-// TODO: Check for malloc errors
 
 bool	split_objects(const t_list *base, const t_list *valid_indexes, t_list *
 	valid_indexes_a, t_list *valid_indexes_b)
@@ -72,10 +70,9 @@ bool	split_objects(const t_list *base, const t_list *valid_indexes, t_list *
 		vec3_add(&current, &curr_aabb->max, &curr_aabb->min);
 		vec3_scale(&current, &current, 0.5);
 		vec3_subtract(&current, &current, &center);
-		if (vec3_dot(&current, &dir) > 0)
-			list_push(valid_indexes_a, list_index_unchecked(valid_indexes, i));
-		else
-			list_push(valid_indexes_b, list_index_unchecked(valid_indexes, i));
+		if (!list_push(ter_ptr(vec3_dot(&current, &dir) > 0, valid_indexes_a,
+					valid_indexes_b), list_index_unchecked(valid_indexes, i)))
+			return (false);
 		i++;
 	}
 	return (true);
