@@ -16,20 +16,20 @@
 # include "mini_rt_object.h"
 
 bool			ray_intersects_aabb(const t_ray *ray,
-	const t_aabb *aabb, float max_dist);
+					const t_aabb *aabb, float max_dist);
 
 bool			ray_intersects_sphere(const t_object *object,
-	const t_ray *ray, t_ray_hit *hit);
+					const t_ray *ray, t_ray_hit *hit);
 bool			ray_intersects_plane(const t_object *object,
-	const t_ray *ray, t_ray_hit *hit);
+					const t_ray *ray, t_ray_hit *hit);
 bool			ray_intersects_square(const t_object *object,
-	const t_ray *ray, t_ray_hit *hit);
+					const t_ray *ray, t_ray_hit *hit);
 bool			ray_intersects_cylinder(const t_object *object,
-	const t_ray *ray, t_ray_hit *hit);
+					const t_ray *ray, t_ray_hit *hit);
 bool			ray_intersects_triangle(const t_object *object,
-	const t_ray *ray, t_ray_hit *hit);
+					const t_ray *ray, t_ray_hit *hit);
 
 bool			ray_intersects_cube(const t_object *object,
-	const t_ray *ray, t_ray_hit *hit);
+					const t_ray *ray, t_ray_hit *hit);
 
 #endif

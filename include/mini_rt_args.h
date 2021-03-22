@@ -13,12 +13,12 @@
 #ifndef MINI_RT_ARGS_H
 # define MINI_RT_ARGS_H
 
-typedef struct	s_args
+typedef struct s_args
 {
-	char *map_file;
-	bool save;
-	bool save_on_exit;
-	bool no_res_cap;
+	char	*map_file;
+	bool	save;
+	bool	save_on_exit;
+	bool	no_res_cap;
 }				t_args;
 
 t_args			*parse_args(int argc, char **argv);

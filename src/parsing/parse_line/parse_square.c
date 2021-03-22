@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:59:22 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/29 14:39:00 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 13:48:30 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "mini_rt_parse_utils.h"
 #include "mini_rt_material_data.h"
 
-bool		parse_square(t_scene *scene, char *line, int *curr)
+bool		scene_parse_square(t_scene *scene, char *line, int *curr)
 {
 	t_object		object;
 	t_object_square *square;
@@ -72,7 +72,7 @@ bool		parse_square(t_scene *scene, char *line, int *curr)
 	if (!list_push(&scene->objects, &object))
 	{
 		free(square);
-		shared_pt8_release_and_free(object.material);
+		shared_pt_release_and_free(object.material);
 		set_error("Could not push square into objects list!", true);
 		return (false);
 	}

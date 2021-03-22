@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:22:16 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/31 13:12:45 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 11:25:22 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,13 @@
 **		else: Noise reduction frame
 */
 
-typedef struct	s_pixel_renderer
+typedef struct s_pixel_renderer
 {
 	pthread_mutex_t			active_render_threads_lock;
 	int						active_render_threads;
 	t_manual_reset_event	no_render_threads_mre;
 	t_pixel_data			*pixels;
+	float					avg_noise;
 
 	pthread_mutex_t			hook_thread_lock;
 	pthread_mutex_t			start_thread_lock;
@@ -64,6 +65,6 @@ typedef struct	s_pixel_renderer
 }				t_pixel_renderer;
 
 bool	is_first_frame(t_pixel_renderer *renderer);
-int		get_aa_frame(t_pixel_renderer *renderer, t_scene* scene);
+int		get_aa_frame(t_pixel_renderer *renderer, t_scene *scene);
 
 #endif

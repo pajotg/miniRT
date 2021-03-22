@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:24:52 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/30 12:10:51 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/21 12:12:23 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include "mini_rt_args.h"
 # include "mini_rt_renderer.h"
 
-typedef struct	s_mlx_image
+typedef struct s_mlx_image
 {
 	void	*image;
 	char	*addr;
@@ -29,20 +29,22 @@ typedef struct	s_mlx_image
 	bool	big_endian;
 }				t_mlx_image;
 
-typedef struct	s_input
+typedef struct s_input
 {
-	bool left;
-	bool right;
-	bool forward;
-	bool backward;
-	bool up;
-	bool down;
+	bool	left;
+	bool	right;
+	bool	forward;
+	bool	backward;
+	bool	up;
+	bool	down;
 
-	bool white_up;
-	bool white_down;
+	bool	camera_free;
+
+	bool	white_up;
+	bool	white_down;
 }				t_input;
 
-typedef struct	s_mlx_data
+typedef struct s_mlx_data
 {
 	void				*mlx;
 	void				*window;
@@ -51,6 +53,8 @@ typedef struct	s_mlx_data
 	t_mlx_image			img;
 	t_args				*args;
 	float				white;
+	bool				should_auto_white;
+	bool				should_update_screen;
 	bool				should_clear;
 	bool				active;
 

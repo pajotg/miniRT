@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:26:17 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:38:03 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 12:18:54 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
 
-bool	parse_ambiant(t_scene_parse_data *parse_data,
+bool	scene_parse_ambiant(t_scene_parse_data *parse_data,
 	t_scene *scene, char *line, int *curr)
 {
 	if (parse_data->has_ambiant)

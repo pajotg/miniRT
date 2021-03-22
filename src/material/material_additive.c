@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 15:25:35 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/29 14:38:41 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 13:48:30 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,18 +32,18 @@ static void material_additive(const t_scene* scene, const void* material_data, c
 static void material_additive_free(void* material_data)
 {
 	t_material_additive* additive = material_data;
-	shared_pt8_release_and_free(additive->a);
-	shared_pt8_release_and_free(additive->b);
+	shared_pt_release_and_free(additive->a);
+	shared_pt_release_and_free(additive->b);
 	free(material_data);
 }
 
-bool material_additive_init(t_material* material, t_shared_pt8* a, t_shared_pt8 *b)
+bool material_additive_init(t_material* material, t_shared_pt* a, t_shared_pt *b)
 {
 	t_material_additive* additive = malloc(sizeof(t_material_additive));
 	if (additive == NULL)
 		return (false);
-	shared_pt8_get(a);
-	shared_pt8_get(b);
+	shared_pt_get(a);
+	shared_pt_get(b);
 	additive->a = a;
 	additive->b = b;
 

@@ -51,7 +51,6 @@ void get_next(DIR* ValidDir, DIR* InValidDir, struct dirent** dir, bool* ShouldB
 
 // TODO: More tests files, and check for NULL mallocs
 //	For every line change every parameter a tiny bit
-//	Alot of objects and cameras and lights (>32)
 
 int main(int argc, char *argv[])
 {
@@ -104,7 +103,8 @@ int main(int argc, char *argv[])
 			tu_warning_message_exit("Failed to open scene file: %s", str);
 
 		// Parse the scene
-		t_scene* scene = parse_scene_file(fd);
+		//fprintf(stderr, "Parsing scene: %s\n",str);
+		t_scene* scene = parse_scene_file(str, fd);
 
 		// Check the output
 		if (ShouldBeValid && !scene)

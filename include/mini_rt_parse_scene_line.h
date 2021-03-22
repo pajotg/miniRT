@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:14:02 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/31 13:05:59 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 12:18:50 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,23 @@
 
 # include "mini_rt_scene.h"
 
-bool	parse_resolution(t_scene_parse_data *parse_data,
-	t_scene *scene, char *line, int *curr);
-bool	parse_ambiant(t_scene_parse_data *parse_data,
-	t_scene *scene, char *line, int *curr);
-bool	parse_anti_aliasing(t_scene *scene, char *line, int *curr);
-bool	parse_noise_reduction(t_scene *scene, char *line, int *curr);
+bool	scene_parse_resolution(t_scene_parse_data *parse_data,
+			t_scene *scene, char *line, int *curr);
+bool	scene_parse_ambiant(t_scene_parse_data *parse_data,
+			t_scene *scene, char *line, int *curr);
+bool	scene_parse_anti_aliasing(t_scene *scene, char *line, int *curr);
+bool	scene_parse_noise_reduction(t_scene *scene, char *line, int *curr);
+bool	scene_parse_gi(t_scene *scene, char *line, int *curr);
 
-bool	parse_camera(t_scene *scene, char *line, int *curr);
-bool	parse_light(t_scene *scene, char *line, int *curr);
-bool	parse_sphere(t_scene *scene, char *line, int *curr);
-bool	parse_plane(t_scene *scene, char *line, int *curr);
-bool	parse_square(t_scene *scene, char *line, int *curr);
-bool	parse_cylinder(t_scene *scene, char *line, int *curr);
-bool	parse_triangle(t_scene *scene, char *line, int *curr);
-bool	parse_cube(t_scene *scene, char *line, int *curr);
-bool	parse_directional_light(t_scene *scene, char *line, int *curr);
+bool	scene_parse_camera(t_scene *scene, char *line, int *curr);
+bool	scene_parse_light(t_scene *scene, char *line, int *curr);
+bool	scene_parse_sphere(t_scene *scene, char *line, int *curr);
+bool	scene_parse_plane(t_scene *scene, char *line, int *curr);
+bool	scene_parse_square(t_scene *scene, char *line, int *curr);
+bool	scene_parse_cylinder(t_scene *scene, char *line, int *curr);
+bool	scene_parse_triangle(t_scene *scene, char *line, int *curr);
+bool	scene_parse_cube(t_scene *scene, char *line, int *curr);
+bool	scene_parse_directional_light(t_scene *scene, char *line, int *curr);
+bool	scene_parse_obj(t_scene *scene, char *line, int *curr);
 
 #endif

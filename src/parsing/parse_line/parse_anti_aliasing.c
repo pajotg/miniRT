@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:26:17 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/31 13:04:30 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 12:53:50 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@
 #include "mini_rt_parse_utils.h"
 #include "ft_list.h"
 
-#include <stdio.h>	// bad
-bool	parse_anti_aliasing(t_scene *scene, char *line, int *curr)
+bool	scene_parse_anti_aliasing(t_scene *scene, char *line, int *curr)
 {
 	if (scene->samples_per_pixel.count != 0)
 	{

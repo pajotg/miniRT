@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:12:15 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/31 13:04:13 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 16:42:56 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,34 +15,38 @@
 
 # include "ft_list.h"
 # include "mini_rt_color.h"
+# include "mini_rt_bvh.h"
 
-typedef struct	s_scene_parse_data
+typedef struct s_scene_parse_data
 {
-	bool has_resolution;
-	bool has_ambiant;
+	bool	has_resolution;
+	bool	has_ambiant;
 }				t_scene_parse_data;
 
-typedef struct	s_resolution
+typedef struct s_resolution
 {
-	int width;
-	int height;
+	int	width;
+	int	height;
 }				t_resolution;
 
-typedef struct	s_scene
+typedef struct s_scene
 {
 	t_resolution	resolution;
 	t_color_hdr		ambiant;
 	int				current_camera_index;
 	int				noise_reduction;
+	bool			use_gi;
 	t_list			samples_per_pixel;
 	t_list			cameras;
 	t_list			objects;
 	t_list			lights;
 	t_list			directional_lights;
+	t_bvh			*bvh;
+	char			*scene_path;
 }				t_scene;
 
 void			free_scene(t_scene *scene);
-t_scene			*parse_scene_file(int fd);
+t_scene			*parse_scene_file(char *path, int fd);
 t_scene			*parse_scene(char *path);
 
 #endif

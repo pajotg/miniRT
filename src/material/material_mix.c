@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 15:25:35 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/29 15:05:16 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 13:48:30 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,19 @@ static void material_mix(const t_scene* scene, const void* material_data, const 
 static void material_mix_free(void* material_data)
 {
 	t_material_mix* mix = material_data;
-	shared_pt8_release_and_free(mix->a);
-	shared_pt8_release_and_free(mix->b);
+	shared_pt_release_and_free(mix->a);
+	shared_pt_release_and_free(mix->b);
 	free(material_data);
 }
 
-bool material_mix_init(t_material* material, float ratio, t_shared_pt8* a, t_shared_pt8 *b)
+bool material_mix_init(t_material* material, float ratio, t_shared_pt* a, t_shared_pt *b)
 {
 	t_material_mix* mix = malloc(sizeof(t_material_mix));
 	if (mix == NULL)
 		return (false);
 	mix->ratio = ratio;
-	shared_pt8_get(a);
-	shared_pt8_get(b);
+	shared_pt_get(a);
+	shared_pt_get(b);
 	mix->a = a;
 	mix->b = b;
 

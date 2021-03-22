@@ -15,8 +15,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-
-void	renderer_un_init(t_pixel_renderer* renderer)
+void	renderer_un_init(t_pixel_renderer *renderer)
 {
 	pthread_mutex_destroy(&renderer->start_thread_lock);
 	pthread_mutex_destroy(&renderer->hook_thread_lock);

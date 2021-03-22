@@ -20,7 +20,8 @@ void	render_pixel(t_mlx_data *data, int x, int y);
 void	render_next_pixels(t_mlx_data *data, int desired);
 
 void	pix_to_ray(const t_mlx_data *data, float x, float y, t_ray *o_ray);
-void	trace_color(const t_scene* scene, t_ray* ray, int depth, t_color_hdr* o_hdr);
+void	trace_color(const t_scene *scene, t_ray *ray, int depth,
+			t_color_hdr *o_hdr);
 
 void	*new_pixel_render_thread(void *p);
 

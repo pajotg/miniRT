@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:14:35 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 17:58:38 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/24 16:42:31 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,5 @@
 # include "mini_rt_mlx.h"
 
 bool	save_image(t_mlx_image *img, char *path);
-bool	write_bmp(int fd, unsigned char *pixels, int width, int height);
 
 #endif

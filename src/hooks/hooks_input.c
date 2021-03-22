@@ -6,10 +6,17 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 14:11:21 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/30 15:02:00 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/06 14:52:47 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "mini_rt_mlx.h"
+#include "mini_rt_object.h"
+#include <stdio.h>
+#include <math.h>
+#include "ft_printf.h"
+#include "mini_rt_render_pixel.h"
+// TODO: Mac keycodes
 #define KEY_ESC 65307
 #define KEY_W 119
 #define KEY_A 97
@@ -19,20 +26,15 @@
 #define KEY_E 101
 #define KEY_T 116
 #define KEY_Z 122
+#define KEY_P 112
+#define KEY_O 111
 
 #define KEY_R 114
 #define KEY_F 102
 
-#include "mini_rt_mlx.h"
-#include "mini_rt_object.h"
-#include <stdio.h>
-#include <math.h>
-#include "ft_printf.h"
-#include "mini_rt_render_pixel.h"
-
-static void next_cam(t_mlx_data* data)
+static void	next_cam(t_mlx_data *data)
 {
-	size_t index;
+	size_t	index;
 
 	index = data->scene->current_camera_index + 1;
 	if (index >= data->scene->cameras.count)
@@ -41,11 +43,25 @@ static void next_cam(t_mlx_data* data)
 	data->should_clear = true;
 }
 
-int	hook_key_down(int key,void *p)
-{
-	t_mlx_data* data = p;
-	//printf("Key down: %i\n", key);
+//printf("Key down: %i\n", key);
 
+static void	secondairy_hook_key_down_if_else_case(t_mlx_data *data, int key)
+{
+	if (key == KEY_P)
+		data->should_auto_white = true;
+	else if (key == KEY_O)
+		data->input.camera_free = !data->input.camera_free;
+	else if (key == KEY_T)
+		next_cam(data);
+}
+
+// this is dumb
+
+int	hook_key_down(int key, void *p)
+{
+	t_mlx_data	*data;
+
+	data = p;
 	if (key == KEY_ESC)
 		correct_exit(data);
 	else if (key == KEY_W)
@@ -64,16 +80,18 @@ int	hook_key_down(int key,void *p)
 		data->input.white_up = true;
 	else if (key == KEY_F)
 		data->input.white_down = true;
-	else if (key == KEY_T)
-		next_cam(data);
-	return 0;
+	else
+		secondairy_hook_key_down_if_else_case(data, key);
+	return (0);
 }
 
-int	hook_key_up(int key,void *p)
-{
-	t_mlx_data* data = p;
-	//printf("Key up: %i\n", key);
+//printf("Key up: %i\n", key);
 
+int	hook_key_up(int key, void *p)
+{
+	t_mlx_data	*data;
+
+	data = p;
 	if (key == KEY_W)
 		data->input.forward = false;
 	else if (key == KEY_A)
@@ -90,91 +108,14 @@ int	hook_key_up(int key,void *p)
 		data->input.white_up = false;
 	else if (key == KEY_F)
 		data->input.white_down = false;
-	return 0;
+	return (0);
 }
 
-/*
-**	1 (left click) = look at point
-**	2 (middle click) = gather debug data from pixel
-**	3 (right click) = get HDR color
-*/
-
-int hook_mouse(int button, int x, int y, void* p)
+int	hook_client_message(void *p)
 {
-	t_mlx_data* data = p;
+	t_mlx_data	*data;
 
-	//printf("mouse hooked! %i at: (%i, %i) %p\n",button, x, y, p);
-	if (button == 1)
-	{
-		t_ray ray;
-		pix_to_ray(data, x, y, &ray);
-
-		t_camera* cam = list_index(&data->scene->cameras, data->scene->current_camera_index);
-		float sqrmag = vec3_magnitude_sqr(&ray.direction);
-		if (sqrmag < 0.99 || sqrmag > 1.01)
-		{
-			printf("Bad ray create! %.2f = sqrmag != 1: %.2f %.2f %.2f\n", sqrmag, ray.direction.x, ray.direction.y, ray.direction.z);
-		}
-		t_quaternion new_rot;
-		quaternion_from_forward_up(&new_rot, &ray.direction, vec3_up());
-		cam->transform.rotation = new_rot;
-		data->should_clear = true;
-	}
-	if (button == 2)
-	{
-		t_ray ray;
-		t_ray_hit hit;
-
-		pix_to_ray(data, x, y, &ray);
-		if (cast_ray(data->scene, &ray, &hit))
-		{
-			ft_printf("Hit!\n");
-			ft_printf("	Location: %v!\n", &hit.location);
-			printf("	Distance: %.2f!\n", hit.distance);
-			ft_printf("	Normal: %v!\n", &hit.normal);
-			ft_printf("	Object: %p!\n", hit.object);
-
-			float sqrmag = vec3_magnitude_sqr(&hit.normal);
-			if (sqrmag > 1.01 || sqrmag < 0.99)
-				printf("		Err: Normal magnitude != 1, actual: %.2f\n", sqrtf(sqrmag));
-
-			t_vec3 expected_loc;
-			vec3_scale(&expected_loc, &ray.direction, hit.distance);
-			vec3_add(&expected_loc, &expected_loc, &ray.origin);
-
-			t_vec3 diff;
-			vec3_subtract(&diff, &expected_loc, &hit.location);
-			sqrmag = vec3_magnitude_sqr(&diff);
-			if (sqrmag > 0.01)
-				ft_printf("		Err: Expected location %v but got: %v!\n", &expected_loc, &hit.location);
-
-			if (vec3_dot(&hit.normal, &ray.direction) > 0)
-				ft_printf("		Err: hit.normal in opposite direction!\n");
-		}
-		else
-			printf("Miss!\n");
-	}
-	else if (button == 3)
-	{
-		t_pixel_data* pixel_data = &data->renderer.pixels[x + y * data->scene->resolution.width];
-		t_temp_pixel_data* temp_pixel_data = &data->renderer.temp_pixels[x + y * data->scene->resolution.width];
-		t_color_hdr hdr = pixel_data->color;
-		t_color_hdr temp_hdr = temp_pixel_data->pixel_data.color;
-		printf("pixel: Color: %.2f %.2f %.2f, mag: %.2f, num samples: %i\n", hdr.r, hdr.g, hdr.b,
-			sqrtf(hdr.r * hdr.r + hdr.g * hdr.g + hdr.b * hdr.b),
-			pixel_data->num_samples
-		);
-		printf("temp pixel: Color: %.2f %.2f %.2f, mag: %.2f, num samples: %i, noise: %.8f\n", temp_hdr.r, temp_hdr.g, temp_hdr.b,
-			sqrtf(temp_hdr.r * temp_hdr.r + temp_hdr.g * temp_hdr.g + temp_hdr.b * temp_hdr.b),
-			temp_pixel_data->pixel_data.num_samples, temp_pixel_data->aa_difference
-		);
-	}
-	return 0;
-}
-
-int hook_client_message(void* p)
-{
-	t_mlx_data* data = p;
+	data = p;
 	correct_exit(data);
-	return 0;
+	return (0);
 }

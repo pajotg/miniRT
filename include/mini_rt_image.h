@@ -19,6 +19,6 @@ void	write_pix(t_mlx_data *data, int x, int y, t_color_hdr hdr);
 void	update_pix(t_mlx_data *data, int x, int y);
 void	update_image(t_mlx_data *data);
 float	get_edgyness(t_mlx_data *data, int x, int y);
-float	get_noisyness(t_mlx_data* data, int x, int y);
+float	get_noisyness(t_mlx_data *data, int x, int y);
 
 #endif

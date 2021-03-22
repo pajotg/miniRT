@@ -6,12 +6,14 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:12:38 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/28 15:24:59 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/04 17:14:15 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_object.h"
 #include "mini_rt_object_data.h"
+#include <math.h>
+#include "ft_vec3.h"
 
 /*
 ** Found this code, read through it, understood it, looks really good, does backface culling
@@ -21,6 +23,9 @@
 ** Welp, i thought a "square" meant a cube, later in the bonus there is a compound cube (6 squares), welp...
 ** I made a bonus thinking it was mandatory, oh wells
 */
+
+#include <stdlib.h>
+#include <stdio.h>
 
 bool ray_intersects_cube(const t_object* object, const t_ray* ray, t_ray_hit* o_hit)
 {
@@ -69,32 +74,59 @@ bool ray_intersects_cube(const t_object* object, const t_ray* ray, t_ray_hit* o_
 		//fprintf(stderr, "axis %i min_b: %.2f max_b: %.2f, side: %i\n", i, min_b[i], max_b[i], side[i]);
 	}
 	if (inside)
-		return false;	// This probably aint good, TODO: Fix it (probably calculate from the 6 planes, not quats)
+	{
+		for (i = 0; i < 3; i++)
+		{
+			if (dir[i] < 0)
+			{
+				side[i] = -1;
+				candidate_plane[i] = min_b[i];
+			}
+			else if (dir[i] > 0)
+			{
+				side[i] = 1;
+				candidate_plane[i] = max_b[i];
+			}
+			else
+				side[i] = 0;
+		}
+	}
 
 	// Calculate the distance to the plane
-	float max_t[3];
+	float hit_t[3];
 	for (i = 0; i < 3; i++)
 	{
 		if (side[i] != 0 && dir[i] != 0.)
-			max_t[i] = (candidate_plane[i] - origin[i]) / dir[i];
+			hit_t[i] = (candidate_plane[i] - origin[i]) / dir[i];
 		else
-			max_t[i] = -1.0;
+			hit_t[i] = inside ? INFINITY : -INFINITY;
 	}
 
-	// Calculate the biggest distance
+	// Calculate the hit plane
 	int which_plane = 0;
-	for (i = 0; i < 3; i++)
-		if (max_t[which_plane] < max_t[i])
-			which_plane = i;
+	if (inside)
+	{
+		// for the inside we have the min time
+		for (i = 0; i < 3; i++)
+			if (hit_t[i] < hit_t[which_plane])
+				which_plane = i;
+	}
+	else
+	{
+		// for the outside we have the max time
+		for (i = 0; i < 3; i++)
+			if (hit_t[i] > hit_t[which_plane])
+				which_plane = i;
+	}
 	// In case we are facing away from the cube
-	if (max_t[which_plane] < 0. || max_t[which_plane] > o_hit->distance)
+	if (hit_t[which_plane] < 0. || hit_t[which_plane] > o_hit->distance)
 		return false;
 	// Check if our hit is on the cube or not
 	for (i = 0; i < 3; i++)
 	{
 		if (which_plane != i)
 		{
-			float coord = origin[i] + dir[i] * max_t[which_plane];
+			float coord = origin[i] + dir[i] * hit_t[which_plane];
 			if ((coord < min_b[i]) || (coord > max_b[i]))
 				return false;
 		}
@@ -105,7 +137,7 @@ bool ray_intersects_cube(const t_object* object, const t_ray* ray, t_ray_hit* o_
 	{
 		if (which_plane != i)
 		{
-			float coord = origin[i] + dir[i] * max_t[which_plane];
+			float coord = origin[i] + dir[i] * hit_t[which_plane];
 			((float*)&o_hit->location)[i] = coord;
 			((float*)&o_hit->normal)[i] = 0;
 		}
@@ -115,7 +147,9 @@ bool ray_intersects_cube(const t_object* object, const t_ray* ray, t_ray_hit* o_
 			((float*)&o_hit->normal)[i] = side[i];
 		}
 	}
-	o_hit->distance = max_t[which_plane];
+	if (inside)
+		vec3_negate(&o_hit->normal, &o_hit->normal);
+	o_hit->distance = hit_t[which_plane];
 	o_hit->object = (t_object*)object;
 
 	quaternion_mult_vec3(&o_hit->normal, &object->transform.rotation, &o_hit->normal);

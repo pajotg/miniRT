@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:28:12 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/31 13:52:36 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/20 18:15:31 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,104 +18,105 @@
 #include "mini_rt_object.h"
 #include "mini_rt_render_pixel.h"
 #include "mlx.h"
+#include "ft_ternary.h"
 
-/*
-**	returns time since last frame
-*/
+#include "stupid_norm.h"
 
-static float hook_frame()
+//	returns time since last frame
+// 	Get time since last frame
+
+static float	hook_frame(void)
 {
-	// 	Get time since last frame
-	static t_time last = { 0, 0 };
-	t_time current = time_now();
-	float diff = time_difference(&current, &last);
+	t_time			current;
+	float			diff;
+	static t_time	last = {0, 0 };
+
+	current = time_now();
+	diff = time_difference(&current, &last);
 	if (last.seconds == 0)
 		diff = 0;
 	last = current;
-
-	//	Accumulate values
-	/*
-	static float time = 0;
-	static int frames = 0;
-	time += diff;
-	frames++;
-	//	Print out
-	if (time > 1)
-	{
-		printf("%i fps (%.4fs/f)\n", frames, time / frames);
-		time = 0;
-		frames = 0;
-	}
-	//*/
 	return (diff);
 }
 
-/*
-**	Beware! if you get more than 400 fps it gets REAL LAGGY...
-**	What?
-*/
-
-int	hook_loop(void *p)
+static void	handle_movement(t_mlx_data *data, float diff)
 {
-	t_mlx_data* data = p;
+	t_vec3		move_dir;
+	t_camera	*cam;
 
-	float diff = hook_frame();
-
-	// Input
-	t_vec3 move_dir = (t_vec3) { 0, 0, 0 };
-	data->should_clear = data->should_clear || (data->input.forward != data->input.backward)
-					|| (data->input.right != data->input.left)
-					|| (data->input.down != data->input.up);
-	move_dir.z = (data->input.forward ? -1 : 0) + (data->input.backward ? 1 : 0);
-	move_dir.x = (data->input.right ? -1 : 0) + (data->input.left ? 1 : 0);
-	move_dir.y = (data->input.down ? -1 : 0) + (data->input.up ? 1 : 0);
-
-	t_camera* cam = list_index(&data->scene->cameras, data->scene->current_camera_index);
+	move_dir = (t_vec3){0, 0, 0 };
+	data->should_clear = data->should_clear || (data->input.forward != data
+			->input.backward)
+		|| (data->input.right != data->input.left)
+		|| (data->input.down != data->input.up);
+	move_dir.z = ter_int(data->input.forward, -1, 0) + ter_int(data
+			->input.backward, 1, 0);
+	move_dir.x = ter_int(data->input.right, -1, 0) + ter_int(data->input.left,
+			1, 0);
+	move_dir.y = ter_int(data->input.down, -1, 0) + ter_int(data->input.up, 1,
+			0);
+	cam = list_index(&data->scene->cameras, data->scene->current_camera_index);
 	quaternion_mult_vec3(&move_dir, &cam->transform.rotation, &move_dir);
 	vec3_scale(&move_dir, &move_dir, diff * 5);
 	vec3_add(&cam->transform.position, &cam->transform.position, &move_dir);
+}
 
+// in case we have stopped rendering, start again
+// Instead of resetting the progress of the frame, only getting updated pixels
+//at the top, i mark this frame dirty
+//data->renderer.current_pixel = 0;	// restart progress of frame, so we dont
+//have stale pixels
+// Wait untill all render threads have stopped
+// If we have moved, we need to clear the pixels
+// dirty frame
+// Prevent new threads from starting
+
+static void	handle_clearing(t_mlx_data *data)
+{
 	if (data->should_clear)
 	{
 		data->should_clear = false;
-
-		// If we have moved, we need to clear the pixels
-		pthread_mutex_lock(&data->renderer.start_thread_lock);	// Prevent new threads from starting
-		manual_reset_event_wait(&data->renderer.no_render_threads_mre);	// Wait untill all render threads have stopped
-		//data->renderer.current_pixel = 0;	// restart progress of frame, so we dont have stale pixels
-
-		// Instead of resetting the progress of the frame, only getting updated pixels at the top, i mark this frame dirty
+		pthread_mutex_lock(&data->renderer.start_thread_lock);
+		manual_reset_event_wait(&data->renderer.no_render_threads_mre);
 		if (data->renderer.rendering_done_mre.is_set)
-			data->renderer.frame_num = 0;	// dirty frame
+			data->renderer.frame_num = 0;
 		else
 			data->renderer.frame_num = 1;
-		manual_reset_event_set(&data->renderer.rendering_done_mre);	// in case we have stopped rendering, start again
+		manual_reset_event_set(&data->renderer.rendering_done_mre);
 		pthread_mutex_unlock(&data->renderer.start_thread_lock);
 	}
-	// Render
-	render_next_pixels(data, 250);
+}
 
-	bool should_update = false;
-	if (data->input.white_up != data->input.white_down)
-	{
-		float change = powf(1.1,
-			((data->input.white_down ? -1 : 0) + (data->input.white_up ? 1 : 0))
-			* (diff * 2)
-		);
-		data->white *= change;
-		if (data->white < 0.001)
-			data->white = 0.001;
-		update_image(data);
-		should_update = true;
-	}
+static void	handle_screen_update(t_mlx_data *data)
+{
+	static int	last_frame = 0;
 
-	static int last_frame = 0;
-	if (data->window &&
-		(last_frame != data->renderer.frame_num || (is_first_frame(&data->renderer) && data->renderer.rendering_done_mre.is_set) || should_update))
+	if (data->window
+		 && (last_frame != data->renderer.frame_num || (is_first_frame(&data
+					->renderer) && data->renderer.rendering_done_mre.is_set)
+			 || data
+			->should_update_screen))
 	{
+		data->should_update_screen = false;
 		last_frame = data->renderer.frame_num;
 		mlx_put_image_to_window(data->mlx, data->window, data->img.image, 0, 0);
 	}
+}
 
-	return 0;
+//	Beware! if you get more than 400 fps it gets REAL LAGGY...
+//	What?
+
+int	hook_loop(void *p)
+{
+	float		diff;
+	t_mlx_data	*data;
+
+	data = p;
+	diff = hook_frame();
+	handle_movement(data, diff);
+	handle_clearing(data);
+	render_next_pixels(data, 250);
+	handle_white_point(data, diff);
+	handle_screen_update(data);
+	return (0);
 }

@@ -21,7 +21,8 @@ int		hook_mouse(int button, int x, int y, void *p);
 int		hook_client_message(void *p);
 
 void	hook_frame_start(t_mlx_data *data);
-void	hook_frame_complete(t_mlx_data *mlx, int total_samples, float avg_noise);
+void	hook_frame_complete(t_mlx_data *mlx, int total_samples, float avg_noise)
+		;
 
 int		hook_loop(void *p);
 

@@ -13,7 +13,7 @@
 #include "mini_rt_material.h"
 #include <stdlib.h>
 
-void	material_free(t_material* material)
+void	material_free(t_material *material)
 {
 	material->material_free_data_func(material->material_data);
 	free(material);

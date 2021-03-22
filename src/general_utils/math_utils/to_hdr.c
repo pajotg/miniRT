@@ -12,12 +12,13 @@
 
 #include "mini_rt_mlx.h"
 
-t_color_hdr convert_to_hdr(t_pixel_data* pixel)
+t_color_hdr	convert_to_hdr(t_pixel_data *pixel)
 {
-	t_color_hdr out;
+	t_color_hdr	out;
+
 	if (pixel->num_samples == 0)
 	{
-		out = (t_color_hdr) { 0,0,0 };
+		out = (t_color_hdr){0, 0, 0 };
 		return (out);
 	}
 	out.r = pixel->color.r / pixel->num_samples;
@@ -26,7 +27,8 @@ t_color_hdr convert_to_hdr(t_pixel_data* pixel)
 	return (out);
 }
 
-t_color_hdr get_hdr(t_mlx_data *data, int x, int y)
+t_color_hdr	get_hdr(t_mlx_data *data, int x, int y)
 {
-	return (convert_to_hdr(&data->renderer.pixels[x + y * data->scene->resolution.width]));
+	return (convert_to_hdr(&data->renderer.pixels[x + y * data->scene
+			->resolution.width]));
 }

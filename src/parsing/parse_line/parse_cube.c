@@ -20,7 +20,7 @@
 #include "mini_rt_parse_utils.h"
 #include "mini_rt_material_data.h"
 
-bool		parse_cube(t_scene *scene, char *line, int *curr)
+bool		scene_parse_cube(t_scene *scene, char *line, int *curr)
 {
 	t_object		object;
 	t_object_cube	*cube;
@@ -72,7 +72,7 @@ bool		parse_cube(t_scene *scene, char *line, int *curr)
 	if (!list_push(&scene->objects, &object))
 	{
 		free(cube);
-		shared_pt8_release_and_free(object.material);
+		shared_pt_release_and_free(object.material);
 		set_error("Could not push cube into objects list!", true);
 		return (false);
 	}

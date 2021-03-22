@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:19:59 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/28 15:25:03 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/20 15:44:28 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,24 +23,26 @@
 **	If you want to use that variable you will have to include mini_rt_object
 */
 
-struct s_object;
+struct	s_object;
 
-typedef struct		s_ray_hit
+typedef struct s_ray_hit
 {
-	t_vec3		location;
-	t_vec3		normal;
-	float		distance;
+	t_vec3			location;
+	t_vec3			normal;
+	float			distance;
 	struct s_object	*object;
-}					t_ray_hit;
+}				t_ray_hit;
 
-typedef struct		s_ray
+typedef struct s_ray
 {
-	t_vec3 origin;
-	t_vec3 direction;
+	t_vec3	origin;
+	t_vec3	direction;
 }					t_ray;
 
-bool				cast_ray(const t_scene *scene, const t_ray *ray, t_ray_hit *o_hit);
-bool				cast_ray_max(const t_scene *scene, const t_ray *ray, t_ray_hit *o_hit,
-	float max_dist);
+bool				cast_ray(const t_scene *scene, const t_ray *ray,
+						t_ray_hit *o_hit);
+bool				cast_ray_max(const t_scene *scene, const t_ray *ray,
+						t_ray_hit *o_hit,
+						float max_dist);
 
 #endif

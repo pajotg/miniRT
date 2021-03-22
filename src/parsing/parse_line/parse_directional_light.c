@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:37:48 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:37:50 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 12:18:54 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
 
-bool	parse_directional_light(t_scene *scene, char *line, int *curr)
+bool	scene_parse_directional_light(t_scene *scene, char *line, int *curr)
 {
 	t_directional_light light;
 
 	skip_whitespace(line, curr);
-	if (!read_vec3_unit(line, curr, &light.direction))
+	if (!read_vec3_unit(line, curr, ',', &light.direction))
 	{
 		set_error(ft_strjoin(
 			"Directional light direction incorrectly formatted: ", line), true);

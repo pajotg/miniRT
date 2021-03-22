@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/31 13:40:21 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/06 13:32:18 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,40 +33,44 @@ static bool is_object(char *line, char *object, int *curr)
 		object++;
 		i++;
 	}
-	if (!ft_isspace(line[i]))
+	if (!ft_isspace(line[i]) && line[i] != '\0')
 		return (false);
-	*curr = i + 1;
+	*curr = i;
 	return (true);
 }
 
 static bool parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *line, int *curr)
 {
 	if (is_object(line, "R", curr))
-		return parse_resolution(parse_data, scene, line, curr);
+		return scene_parse_resolution(parse_data, scene, line, curr);
 	else if (is_object(line, "A", curr))
-		return parse_ambiant(parse_data, scene, line, curr);
+		return scene_parse_ambiant(parse_data, scene, line, curr);
 	else if (is_object(line, "AA", curr))
-		return parse_anti_aliasing(scene, line, curr);
+		return scene_parse_anti_aliasing(scene, line, curr);
 	else if (is_object(line, "NR", curr))
-		return parse_noise_reduction(scene, line, curr);
+		return scene_parse_noise_reduction(scene, line, curr);
+	else if (is_object(line, "GI", curr))
+		return scene_parse_gi(scene, line, curr);
 	else if (is_object(line, "c", curr))
-		return parse_camera(scene, line, curr);
+		return scene_parse_camera(scene, line, curr);
 	else if (is_object(line, "l", curr))
-		return parse_light(scene, line, curr);
+		return scene_parse_light(scene, line, curr);
 	else if (is_object(line, "sp", curr))
-		return parse_sphere(scene, line, curr);
+		return scene_parse_sphere(scene, line, curr);
 	else if (is_object(line, "pl", curr))
-		return parse_plane(scene, line, curr);
+		return scene_parse_plane(scene, line, curr);
 	else if (is_object(line, "sq", curr))
-		return parse_square(scene, line, curr);
+		return scene_parse_square(scene, line, curr);
 	else if (is_object(line, "cy", curr))
-		return parse_cylinder(scene, line, curr);
+		return scene_parse_cylinder(scene, line, curr);
 	else if (is_object(line, "tr", curr))
-		return parse_triangle(scene, line, curr);
+		return scene_parse_triangle(scene, line, curr);
 	else if (is_object(line, "cu", curr))
-		return parse_cube(scene, line, curr);
+		return scene_parse_cube(scene, line, curr);
 	else if (is_object(line, "dl", curr))
-		return parse_directional_light(scene, line, curr);
+		return scene_parse_directional_light(scene, line, curr);
+	else if (is_object(line, "obj", curr))
+		return scene_parse_obj(scene, line, curr);
 	set_error(ft_strjoin("Unknown configuration: ", line), true);
 	return (false);
 }
@@ -93,7 +97,7 @@ static bool parse_line(t_scene_parse_data *parse_data, t_scene *scene, char *lin
 void un_init_object(t_object* object)
 {
 	free(object->object_data);
-	shared_pt8_release_and_free(object->material);
+	shared_pt_release_and_free(object->material);
 }
 
 void free_scene(t_scene* scene)
@@ -103,6 +107,8 @@ void free_scene(t_scene* scene)
 	list_un_init(&(scene->lights), NULL);
 	list_un_init(&(scene->directional_lights), NULL);
 	list_un_init(&(scene->samples_per_pixel), NULL);
+	if (scene->bvh)
+		bvh_free(scene->bvh);
 	free(scene);
 }
 
@@ -114,7 +120,7 @@ void free_scene(t_scene* scene)
 **		because un-initialized memory is zero'd on my system
 */
 
-t_scene* parse_scene_file(int fd)
+t_scene* parse_scene_file(char* path, int fd)
 {
 	t_scene* scene = malloc(sizeof(t_scene));
 	if (scene == NULL)
@@ -137,6 +143,9 @@ t_scene* parse_scene_file(int fd)
 	char* line;
 	scene->current_camera_index = 0;
 	scene->noise_reduction = 0;
+	scene->use_gi = false;
+	scene->scene_path = path;
+	scene->bvh = NULL;
 
 	t_scene_parse_data parse_data;
 	parse_data.has_ambiant = false;
@@ -178,7 +187,9 @@ t_scene* parse_scene_file(int fd)
 	}
 	*/
 
-	if (!parse_data.has_ambiant || !parse_data.has_resolution || scene->cameras.count == 0 || (scene->noise_reduction != 0 && scene->samples_per_pixel.count == 0))
+	scene->bvh = bvh_build(&scene->objects);
+
+	if (!scene->bvh || !parse_data.has_ambiant || !parse_data.has_resolution || scene->cameras.count == 0 || (scene->noise_reduction != 0 && scene->samples_per_pixel.count == 0))
 	{
 		if (!parse_data.has_ambiant)
 			set_error("No ambiant in configuration!", false);
@@ -188,6 +199,8 @@ t_scene* parse_scene_file(int fd)
 			set_error("No cameras in configuration", false);
 		else if (scene->noise_reduction != 0 && scene->samples_per_pixel.count == 0)
 			set_error("Noise reduction set without AA!", false);
+		else if (!scene->bvh)
+			set_error("Failed to build BVH!", false);
 		else
 			set_error("Wait, what even errored?", false);
 		free_scene(scene);

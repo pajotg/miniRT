@@ -13,19 +13,22 @@
 #include "mini_rt_mlx.h"
 #include "mlx.h"
 
-bool image_init(void* mlx, t_mlx_image* img, int width, int height)
+bool	image_init(void *mlx, t_mlx_image *img, int width, int height)
 {
-	void* image = mlx_new_image(mlx, width, height);
+	void	*image;
+
+	image = mlx_new_image(mlx, width, height);
 	if (!image)
-		return false;
+		return (false);
 	img->image = image;
 	img->width = width;
 	img->height = height;
-	img->addr = mlx_get_data_addr(image, &img->bits_per_pixel, &img->line_length, (int*)&img->big_endian);
-	return true;
+	img->addr = mlx_get_data_addr(image, &img->bits_per_pixel,
+			&img->line_length, (int *)&img->big_endian);
+	return (true);
 }
 
-void image_un_init(void* mlx, t_mlx_image* img)
+void	image_un_init(void *mlx, t_mlx_image *img)
 {
 	mlx_destroy_image(mlx, img->image);
 }

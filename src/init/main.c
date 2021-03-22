@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/31 13:41:22 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/26 11:52:21 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,19 @@ static int do_error()
 	return (1);
 }
 
-#include "libft.h"
-#include <math.h>
 int main(int argc, char **argv)
 {
+	//t_hilbert_randomizer randomizer;
+	//hilbert_randomizer_init(&randomizer);
+
+	//for (int i = 0; i < 20; i++)
+	//{
+	//	printf("Stats: recursion: %i index: %i stage: %i size: %i\n", randomizer.curve.recursion, randomizer.index, randomizer.stage, randomizer.curve.size);
+	//	t_vec2 vec = hilbert_randomizer_get_next(&randomizer);
+	//	printf("Got: %.2f %.2f\n", vec.x, vec.y);
+	//}
+
+	//return 1;
 	init_ft_printf();
 
 	t_args* arg_data = parse_args(argc, argv);

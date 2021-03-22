@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:25 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/28 15:25:03 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 12:53:50 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 **	https://math.stackexchange.com/questions/2613781/line-cylinder-intersection
 */
 
+#include <stdio.h>
+#include <stdlib.h>
 bool ray_intersects_cylinder_top_and_bottom(float Height, float Radius, const t_vec3* origin, const t_vec3* dir, t_ray_hit* o_hit)
 {
 	bool Above = (dir->z < 0) != (origin->z < Height && origin->z > -Height);
@@ -71,6 +73,8 @@ bool ray_intersects_cylinder(const t_object* object, const t_ray* ray, t_ray_hit
 	}
 
 	float dir2d_sqr = dir.x * dir.x + dir.y * dir.y;
+	if (dir2d_sqr <= 0)	// Yeah, i should watch out for this kind of stuff more often
+		return (false);
 	float t = - (origin.x * dir.x + dir.y * origin.y) / dir2d_sqr;
 	float dsqr = origin.x * origin.x + origin.y * origin.y - t * t * dir2d_sqr;
 	if (dsqr > data->radius * data->radius)

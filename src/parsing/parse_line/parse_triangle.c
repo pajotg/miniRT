@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:08:45 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/29 14:39:03 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 13:48:30 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "mini_rt_parse_utils.h"
 #include "mini_rt_material_data.h"
 
-bool		parse_triangle(t_scene *scene, char *line, int *curr)
+bool		scene_parse_triangle(t_scene *scene, char *line, int *curr)
 {
 	t_object			object;
 	t_object_triangle	*triangle;
@@ -35,7 +35,7 @@ bool		parse_triangle(t_scene *scene, char *line, int *curr)
 	object.intersect_func = (t_object_intersect_func)ray_intersects_triangle;
 	object.transform.rotation = *quaternion_identity();
 	skip_whitespace(line, curr);
-	if (!read_vec3(line, curr, &object.transform.position))
+	if (!read_vec3(line, curr, ',', &object.transform.position))
 	{
 		free(triangle);
 		set_error(ft_strjoin(
@@ -43,7 +43,7 @@ bool		parse_triangle(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	skip_whitespace(line, curr);
-	if (!read_vec3(line, curr, &triangle->second_point))
+	if (!read_vec3(line, curr, ',', &triangle->second_point))
 	{
 		free(triangle);
 		set_error(ft_strjoin(
@@ -51,7 +51,7 @@ bool		parse_triangle(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	skip_whitespace(line, curr);
-	if (!read_vec3(line, curr, &triangle->third_point))
+	if (!read_vec3(line, curr, ',', &triangle->third_point))
 	{
 		free(triangle);
 		set_error(ft_strjoin(
@@ -76,7 +76,7 @@ bool		parse_triangle(t_scene *scene, char *line, int *curr)
 	if (!list_push(&scene->objects, &object))
 	{
 		free(triangle);
-		shared_pt8_release_and_free(object.material);
+		shared_pt_release_and_free(object.material);
 		set_error("Could not push triangle into objects list!", true);
 		return (false);
 	}

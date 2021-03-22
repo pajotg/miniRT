@@ -14,7 +14,7 @@
 #include "ft_error.h"
 #include "mlx.h"
 
-void	mlx_data_un_init(t_mlx_data* data)
+void	mlx_data_un_init(t_mlx_data *data)
 {
 	renderer_un_init(&data->renderer);
 	image_un_init(data->mlx, &data->img);

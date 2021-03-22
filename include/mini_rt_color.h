@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:19:12 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:01:02 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/21 11:46:42 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@
 **	So why not? :)
 */
 
-typedef struct		s_color_rgb
+typedef struct s_color_rgb
 {
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
+	unsigned char	r;
+	unsigned char	g;
+	unsigned char	b;
 }					t_color_rgb;
 
 /*
@@ -38,11 +38,11 @@ typedef struct		s_color_rgb
 ** ACES also exists
 */
 
-typedef struct		s_color_hdr
+typedef struct s_color_hdr
 {
-	float r;
-	float g;
-	float b;
+	float	r;
+	float	g;
+	float	b;
 }					t_color_hdr;
 
 /*
@@ -58,9 +58,11 @@ typedef struct		s_color_hdr
 **}					t_color_hdr_to_rgb_jh;
 */
 
+float				color_hdr_to_luminance(t_color_hdr hdr);
+
 t_color_rgb			color_hdr_to_rgb_reindard(t_color_hdr hdr);
 t_color_rgb			color_hdr_to_rgb_reindard_white(t_color_hdr hdr,
-	float white_point);
+						float white_point);
 
 /*
 **t_color_rgb color_hdr_to_rgb_jh(t_color_hdr hdr, t_color_hdr_to_rgb_jh* m);

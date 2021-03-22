@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:26:17 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/31 13:05:40 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 12:18:54 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "ft_parse_utils.h"
 #include "mini_rt_scene.h"
 
-bool	parse_noise_reduction(t_scene *scene, char *line, int *curr)
+bool	scene_parse_noise_reduction(t_scene *scene, char *line, int *curr)
 {
 	if (scene->noise_reduction != 0)
 	{

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:38:38 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 18:09:34 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/21 11:46:42 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,11 @@
 **			);
 */
 
-float					to_luminance(t_color_hdr hdr)
+float	color_hdr_to_luminance(t_color_hdr hdr)
 {
 	return (000.2126 * hdr.r
-			+ 0.7152 * hdr.g
-			+ 0.0722 * hdr.b);
+		+ 0.7152 * hdr.g
+		+ 0.0722 * hdr.b);
 }
 
 static unsigned char	float_to_char(float f)
@@ -38,13 +38,13 @@ static unsigned char	float_to_char(float f)
 	return ((unsigned char)(f * 255));
 }
 
-t_color_rgb				color_hdr_to_rgb_reindard(t_color_hdr hdr)
+t_color_rgb	color_hdr_to_rgb_reindard(t_color_hdr hdr)
 {
 	t_color_rgb	rgb;
 	float		lum;
 	float		scale;
 
-	lum = to_luminance(hdr);
+	lum = color_hdr_to_luminance(hdr);
 	scale = (lum / (lum + 1)) / lum;
 	rgb.r = float_to_char(hdr.r * scale);
 	rgb.g = float_to_char(hdr.g * scale);
@@ -52,7 +52,7 @@ t_color_rgb				color_hdr_to_rgb_reindard(t_color_hdr hdr)
 	return (rgb);
 }
 
-t_color_rgb				color_hdr_to_rgb_reindard_white(t_color_hdr hdr,
+t_color_rgb	color_hdr_to_rgb_reindard_white(t_color_hdr hdr,
 	float white_point)
 {
 	t_color_rgb	rgb;
@@ -60,7 +60,7 @@ t_color_rgb				color_hdr_to_rgb_reindard_white(t_color_hdr hdr,
 	float		new_lum;
 	float		scale;
 
-	lum = to_luminance(hdr);
+	lum = color_hdr_to_luminance(hdr);
 	new_lum = lum * ((1 + (lum / (white_point * white_point))) / (1 + lum));
 	scale = new_lum / lum;
 	rgb.r = float_to_char(hdr.r * scale);

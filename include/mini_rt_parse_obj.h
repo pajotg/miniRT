@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:25:22 by jasper        #+#    #+#                 */
-/*   Updated: 2021/01/26 17:59:03 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/02/05 13:17:23 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,24 +21,31 @@
 **	Thats alot of info for a face!
 */
 
-typedef struct	s_face
+typedef struct s_face_vertex
 {
-	t_vec3 a_pos;
-	t_vec3 b_pos;
-	t_vec3 c_pos;
+	int	vertex_index;
+	int	texture_index;
+	int	normal_index;
+}				t_face_vertex;
 
-	t_vec2 a_uv;
-	t_vec2 b_uv;
-	t_vec2 c_uv;
-
-	t_vec3 a_normal;
-	t_vec3 b_normal;
-	t_vec3 c_normal;
+typedef struct s_face
+{
+	t_face_vertex	a;
+	t_face_vertex	b;
+	t_face_vertex	c;
 }				t_face;
 
-typedef struct	s_obj
+typedef struct s_obj
 {
+	t_list	vertexes;
+	t_list	normals;
+	t_list	uvs;
 	t_list	faces;
 }				t_obj;
+
+void	free_obj(t_obj *obj);
+
+t_obj	*parse_obj_file(int fd);
+t_obj	*parse_obj(char *path);
 
 #endif
