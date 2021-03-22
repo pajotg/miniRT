@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/02/26 11:52:21 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/22 14:31:44 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,33 +16,50 @@
 #include "mini_rt_init.h"
 #include "mini_rt_object.h"
 
+#include <stdlib.h>
 #include "ft_printf.h"
 #include "mini_rt_bmp.h"
 #include "libft.h"
 #include "mlx.h"
-#include "mlx_int.h"
+//#include "mlx_int.h"
 #include <math.h>
 #include "ft_printf.h"
 #include "ft_error.h"
 #include "ft_time.h"	// Used for movement (bonus)
 #include "ft_manual_reset_event.h"
+#include <stdio.h>
 
 #define NUM_THREADS 5
 
 void correct_exit(t_mlx_data* data)
 {
 	data->active = false;	// Notify render threads to stop
+	// TODO: Figure out how to do this
+	#ifdef OS_Linux
 	mlx_loop_end(data->mlx);
+	#else
+	if (data->window)
+	{
+		printf("Oi, fix this!\n");
+		exit(1);
+	}
+	#endif
 }
 
 static void cap_resolution(void* mlx, t_scene* scene)
 {
+	// TODO: Figure out how to do this
+	#ifdef OS_Linux
 	int rx, ry;
 	mlx_get_screen_size(mlx, &rx, &ry);
 	if (scene->resolution.width > rx)
 		scene->resolution.width = rx;
 	if (scene->resolution.height > ry)
 		scene->resolution.height = ry;
+	#else
+	(void)mlx;
+	(void)scene;
+	#endif
 }
 
 static void do_loop(t_mlx_data* data)
@@ -71,14 +88,20 @@ static int do_error()
 
 int main(int argc, char **argv)
 {
-	//t_hilbert_randomizer randomizer;
-	//hilbert_randomizer_init(&randomizer);
-
-	//for (int i = 0; i < 20; i++)
+	//for (int i = 0; i < 1000; i++)
 	//{
-	//	printf("Stats: recursion: %i index: %i stage: %i size: %i\n", randomizer.curve.recursion, randomizer.index, randomizer.stage, randomizer.curve.size);
-	//	t_vec2 vec = hilbert_randomizer_get_next(&randomizer);
-	//	printf("Got: %.2f %.2f\n", vec.x, vec.y);
+	//	float x = (ft_randf() - 0.5) * 10;
+	//	float y = (ft_randf() - 0.5) * 10;
+	//	float z = ft_randf() * 5;
+	//
+	//	int r = ft_rand() & 0xff;
+	//	int g = ft_rand() & 0xff;
+	//	int b = ft_rand() & 0xff;
+	//
+	//	t_vec3 dir = { ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f };
+	//	vec3_normalize(&dir, &dir);
+	//
+	//	printf("obj %.2f,%.2f,%.2f %.2f,%.2f,%.2f	../obj/Deer.obj D %i,%i,%i\n", x, y, z, dir.x, dir.y, dir.z, r,g,b);
 	//}
 
 	//return 1;
@@ -111,17 +134,21 @@ int main(int argc, char **argv)
 	{
 		free(arg_data);
 		free_scene(scene);
+		// TODO: Figure out how to do this
+		#ifdef OS_Linux
 		mlx_destroy_display(mlx);
+		#endif
 		free(mlx);
 		return do_error();
 	}
 
 	if (mlx_data.window)
 	{
-		mlx_hook(mlx_data.window, KeyPress, KeyPressMask, &hook_key_down, &mlx_data);
-		mlx_hook(mlx_data.window, KeyRelease, KeyReleaseMask, &hook_key_up, &mlx_data);
-		mlx_mouse_hook(mlx_data.window, hook_mouse, &mlx_data);
-		mlx_hook(mlx_data.window, ClientMessage, StructureNotifyMask, hook_client_message, &mlx_data);
+		// TODO: Figure out hook keys
+		//mlx_hook(mlx_data.window, KeyPress, KeyPressMask, &hook_key_down, &mlx_data);
+		//mlx_hook(mlx_data.window, KeyRelease, KeyReleaseMask, &hook_key_up, &mlx_data);
+		//mlx_mouse_hook(mlx_data.window, hook_mouse, &mlx_data);
+		//mlx_hook(mlx_data.window, ClientMessage, StructureNotifyMask, hook_client_message, &mlx_data);
 		mlx_loop_hook(mlx, hook_loop, &mlx_data);
 	}
 
@@ -153,7 +180,10 @@ int main(int argc, char **argv)
 
 	// free stuff
 	mlx_data_un_init(&mlx_data);
+	// TODO: Figure out how to do this
+	#ifdef OS_Linux
 	mlx_destroy_display(mlx);
+	#endif
 	free(mlx);
 	free_scene(scene);
 	free(arg_data);

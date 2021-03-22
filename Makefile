@@ -6,18 +6,37 @@ NAME = miniRT
 # so here is it!
 TEST_BINDER_NAME = TestBinder.a
 
+OS = $(shell uname -s)
+ifeq ($(OS), Darwin)
+MINI_LIBX_DIR = minilibx_mac
+else ifeq ($(OS), Linux)
+MINI_LIBX_DIR = minilibx_linux
+else
+$(error Unknown OS: $(OS))
+endif
+
 SRC_DIR = src/
 OBJ_DIR = obj/
 DEBUG_DIR = obj_debug/
-INCLUDE_DIRS = include libft/include minilibx-linux
-INCLUDE = -Iinclude -Ilibft/include -Iminilibx-linux
-LDFLAGS = -Lminilibx-linux/ -lmlx -Llibft -lft -lXext -lX11 -lm -lbsd -lpthread
+INCLUDE_DIRS = include libft/include $(MINI_LIBX_DIR)
+INCLUDE = -Iinclude -Ilibft/include -I$(MINI_LIBX_DIR)
+LDFLAGS = -L$(MINI_LIBX_DIR)/ -lmlx -Llibft -lft -lm -lpthread
 
-FOREIGN_TARGETS = minilibx-linux/libmlx.a libft/libft.a
-MAKE_FOREIGN_TARGETS = minilibx-linux/libmlx libft/libft
+FOREIGN_TARGETS = $(MINI_LIBX_DIR)/libmlx.a libft/libft.a
+MAKE_FOREIGN_TARGETS = $(MINI_LIBX_DIR)/libmlx libft/libft
 
-#FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
-FLAGS = -DBUFFER_SIZE=128	# warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning
+FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
+#FLAGS = -DBUFFER_SIZE=128 # warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning
+
+FLAGS += -D OS_$(OS)
+
+ifeq ($(OS), Darwin)
+LDFLAGS += -framework OpenGL -framework AppKit
+else ifeq ($(OS), Linux)
+LDFLAGS += -lXext -lX11 -lbsd
+else
+$(error Unknown OS: $(OS))
+endif
 
 ifdef DEBUG
 FLAGS += -g
@@ -70,7 +89,8 @@ $(OBJECTS): $(USE_OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES) \
 
 .PHONY: $(MAKE_FOREIGN_TARGETS)
 $(MAKE_FOREIGN_TARGETS):
-	$(MAKE) -C $(dir $@) $(notdir $@).a
+	#$(MAKE) -C $(dir $@) $(notdir $@).a
+	$(MAKE) -C $(dir $@)
 
 # also in case the file does not exist yet, add this rule so it wont error
 # we will make the libs with the $(MAKE_FOREIGN_TARGETS) target

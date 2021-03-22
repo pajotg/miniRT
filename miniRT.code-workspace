@@ -25,7 +25,17 @@
 			"mini_rt_object.h": "c",
 			"mini_rt_image.h": "c",
 			"ft_error.h": "c",
-			"ft_parse_utils.h": "c"
+			"ft_parse_utils.h": "c",
+			"mini_rt_mlx.h": "c",
+			"mini_rt_scene.h": "c",
+			"mini_rt_color.h": "c",
+			"mini_rt_args.h": "c",
+			"mini_rt_renderer.h": "c",
+			"mini_rt_init.h": "c",
+			"mini_rt_pixel.h": "c",
+			"mini_rt_hooks.h": "c",
+			"mini_rt_raycast.h": "c",
+			"iterator": "c"
 		},
 	}
 }

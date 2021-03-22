@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/16 17:29:33 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/20 15:16:53 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/22 14:28:51 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,17 @@ static void	print_frame_data(t_mlx_data *data, int total_samples,
 	diff = time_difference(&current, &g_start_time);
 	if (is_first_frame(&data->renderer))
 		if (data->renderer.frame_num == 0)
-			printf("Completed DI frame! time taken: %.2fs, samples: %i\r", diff,
+			printf("Completed DI frame! time taken: %.2fs, samples: %i\n", diff,
 				total_samples);
 	else
-		printf("Completed FI frame! time taken: %.2fs, samples: %i\r", diff,
+		printf("Completed FI frame! time taken: %.2fs, samples: %i\n", diff,
 			total_samples);
 	else if (get_aa_frame(&data->renderer, data->scene) != -1)
 		printf("Completed AA frame! time taken: %.2fs, samples: %i, avg noise: "
-			"%.8f\r", diff, total_samples, avg_noise);
+			"%.8f\n", diff, total_samples, avg_noise);
 	else
 		printf("Completed NR frame! time taken: %.2fs, samples: %i, avg noise: "
-			"%.8f\r", diff, total_samples, avg_noise);
-	fflush(stdout);
+			"%.8f\n", diff, total_samples, avg_noise);
 }
 
 // Check if we should save the frame
@@ -67,7 +66,7 @@ void	hook_frame_complete(t_mlx_data *data, int total_samples,
 	print_frame_data(data, total_samples, avg_noise);
 	if (data->args->save && (
 			(avg_noise < (data->scene->use_gi * 0.0035 + (!data->scene->use_gi)
-					* 0.000035) && !is_first_frame(&data->renderer)
+					* 0.0035) && !is_first_frame(&data->renderer)
 				&& get_aa_frame(&data->renderer, data->scene) == -1)
 			|| (!data->renderer.rendering_done_mre.is_set)
 			))
