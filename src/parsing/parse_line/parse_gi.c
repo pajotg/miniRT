@@ -19,7 +19,7 @@
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
 
-bool	scene_parse_gi(t_scene *scene, char* line, int *curr)
+bool	scene_parse_gi(t_scene *scene, char *line, int *curr)
 {
 	if (scene->use_gi)
 	{

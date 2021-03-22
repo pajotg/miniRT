@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 14:11:21 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/06 14:52:47 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/22 15:50:48 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include "ft_printf.h"
 #include "mini_rt_render_pixel.h"
 // TODO: Mac keycodes
+
+#ifdef OS_Linux
 #define KEY_ESC 65307
 #define KEY_W 119
 #define KEY_A 97
@@ -31,6 +33,22 @@
 
 #define KEY_R 114
 #define KEY_F 102
+#else
+#define KEY_ESC 53
+#define KEY_W 13
+#define KEY_A 0
+#define KEY_S 1
+#define KEY_D 2
+#define KEY_Q 12
+#define KEY_E 14
+#define KEY_T 17
+#define KEY_Z 6
+#define KEY_P 35
+#define KEY_O 31
+
+#define KEY_R 15
+#define KEY_F 3
+#endif
 
 static void	next_cam(t_mlx_data *data)
 {
@@ -60,6 +78,7 @@ static void	secondairy_hook_key_down_if_else_case(t_mlx_data *data, int key)
 int	hook_key_down(int key, void *p)
 {
 	t_mlx_data	*data;
+	//printf("key: %i\n", key);
 
 	data = p;
 	if (key == KEY_ESC)

@@ -20,7 +20,10 @@
 #include "mini_rt_parse_utils.h"
 #include "mini_rt_material_data.h"
 
-bool		scene_parse_triangle(t_scene *scene, char *line, int *curr)
+// Calculate the aabb
+// Read material
+
+bool	scene_parse_triangle(t_scene *scene, char *line, int *curr)
 {
 	t_object			object;
 	t_object_triangle	*triangle;
@@ -39,7 +42,7 @@ bool		scene_parse_triangle(t_scene *scene, char *line, int *curr)
 	{
 		free(triangle);
 		set_error(ft_strjoin(
-			"triangle first position incorrectly formatted: ", line), true);
+				"triangle first position incorrectly formatted: ", line), true);
 		return (false);
 	}
 	skip_whitespace(line, curr);
@@ -47,7 +50,8 @@ bool		scene_parse_triangle(t_scene *scene, char *line, int *curr)
 	{
 		free(triangle);
 		set_error(ft_strjoin(
-			"triangle second position incorrectly formatted: ", line), true);
+				"triangle second position incorrectly formatted: ", line), true)
+		;
 		return (false);
 	}
 	skip_whitespace(line, curr);
@@ -55,21 +59,18 @@ bool		scene_parse_triangle(t_scene *scene, char *line, int *curr)
 	{
 		free(triangle);
 		set_error(ft_strjoin(
-			"triangle third position incorrectly formatted: ", line), true);
+				"triangle third position incorrectly formatted: ", line), true);
 		return (false);
 	}
-
-	// Read material
 	skip_whitespace(line, curr);
 	object.material = read_material(line, curr);
 	if (!object.material)
 	{
 		free(triangle);
-		set_error(ft_strjoin_va(4, "triangle material incorrectly formatted: ", line, "\nReason: ", get_last_error()), true);
+		set_error(ft_strjoin_va(4, "triangle material incorrectly formatted: ",
+				line, "\nReason: ", get_last_error()), true);
 		return (false);
 	}
-
-	// Calculate the aabb
 	aabb_init(&object.aabb, &object.transform.position);
 	aabb_extend_point(&object.aabb, &triangle->second_point);
 	aabb_extend_point(&object.aabb, &triangle->third_point);

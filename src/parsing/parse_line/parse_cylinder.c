@@ -20,7 +20,12 @@
 #include "mini_rt_parse_utils.h"
 #include "mini_rt_material_data.h"
 
-bool		scene_parse_cylinder(t_scene *scene, char *line, int *curr)
+// Calculate the aabb
+// Read material
+// Read extends
+// Read radius
+
+bool	scene_parse_cylinder(t_scene *scene, char *line, int *curr)
 {
 	t_object			object;
 	t_object_cylinder	*cylinder;
@@ -38,49 +43,44 @@ bool		scene_parse_cylinder(t_scene *scene, char *line, int *curr)
 	{
 		free(cylinder);
 		set_error(ft_strjoin(
-"cylinder position and normal incorrectly formatted: ", line), true);
+				"cylinder position and normal incorrectly formatted: ", line),
+			true);
 		return (false);
 	}
 	skip_whitespace(line, curr);
-
-
-	// Read radius
 	if (!read_float(line, curr, &cylinder->radius))
 	{
 		free(cylinder);
 		set_error(ft_strjoin(
-			"cylinder diameter incorrectly formatted: ", line), true);
+				"cylinder diameter incorrectly formatted: ", line), true);
 		return (false);
 	}
 	cylinder->radius /= 2;
-
-	// Read extends
 	skip_whitespace(line, curr);
 	if (!read_float(line, curr, &cylinder->height_extends))
 	{
 		free(cylinder);
 		set_error(ft_strjoin(
-			"cylinder height incorrectly formatted: ", line), true);
+				"cylinder height incorrectly formatted: ", line), true);
 		return (false);
 	}
 	cylinder->height_extends /= 2;
-
-	// Read material
 	skip_whitespace(line, curr);
 	object.material = read_material(line, curr);
 	if (!object.material)
 	{
 		free(cylinder);
-		set_error(ft_strjoin_va(4, "cylinder material incorrectly formatted: ", line, "\nReason: ", get_last_error()), true);
+		set_error(ft_strjoin_va(4, "cylinder material incorrectly formatted: ",
+				line, "\nReason: ", get_last_error()), true);
 		return (false);
 	}
-
-	// Calculate the aabb
-	object.aabb.max = (t_vec3) {  cylinder->radius,  cylinder->radius,  cylinder->height_extends };
-	object.aabb.min = (t_vec3) { -cylinder->radius, -cylinder->radius, -cylinder->height_extends };
+	object.aabb.max = (t_vec3){cylinder->radius, cylinder->radius, cylinder
+		->height_extends};
+	object.aabb.min = (t_vec3){-cylinder->radius, -cylinder->radius, -cylinder
+		->height_extends};
 	vec3_add(&object.aabb.min, &object.aabb.min, &object.transform.position);
 	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
-	aabb_rotate(&object.aabb,&object.transform.rotation);
+	aabb_rotate(&object.aabb,& object.transform.rotation);
 	if (!list_push(&scene->objects, &object))
 	{
 		free(cylinder);

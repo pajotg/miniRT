@@ -20,7 +20,9 @@
 #include "mini_rt_parse_utils.h"
 #include <math.h>
 
-bool		scene_parse_plane(t_scene *scene, char *line, int *curr)
+// Calculate the aabb
+
+bool	scene_parse_plane(t_scene *scene, char *line, int *curr)
 {
 	t_object		object;
 	t_object_plane	*plane;
@@ -38,22 +40,21 @@ bool		scene_parse_plane(t_scene *scene, char *line, int *curr)
 	{
 		free(plane);
 		set_error(ft_strjoin(
-			"plane position and normal incorrectly formatted: ", line), true);
+				"plane position and normal incorrectly formatted: ", line),
+			true);
 		return (false);
 	}
 	skip_whitespace(line, curr);
-
 	object.material = read_material(line, curr);
 	if (!object.material)
 	{
 		free(plane);
-		set_error(ft_strjoin_va(4, "plane material incorrectly formatted: ", line, "\nReason: ", get_last_error()), true);
+		set_error(ft_strjoin_va(4, "plane material incorrectly formatted: ",
+				line, "\nReason: ", get_last_error()), true);
 		return (false);
 	}
-
-	// Calculate the aabb
-	object.aabb.max = (t_vec3) { INFINITY, INFINITY, INFINITY };
-	object.aabb.min = (t_vec3) { -INFINITY, -INFINITY, -INFINITY };
+	object.aabb.max = (t_vec3){INFINITY, INFINITY, INFINITY};
+	object.aabb.min = (t_vec3){-INFINITY, -INFINITY, -INFINITY};
 	if (!list_push(&scene->objects, &object))
 	{
 		free(plane);

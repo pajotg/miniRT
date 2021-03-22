@@ -20,7 +20,54 @@
 #include "mini_rt_parse_utils.h"
 #include "mini_rt_material_data.h"
 
-bool		scene_parse_cube(t_scene *scene, char *line, int *curr)
+static bool	stupid_norm1(t_object *object, t_object_cube *cube, char *line,
+	int *curr)
+{
+	object->object_data = cube;
+	object->intersect_func = (t_object_intersect_func)ray_intersects_cube;
+	skip_whitespace(line, curr);
+	if (!read_transform(line, curr, &object->transform))
+	{
+		free(cube);
+		set_error(ft_strjoin(
+				"cube position and normal incorrectly formatted: ", line), true)
+		;
+		return (false);
+	}
+	return (true);
+}
+
+// Calculate the aabb
+static bool	stupid_norm2(t_object *object, t_object_cube *cube, char *line,
+	int *curr)
+{
+	skip_whitespace(line, curr);
+	if (!read_float(line, curr, &cube->extends))
+	{
+		free(cube);
+		set_error(ft_strjoin(
+				"cube size incorrectly formatted: ", line), true);
+		return (false);
+	}
+	cube->extends /= 2;
+	skip_whitespace(line, curr);
+	object->material = read_material(line, curr);
+	if (!object->material)
+	{
+		free(cube);
+		set_error(ft_strjoin_va(4, "cube material incorrectly formatted: ",
+				line, "\nReason: ", get_last_error()), true);
+		return (false);
+	}
+	object->aabb.max = (t_vec3){cube->extends, cube->extends, cube->extends};
+	object->aabb.min = (t_vec3){-cube->extends, -cube->extends, -cube->extends};
+	vec3_add(&object->aabb.min, &object->aabb.min, &object->transform.position);
+	vec3_add(&object->aabb.max, &object->aabb.max, &object->transform.position);
+	aabb_rotate(&object->aabb, &object->transform.rotation);
+	return (true);
+}
+
+bool	scene_parse_cube(t_scene *scene, char *line, int *curr)
 {
 	t_object		object;
 	t_object_cube	*cube;
@@ -31,44 +78,9 @@ bool		scene_parse_cube(t_scene *scene, char *line, int *curr)
 		set_error("Malloc failed", false);
 		return (false);
 	}
-	object.object_data = cube;
-	object.intersect_func = (t_object_intersect_func)ray_intersects_cube;
-
-	skip_whitespace(line, curr);
-	if (!read_transform(line, curr, &object.transform))
-	{
-		free(cube);
-		set_error(ft_strjoin(
-			"cube position and normal incorrectly formatted: ", line), true);
+	if (!stupid_norm1(&object, cube, line, curr)
+		|| !stupid_norm2(&object, cube, line, curr))
 		return (false);
-	}
-
-	skip_whitespace(line, curr);
-	if (!read_float(line, curr, &cube->extends))
-	{
-		free(cube);
-		set_error(ft_strjoin(
-			"cube size incorrectly formatted: ", line), true);
-		return (false);
-	}
-	cube->extends /= 2;
-
-	skip_whitespace(line, curr);
-	object.material = read_material(line, curr);
-	if (!object.material)
-	{
-		free(cube);
-		set_error(ft_strjoin_va(4, "cube material incorrectly formatted: ", line, "\nReason: ", get_last_error()), true);
-		return (false);
-	}
-
-	// Calculate the aabb
-	object.aabb.max = (t_vec3) {  cube->extends,  cube->extends,  cube->extends };
-	object.aabb.min = (t_vec3) { -cube->extends, -cube->extends, -cube->extends };
-	vec3_add(&object.aabb.min, &object.aabb.min, &object.transform.position);
-	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
-	aabb_rotate(&object.aabb,&object.transform.rotation);
-
 	if (!list_push(&scene->objects, &object))
 	{
 		free(cube);

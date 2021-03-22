@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:26:17 by jasper        #+#    #+#                 */
-/*   Updated: 2021/02/05 12:18:54 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/22 15:21:04 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,11 @@ bool	scene_parse_noise_reduction(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	skip_whitespace(line, curr);
-	if (!read_int(line, curr, &scene->noise_reduction) || scene->noise_reduction <= 0)
+	if (!read_int(line, curr, &scene->noise_reduction) || scene
+		->noise_reduction <= 0)
 	{
-		set_error(ft_strjoin("noise reduction incorrectly formatted: ", line), true);
+		set_error(ft_strjoin("noise reduction incorrectly formatted: ", line),
+			true);
 		return (false);
 	}
 	return (true);

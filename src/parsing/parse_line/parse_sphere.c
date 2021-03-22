@@ -20,7 +20,9 @@
 #include "mini_rt_parse_utils.h"
 #include "mini_rt_material_data.h"
 
-bool		scene_parse_sphere(t_scene *scene, char *line, int *curr)
+// Calculate the aabb
+
+bool	scene_parse_sphere(t_scene *scene, char *line, int *curr)
 {
 	t_object		object;
 	t_object_sphere	*sphere;
@@ -39,10 +41,9 @@ bool		scene_parse_sphere(t_scene *scene, char *line, int *curr)
 	{
 		free(sphere);
 		set_error(ft_strjoin(
-			"sphere position incorrectly formatted: ", line), true);
+				"sphere position incorrectly formatted: ", line), true);
 		return (false);
 	}
-
 	skip_whitespace(line, curr);
 	if (!read_float(line, curr, &sphere->radius))
 	{
@@ -51,20 +52,18 @@ bool		scene_parse_sphere(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	sphere->radius /= 2;
-
 	skip_whitespace(line, curr);
 	object.material = read_material(line, curr);
 	if (!object.material)
 	{
 		free(sphere);
-		set_error(ft_strjoin_va(4, "sphere material incorrectly formatted: ", line, "\nReason: ", get_last_error()), true);
+		set_error(ft_strjoin_va(4, "sphere material incorrectly formatted: ",
+				line, "\nReason: ", get_last_error()), true);
 		return (false);
 	}
-
-
-	// Calculate the aabb
-	object.aabb.max = (t_vec3) {  sphere->radius,  sphere->radius,  sphere->radius };
-	object.aabb.min = (t_vec3) { -sphere->radius, -sphere->radius, -sphere->radius };
+	object.aabb.max = (t_vec3){sphere->radius, sphere->radius, sphere->radius};
+	object.aabb.min = (t_vec3){-sphere->radius, -sphere->radius, -sphere
+		->radius};
 	vec3_add(&object.aabb.min, &object.aabb.min, &object.transform.position);
 	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
 	if (!list_push(&scene->objects, &object))

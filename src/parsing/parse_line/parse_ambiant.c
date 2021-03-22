@@ -34,6 +34,5 @@ bool	scene_parse_ambiant(t_scene_parse_data *parse_data,
 		set_error(ft_strjoin("Ambiant incorrectly formatted: ", line), true);
 		return (false);
 	}
-
 	return (true);
 }

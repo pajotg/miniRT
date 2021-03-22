@@ -20,10 +20,14 @@
 #include "mini_rt_parse_utils.h"
 #include "mini_rt_material_data.h"
 
-bool		scene_parse_square(t_scene *scene, char *line, int *curr)
+// Calculate the aabb
+// Read material
+// read extends
+
+bool	scene_parse_square(t_scene *scene, char *line, int *curr)
 {
 	t_object		object;
-	t_object_square *square;
+	t_object_square	*square;
 
 	square = malloc(sizeof(t_object_square));
 	if (!square)
@@ -38,37 +42,33 @@ bool		scene_parse_square(t_scene *scene, char *line, int *curr)
 	{
 		free(square);
 		set_error(ft_strjoin(
-			"square position and normal incorrectly formatted: ", line), true);
+				"square position and normal incorrectly formatted: ", line),
+			true);
 		return (false);
 	}
 	skip_whitespace(line, curr);
-
-	// read extends
 	if (!read_float(line, curr, &square->extends))
 	{
 		free(square);
 		set_error(ft_strjoin(
-			"square size incorrectly formatted: ", line), true);
+				"square size incorrectly formatted: ", line), true);
 		return (false);
 	}
 	square->extends /= 2;
-
-	// Read material
 	skip_whitespace(line, curr);
 	object.material = read_material(line, curr);
 	if (!object.material)
 	{
 		free(square);
-		set_error(ft_strjoin_va(4, "square material incorrectly formatted: ", line, "\nReason: ", get_last_error()), true);
+		set_error(ft_strjoin_va(4, "square material incorrectly formatted: ",
+				line, "\nReason: ", get_last_error()), true);
 		return (false);
 	}
-
-	// Calculate the aabb
-	object.aabb.max = (t_vec3) {  square->extends,  square->extends, 0 };
-	object.aabb.min = (t_vec3) { -square->extends, -square->extends, 0 };
+	object.aabb.max = (t_vec3){square->extends, square->extends, 0 };
+	object.aabb.min = (t_vec3){-square->extends, -square->extends, 0 };
 	vec3_add(&object.aabb.min, &object.aabb.min, &object.transform.position);
 	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
-	aabb_rotate(&object.aabb,&object.transform.rotation);
+	aabb_rotate(&object.aabb,& object.transform.rotation);
 	if (!list_push(&scene->objects, &object))
 	{
 		free(square);

@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/02/05 15:57:59 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/22 15:08:17 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/22 15:52:57 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ t_bvh	*bvh_build_from_indexes(t_list *objects, t_list *valid_indexes)
 	return (bvh_build_from_indexes_raw(objects, valid_indexes));
 }
 
+#include "ft_time.h"
 t_bvh	*bvh_build(t_list *objects)
 {
 	size_t	i;
@@ -79,7 +80,11 @@ t_bvh	*bvh_build(t_list *objects)
 		list_push(&valid_indexes, &i);
 		i++;
 	}
+	printf("building BVH!\n");
+	t_time now = time_now();
 	new = bvh_build_from_indexes(objects, &valid_indexes);
+	t_time end = time_now();
+	printf("BVH building took %.2fs!\n", time_difference(&end, &now));
 	list_un_init(&valid_indexes, NULL);
 	return (new);
 }

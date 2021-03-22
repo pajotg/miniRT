@@ -22,6 +22,8 @@
 
 bool	scene_parse_anti_aliasing(t_scene *scene, char *line, int *curr)
 {
+	int	spp;
+
 	if (scene->samples_per_pixel.count != 0)
 	{
 		set_error(ft_strjoin("Duplicate anti aliasing: ", line), true);
@@ -30,10 +32,10 @@ bool	scene_parse_anti_aliasing(t_scene *scene, char *line, int *curr)
 	skip_whitespace(line, curr);
 	while (true)
 	{
-		int spp;
 		if (!read_int(line, curr, &spp) || spp <= 0)
 		{
-			set_error(ft_strjoin("anti aliasing incorrectly formatted: ", line), true);
+			set_error(ft_strjoin("anti aliasing incorrectly formatted: ", line),
+				true);
 			return (false);
 		}
 		if (!list_push(&scene->samples_per_pixel, &spp))
@@ -42,7 +44,7 @@ bool	scene_parse_anti_aliasing(t_scene *scene, char *line, int *curr)
 			return (false);
 		}
 		if (!skip_char(line, curr, ','))
-			break;
+			break ;
 	}
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/03/22 14:31:44 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/22 16:05:39 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,21 +88,23 @@ static int do_error()
 
 int main(int argc, char **argv)
 {
-	//for (int i = 0; i < 1000; i++)
-	//{
-	//	float x = (ft_randf() - 0.5) * 10;
-	//	float y = (ft_randf() - 0.5) * 10;
-	//	float z = ft_randf() * 5;
-	//
-	//	int r = ft_rand() & 0xff;
-	//	int g = ft_rand() & 0xff;
-	//	int b = ft_rand() & 0xff;
-	//
-	//	t_vec3 dir = { ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f };
-	//	vec3_normalize(&dir, &dir);
-	//
-	//	printf("obj %.2f,%.2f,%.2f %.2f,%.2f,%.2f	../obj/Deer.obj D %i,%i,%i\n", x, y, z, dir.x, dir.y, dir.z, r,g,b);
-	//}
+	/*
+	for (int i = 0; i < 100000; i++)
+	{
+		float x = (ft_randf() - 0.5) * 100;
+		float y = (ft_randf() - 0.5) * 100;
+		float z = (ft_randf() - 0.5) * 100;
+
+		int r = ft_rand() & 0xff;
+		int g = ft_rand() & 0xff;
+		int b = ft_rand() & 0xff;
+
+		t_vec3 dir = { ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f };
+		vec3_normalize(&dir, &dir);
+
+		printf("obj %.2f,%.2f,%.2f %.2f,%.2f,%.2f	../obj/Deer.obj D %i,%i,%i\n", x, y, z, dir.x, dir.y, dir.z, r,g,b);
+	}
+	//*/
 
 	//return 1;
 	init_ft_printf();
@@ -145,10 +147,16 @@ int main(int argc, char **argv)
 	if (mlx_data.window)
 	{
 		// TODO: Figure out hook keys
-		//mlx_hook(mlx_data.window, KeyPress, KeyPressMask, &hook_key_down, &mlx_data);
-		//mlx_hook(mlx_data.window, KeyRelease, KeyReleaseMask, &hook_key_up, &mlx_data);
-		//mlx_mouse_hook(mlx_data.window, hook_mouse, &mlx_data);
-		//mlx_hook(mlx_data.window, ClientMessage, StructureNotifyMask, hook_client_message, &mlx_data);
+		#ifdef OS_Linux
+		mlx_hook(mlx_data.window, KeyPress, KeyPressMask, &hook_key_down, &mlx_data);
+		mlx_hook(mlx_data.window, KeyRelease, KeyReleaseMask, &hook_key_up, &mlx_data);
+		mlx_hook(mlx_data.window, ClientMessage, StructureNotifyMask, hook_client_message, &mlx_data);
+		#else
+		mlx_hook(mlx_data.window, 2, 0, &hook_key_down, &mlx_data);
+		mlx_hook(mlx_data.window, 3, 0, &hook_key_up, &mlx_data);
+		mlx_hook(mlx_data.window, 17, 0, hook_client_message, &mlx_data);
+		#endif
+		mlx_mouse_hook(mlx_data.window, hook_mouse, &mlx_data);
 		mlx_loop_hook(mlx, hook_loop, &mlx_data);
 	}
 
