@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/02/06 13:32:18 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/29 15:41:24 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void free_scene(t_scene* scene)
 	list_un_init(&(scene->directional_lights), NULL);
 	list_un_init(&(scene->samples_per_pixel), NULL);
 	if (scene->bvh)
-		bvh_free(scene->bvh);
+		bvh_free(scene->bvh, NULL);
 	free(scene);
 }
 

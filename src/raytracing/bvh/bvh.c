@@ -5,12 +5,20 @@
 
 #include <stdio.h>	// bad
 
-void	bvh_free(t_bvh *bvh)
+void	bvh_free(t_bvh *bvh, t_leaf_free_func free_leaf_nodes)
 {
-	if (!bvh->is_leaf)
+	if (bvh->is_leaf)
 	{
-		bvh_free(bvh->a);
-		bvh_free(bvh->b);
+		if (free_leaf_nodes)
+		{
+			free_leaf_nodes(bvh->a);
+			free_leaf_nodes(bvh->b);
+		}
+	}
+	else
+	{
+		bvh_free(bvh->a, free_leaf_nodes);
+		bvh_free(bvh->b, free_leaf_nodes);
 	}
 	free(bvh);
 }

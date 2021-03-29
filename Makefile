@@ -39,7 +39,7 @@ $(error Unknown OS: $(OS))
 endif
 
 ifdef DEBUG
-FLAGS += -g
+FLAGS += -g -fsanitize=address
 USE_OBJ_DIR = $(DEBUG_DIR)
 OTHER_OBJ_DIR = $(OBJ_DIR)
 else

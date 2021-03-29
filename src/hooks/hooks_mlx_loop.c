@@ -39,12 +39,15 @@ static float	hook_frame(void)
 	return (diff);
 }
 
+//printf("Got inputs: %i|%i %i|%i\n", data->input.forward,data->input.backward, 
+//
+//data->input.left, data->input.right);
+
 static void	handle_movement(t_mlx_data *data, float diff)
 {
 	t_vec3		move_dir;
 	t_camera	*cam;
 
-	//printf("Got inputs: %i|%i %i|%i\n", data->input.forward,data->input.backward, data->input.left, data->input.right);
 	move_dir = (t_vec3){0, 0, 0 };
 	data->should_clear = data->should_clear || (data->input.forward != data
 			->input.backward)

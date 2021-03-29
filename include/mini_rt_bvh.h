@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/02/05 15:54:05 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/22 14:42:31 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/29 15:33:43 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 **	otherwise, a and b aree bvh pointers
 */
 
+typedef void	(*t_leaf_free_func)(void* ptr);
+
 typedef struct s_bvh
 {
 	bool	is_leaf;
@@ -29,7 +31,7 @@ typedef struct s_bvh
 	void	*b;
 }				t_bvh;
 
-void	bvh_free(t_bvh *bvh);
+void	bvh_free(t_bvh *bvh, t_leaf_free_func free_leaf_nodes);
 t_bvh	*bvh_combine_bvh(t_bvh *a, t_bvh *b);
 t_bvh	*bvh_combine_leaf(void *a, t_aabb *a_aabb, void *b, t_aabb *b_aabb);
 

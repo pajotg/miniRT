@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/04 12:59:25 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:26:20 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/29 16:04:15 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,55 +15,80 @@
 #include <stdlib.h>
 #include "mini_rt_args.h"
 
-t_args* parse_args(int argc, char **argv)
+static bool	parse_flags(t_args *data, int argc, char **argv)
 {
+	int		i;
+
+	data->save = false;
+	data->save_on_exit = false;
+	data->no_res_cap = false;
+	i = 2;
+	while (i < argc)
+	{
+		if (ft_strncmp(argv[i], "--save", 7) == 0 && data->save == false)
+			data->save = true;
+		else if (ft_strncmp(argv[i], "--no-res-cap", 13) == 0 && data
+			->no_res_cap == false)
+			data->no_res_cap = true;
+		else if (ft_strncmp(argv[i], "--save-on-exit", 15) == 0 && data
+			->save_on_exit == false)
+			data->save_on_exit = true;
+		else
+		{
+			set_error(ft_strjoin("Argument not recognized: ", argv[i]), true);
+			free(data);
+			return (false);
+		}
+		i++;
+	}
+	return (true);
+}
+
+static t_args	*init(int argc)
+{
+	t_args	*data;
+
 	if (argc <= 1)
 	{
 		set_error("Usage: miniRT [file] {args}", false);
 		return (NULL);
 	}
-	t_args* data = malloc(sizeof(t_args));
+	data = malloc(sizeof(t_args));
 	if (data == NULL)
 	{
 		set_error("Malloc failed for parse args!", false);
-		return NULL;
+		return (NULL);
 	}
+	return (data);
+}
 
+// Checks for: strlen >= 4, ends with .rt, and character before . != /
+
+t_args	*parse_args(int argc, char **argv)
+{
+	t_args	*data;
+
+	data = init(argc);
+	if (!data)
+		return (NULL);
 	data->map_file = argv[1];
-	if (ft_strlen(data->map_file) < 4 || ft_strncmp(data->map_file + ft_strlen(data->map_file) - 3,".rt", 3) != 0 || (data->map_file[ft_strlen(data->map_file)-4] == '/'))	// Checks for: strlen >= 4, ends with .rt, and character before . != /
+	if (ft_strlen(data->map_file) < 4 || ft_strncmp(data->map_file + ft_strlen(
+				data->map_file) - 3, ".rt", 3) != 0 || (data
+			->map_file[ft_strlen(data->map_file) - 4] == '/'))
 	{
-		set_error(ft_strjoin("File does not end with \".rt\", got: ", data->map_file), true);
+		set_error(ft_strjoin("File does not end with \".rt\", got: ", data
+				->map_file), true);
 		free(data);
-		return NULL;
+		return (NULL);
 	}
-
-	data->save = false;
-	data->save_on_exit = false;
-	data->no_res_cap = false;
-	int i = 2;
-	while (i < argc)
-	{
-		char* arg = argv[i];
-		if (ft_strncmp(arg, "--save", 7) == 0 && data->save == false)
-			data->save = true;
-		else if (ft_strncmp(arg, "--no-res-cap",13) == 0 && data->no_res_cap == false)
-			data->no_res_cap = true;
-		else if (ft_strncmp(arg, "--save-on-exit",15) == 0 && data->save_on_exit == false)
-			data->save_on_exit = true;
-		else
-		{
-			set_error(ft_strjoin("Argument not recognized: ", arg), true);
-			free(data);
-			return NULL;
-		}
-		i++;
-	}
+	if (!parse_flags(data, argc, argv))
+		return (NULL);
 	if (data->save && data->save_on_exit)
 	{
-		set_error("Both save and save-on-exit arguments where specified!", false);
+		set_error("Both save and save-on-exit arguments where specified!",
+			false);
 		free(data);
-		return NULL;
+		return (NULL);
 	}
-
-	return data;
+	return (data);
 }

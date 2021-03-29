@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/02/05 15:57:59 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/22 15:52:57 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/03/29 17:03:19 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,18 +23,34 @@ static t_bvh	*try_combine_or_free(t_bvh *a, t_bvh *b)
 
 	if (!a || !b)
 	{
-		bvh_free(a);
-		bvh_free(b);
+		bvh_free(a, NULL);
+		bvh_free(b, NULL);
 		return (NULL);
 	}
 	new = bvh_combine_bvh(a, b);
 	if (!new)
 	{
-		bvh_free(a);
-		bvh_free(b);
+		bvh_free(a, NULL);
+		bvh_free(b, NULL);
 		return (NULL);
 	}
 	return (new);
+}
+
+static bool init_indexes_and_split(t_list *objects, t_list *valid_indexes, t_list*	valid_indexes_a, t_list*	valid_indexes_b)
+{
+	bool	success;
+
+	success = list_init(valid_indexes_a, sizeof(size_t));
+	success = list_init(valid_indexes_b, sizeof(size_t)) && success;
+	if (!success || !split_objects(objects, valid_indexes, valid_indexes_a,
+			valid_indexes_b))
+	{
+		list_un_init(valid_indexes_a, NULL);
+		list_un_init(valid_indexes_b, NULL);
+		return (false);
+	}
+	return true;
 }
 
 t_bvh	*bvh_build_from_indexes(t_list *objects, t_list *valid_indexes)
@@ -42,23 +58,18 @@ t_bvh	*bvh_build_from_indexes(t_list *objects, t_list *valid_indexes)
 	t_list	valid_indexes_a;
 	t_list	valid_indexes_b;
 	t_bvh	*new;
-	bool	success;
 
 	if (valid_indexes->count > 200)
 	{
-		success = list_init(&valid_indexes_a, sizeof(size_t));
-		success = list_init(&valid_indexes_b, sizeof(size_t)) && success;
-		if (!success || !split_objects(objects, valid_indexes, &valid_indexes_a,
-				&valid_indexes_b))
-		{
-			list_un_init(&valid_indexes_a, NULL);
-			list_un_init(&valid_indexes_b, NULL);
+		if (!init_indexes_and_split(objects, valid_indexes, &valid_indexes_a, &valid_indexes_b))
 			return (NULL);
-		}
-		new = try_combine_or_free(
-				bvh_build_from_indexes(objects, &valid_indexes_a),
-				bvh_build_from_indexes(objects, &valid_indexes_b)
-				);
+		if (valid_indexes_a.count == 0 || valid_indexes_b.count == 0)
+			new = bvh_build_from_indexes_raw(objects, valid_indexes);
+		else
+			new = try_combine_or_free(
+					bvh_build_from_indexes(objects, &valid_indexes_a),
+					bvh_build_from_indexes(objects, &valid_indexes_b)
+					);
 		list_un_init(&valid_indexes_a, NULL);
 		list_un_init(&valid_indexes_b, NULL);
 		return (new);
@@ -66,7 +77,7 @@ t_bvh	*bvh_build_from_indexes(t_list *objects, t_list *valid_indexes)
 	return (bvh_build_from_indexes_raw(objects, valid_indexes));
 }
 
-#include "ft_time.h"
+//#include "ft_time.h"
 t_bvh	*bvh_build(t_list *objects)
 {
 	size_t	i;
@@ -80,11 +91,11 @@ t_bvh	*bvh_build(t_list *objects)
 		list_push(&valid_indexes, &i);
 		i++;
 	}
-	printf("building BVH!\n");
-	t_time now = time_now();
+	//printf("building BVH!\n");
+	//t_time now = time_now();
 	new = bvh_build_from_indexes(objects, &valid_indexes);
-	t_time end = time_now();
-	printf("BVH building took %.2fs!\n", time_difference(&end, &now));
+	//t_time end = time_now();
+	//printf("BVH building took %.2fs! with %lu objects!\n", time_difference(&end, &now), objects->count);
 	list_un_init(&valid_indexes, NULL);
 	return (new);
 }

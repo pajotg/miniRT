@@ -28,7 +28,11 @@
 #include "mini_rt_object_data.h"
 #include "ft_parse_utils.h"
 
+#if LINUX
 #define ScenesPath "/home/jasper/Desktop/miniRT/scenes"
+#else
+#define ScenesPath "/Users/jsimonis/Desktop/miniRT/scenes"
+#endif
 
 void get_next(DIR* ValidDir, DIR* InValidDir, struct dirent** dir, bool* ShouldBeValid)
 {
@@ -112,6 +116,7 @@ int main(int argc, char *argv[])
 		else if (!ShouldBeValid && scene)
 			tu_ko_message_exit("Failed to detect invalid valid scene: %s",str);
 
+
 		if (ShouldBeValid)
 		{
 			for (size_t i = 0; i < scene->objects.count; i++)
@@ -139,7 +144,6 @@ int main(int argc, char *argv[])
 					tu_ko_message_exit("Failed to set position to valid value for camera %lu in scene file: %s", i, str);
 			}
 		}
-
 		if (scene)
 			free_scene(scene);
 
@@ -154,9 +158,10 @@ int main(int argc, char *argv[])
 	// Change the leak message to also contain the file we tested
 	if (tu_malloc_non_null_count() != tu_free_non_null_count() + 1)	// + 1 because we still have str allocated
 	{
+		//fprintf(stderr, "Leaks detected for file: %s! mallocs != frees (%i != %i)\n",str, tu_malloc_non_null_count(), tu_free_non_null_count() + 1);
 		tu_ko_message_exit("Leaks detected for file: %s! mallocs != frees (%i != %i)",str, tu_malloc_non_null_count(), tu_free_non_null_count() + 1);
 	}
 	free(str);
 	tu_test_finish();
-	return 0;
+	return 5;
 }
