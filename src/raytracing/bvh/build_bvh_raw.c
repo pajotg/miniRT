@@ -32,6 +32,11 @@ static t_bvh	*bvh_combine_objects(t_object *a, t_object *b)
 	return bvh_combine_leaf(a, &a->aabb, NULL, NULL);
 }
 
+static void bvh_free_simple(t_bvh* bvh)
+{
+	bvh_free(bvh, NULL);
+}
+
 // What a horrific function, i guess this is what happens when you code late
 t_bvh	*bvh_build_from_indexes_raw(t_list *objects, t_list* valid_indexes)
 {
@@ -45,8 +50,8 @@ t_bvh	*bvh_build_from_indexes_raw(t_list *objects, t_list* valid_indexes)
 	init_success = init_success && list_set_capacity(bvh_get, sizeof(t_bvh*) * objects->count / 4 + 1);
 	if (!init_success)
 	{
-		list_free(bvh_get, (t_free_values)bvh_free);
-		list_free(bvh_put, (t_free_values)bvh_free);
+		list_free(bvh_get, (t_free_values)bvh_free_simple);
+		list_free(bvh_put, (t_free_values)bvh_free_simple);
 		return (NULL);
 	}
 	// Populate the list
@@ -87,8 +92,8 @@ t_bvh	*bvh_build_from_indexes_raw(t_list *objects, t_list* valid_indexes)
 		}
 		if (!new)
 		{
-			list_free(bvh_get, (t_free_values)bvh_free);
-			list_free(bvh_put, (t_free_values)bvh_free);
+			list_free(bvh_get, (t_free_values)bvh_free_simple);
+			list_free(bvh_put, (t_free_values)bvh_free_simple);
 			return (NULL);
 		}
 		list_push(bvh_put, &new);
@@ -143,8 +148,8 @@ t_bvh	*bvh_build_from_indexes_raw(t_list *objects, t_list* valid_indexes)
 			}
 			if (!new)
 			{
-				list_free(bvh_get, (t_free_values)bvh_free);
-				list_free(bvh_put, (t_free_values)bvh_free);
+				list_free(bvh_get, (t_free_values)bvh_free_simple);
+				list_free(bvh_put, (t_free_values)bvh_free_simple);
 				return (NULL);
 			}
 			list_push(bvh_put, &new);

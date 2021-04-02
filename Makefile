@@ -10,7 +10,7 @@ OS = $(shell uname -s)
 ifeq ($(OS), Darwin)
 MINI_LIBX_DIR = minilibx_mac
 else ifeq ($(OS), Linux)
-MINI_LIBX_DIR = minilibx_linux
+MINI_LIBX_DIR = minilibx-linux
 else
 $(error Unknown OS: $(OS))
 endif

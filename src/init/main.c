@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/03/22 16:05:39 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/02 14:02:36 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@
 #include "mini_rt_bmp.h"
 #include "libft.h"
 #include "mlx.h"
-//#include "mlx_int.h"
+#ifdef OS_Linux
+#include "mlx_int.h"
+#endif
 #include <math.h>
 #include "ft_printf.h"
 #include "ft_error.h"
