@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:05:43 by jasper        #+#    #+#                 */
-/*   Updated: 2021/02/05 13:48:30 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/02 16:32:04 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,23 @@
 // Read extends
 // Read radius
 
-bool	scene_parse_cylinder(t_scene *scene, char *line, int *curr)
+static void	calculate_aabb_stupid_norm(t_object *object, t_object_cylinder *
+	cylinder)
 {
-	t_object			object;
-	t_object_cylinder	*cylinder;
+	object->aabb.max = (t_vec3){cylinder->radius, cylinder->radius, cylinder
+		->height_extends};
+	object->aabb.min = (t_vec3){-cylinder->radius, -cylinder->radius, -cylinder
+		->height_extends};
+	vec3_add(&object->aabb.min, &object->aabb.min, &object->transform.position);
+	vec3_add(&object->aabb.max, &object->aabb.max, &object->transform.position);
+	aabb_rotate(&object->aabb, &object->transform.rotation);
+}
 
-	cylinder = malloc(sizeof(t_object_cylinder));
-	if (!cylinder)
-	{
-		set_error("Malloc failed", false);
-		return (false);
-	}
-	object.object_data = cylinder;
-	object.intersect_func = (t_object_intersect_func)ray_intersects_cylinder;
+static bool	stupid_norm_1(t_object *object, t_object_cylinder *cylinder, char *
+	line, int *curr)
+{
 	skip_whitespace(line, curr);
-	if (!read_transform(line, curr, &object.transform))
+	if (!read_transform(line, curr, &object->transform))
 	{
 		free(cylinder);
 		set_error(ft_strjoin(
@@ -56,6 +58,12 @@ bool	scene_parse_cylinder(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	cylinder->radius /= 2;
+	return (true);
+}
+
+static bool	stupid_norm_2(t_object *object, t_object_cylinder *cylinder, char *
+	line, int *curr)
+{
 	skip_whitespace(line, curr);
 	if (!read_float(line, curr, &cylinder->height_extends))
 	{
@@ -66,21 +74,34 @@ bool	scene_parse_cylinder(t_scene *scene, char *line, int *curr)
 	}
 	cylinder->height_extends /= 2;
 	skip_whitespace(line, curr);
-	object.material = read_material(line, curr);
-	if (!object.material)
+	object->material = read_material(line, curr);
+	if (!object->material)
 	{
 		free(cylinder);
 		set_error(ft_strjoin_va(4, "cylinder material incorrectly formatted: ",
 				line, "\nReason: ", get_last_error()), true);
 		return (false);
 	}
-	object.aabb.max = (t_vec3){cylinder->radius, cylinder->radius, cylinder
-		->height_extends};
-	object.aabb.min = (t_vec3){-cylinder->radius, -cylinder->radius, -cylinder
-		->height_extends};
-	vec3_add(&object.aabb.min, &object.aabb.min, &object.transform.position);
-	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
-	aabb_rotate(&object.aabb,& object.transform.rotation);
+	return (true);
+}
+
+bool	scene_parse_cylinder(t_scene *scene, char *line, int *curr)
+{
+	t_object			object;
+	t_object_cylinder	*cylinder;
+
+	cylinder = malloc(sizeof(t_object_cylinder));
+	if (!cylinder)
+	{
+		set_error("Malloc failed", false);
+		return (false);
+	}
+	object.object_data = cylinder;
+	object.intersect_func = (t_object_intersect_func)ray_intersects_cylinder;
+	if (!stupid_norm_1(&object, cylinder, line, curr) || !stupid_norm_2(&object,
+			cylinder, line, curr))
+		return (false);
+	calculate_aabb_stupid_norm(&object, cylinder);
 	if (!list_push(&scene->objects, &object))
 	{
 		free(cylinder);

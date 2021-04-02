@@ -36,7 +36,8 @@ bool	read_transform(const char *str, int *current, t_transform *o_transform)
 	return (true);
 }
 
-static bool	read_ratio(const char *str, int *current, bool has_ratio, float *ratio)
+static bool	read_ratio(const char *str, int *current, bool has_ratio, float *
+	ratio)
 {
 	if (has_ratio)
 	{
@@ -46,12 +47,12 @@ static bool	read_ratio(const char *str, int *current, bool has_ratio, float *rat
 			return (false);
 		*ratio /= 255;
 		skip_whitespace(str, current);
-		return true;
+		return (true);
 	}
 	else
 	{
 		*ratio = 1 / 255.0;
-		return true;
+		return (true);
 	}
 }
 
@@ -64,7 +65,7 @@ bool	read_color(const char *str, int *current, bool has_ratio, t_color_hdr *
 	float	ratio;
 
 	if (!read_ratio(str, current, has_ratio, &ratio))
-		return false;
+		return (false);
 	if (!read_int(str, current, &read))
 		return (false);
 	o_color->r = read * ratio;

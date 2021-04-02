@@ -37,7 +37,9 @@
 			"mini_rt_raycast.h": "c",
 			"iterator": "c",
 			"mini_rt_bvh.h": "c",
-			"chrono": "c"
+			"chrono": "c",
+			"ft_get_next_line.h": "c",
+			"mini_rt_parse_obj.h": "c"
 		},
 	}
 }

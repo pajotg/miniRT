@@ -16,21 +16,22 @@
 #include "ft_error.h"
 #include "libft.h"
 
-t_scene* parse_scene(char* path)
+t_scene	*parse_scene(char *path)
 {
-	t_scene* scene;
+	int		fd;
+	t_scene	*scene;
 
-	int fd = open(path, O_RDONLY);
+	fd = open(path, O_RDONLY);
 	if (fd == -1)
 	{
 		set_error(ft_strjoin("Could not open file ", path), true);
 		return (NULL);
 	}
-
 	scene = parse_scene_file(path, fd);
 	if (!scene)
 	{
-		set_error(ft_strjoin("An error occured while parsing the file: ", get_last_error()), true);
+		set_error(ft_strjoin("An error occured while parsing the file: ",
+				get_last_error()), true);
 		close(fd);
 		return (NULL);
 	}

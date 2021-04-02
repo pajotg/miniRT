@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 16:59:22 by jasper        #+#    #+#                 */
-/*   Updated: 2021/02/05 13:48:30 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/02 16:35:10 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,21 @@
 // Read material
 // read extends
 
-bool	scene_parse_square(t_scene *scene, char *line, int *curr)
+static void	calculate_aabb_stupid_norm(t_object *object, t_object_square *
+	square)
 {
-	t_object		object;
-	t_object_square	*square;
+	object->aabb.max = (t_vec3){square->extends, square->extends, 0 };
+	object->aabb.min = (t_vec3){-square->extends, -square->extends, 0 };
+	vec3_add(&object->aabb.min, &object->aabb.min, &object->transform.position);
+	vec3_add(&object->aabb.max, &object->aabb.max, &object->transform.position);
+	aabb_rotate(&object->aabb, &object->transform.rotation);
+}
 
-	square = malloc(sizeof(t_object_square));
-	if (!square)
-	{
-		set_error("Malloc failed", false);
-		return (false);
-	}
-	object.object_data = square;
-	object.intersect_func = (t_object_intersect_func)ray_intersects_square;
+static bool	stupid_norm_1(t_object *object, t_object_square	*square, char *line,
+	int *curr)
+{
 	skip_whitespace(line, curr);
-	if (!read_transform(line, curr, &object.transform))
+	if (!read_transform(line, curr, &object->transform))
 	{
 		free(square);
 		set_error(ft_strjoin(
@@ -55,20 +55,41 @@ bool	scene_parse_square(t_scene *scene, char *line, int *curr)
 		return (false);
 	}
 	square->extends /= 2;
+	return (true);
+}
+
+static bool	stupid_norm_2(t_object *object, t_object_square	*square, char *line,
+	int *curr)
+{
 	skip_whitespace(line, curr);
-	object.material = read_material(line, curr);
-	if (!object.material)
+	object->material = read_material(line, curr);
+	if (!object->material)
 	{
 		free(square);
 		set_error(ft_strjoin_va(4, "square material incorrectly formatted: ",
 				line, "\nReason: ", get_last_error()), true);
 		return (false);
 	}
-	object.aabb.max = (t_vec3){square->extends, square->extends, 0 };
-	object.aabb.min = (t_vec3){-square->extends, -square->extends, 0 };
-	vec3_add(&object.aabb.min, &object.aabb.min, &object.transform.position);
-	vec3_add(&object.aabb.max, &object.aabb.max, &object.transform.position);
-	aabb_rotate(&object.aabb,& object.transform.rotation);
+	return (true);
+}
+
+bool	scene_parse_square(t_scene *scene, char *line, int *curr)
+{
+	t_object		object;
+	t_object_square	*square;
+
+	square = malloc(sizeof(t_object_square));
+	if (!square)
+	{
+		set_error("Malloc failed", false);
+		return (false);
+	}
+	object.object_data = square;
+	object.intersect_func = (t_object_intersect_func)ray_intersects_square;
+	if (!stupid_norm_1(&object, square, line, curr) || !stupid_norm_2(&object,
+			square, line, curr))
+		return (false);
+	calculate_aabb_stupid_norm(&object, square);
 	if (!list_push(&scene->objects, &object))
 	{
 		free(square);

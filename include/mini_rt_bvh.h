@@ -36,9 +36,10 @@ t_bvh	*bvh_combine_bvh(t_bvh *a, t_bvh *b);
 t_bvh	*bvh_combine_leaf(void *a, t_aabb *a_aabb, void *b, t_aabb *b_aabb);
 
 t_bvh	*bvh_build(t_list *objects);
-t_bvh	*bvh_build_from_indexes(t_list *objects, t_list* valid_indexes);
-t_bvh	*bvh_build_from_indexes_raw(t_list *objects, t_list* valid_indexes);
+t_bvh	*bvh_build_from_indexes(t_list *objects, t_list *valid_indexes);
+t_bvh	*bvh_build_from_indexes_raw(t_list *objects, t_list *valid_indexes);
 
-bool	split_objects(const t_list* base, const t_list* valid_indexes, t_list* valid_indexes_a, t_list* valid_indexes_b);
+bool	split_objects(const t_list *base, const t_list *valid_indexes, t_list
+			*valid_indexes_a, t_list *valid_indexes_b);
 
 #endif
