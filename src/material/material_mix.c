@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 15:25:35 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/02/05 13:48:30 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/05 14:09:50 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,16 @@
 #include <stdlib.h>
 #include <math.h>
 
-static void material_mix(const t_scene* scene, const void* material_data, const t_material_trace_data* trace_data, t_color_hdr* o_hdr)
+static void	material_mix(const t_scene *scene, const void *material_data,
+	const t_material_trace_data *trace_data, t_color_hdr *o_hdr)
 {
-	const t_material_mix* mix = material_data;
-	t_material* a = mix->a->ptr;
-	t_material* b = mix->b->ptr;
+	t_color_hdr				tmp;
+	t_material				*a;
+	t_material				*b;
+	const t_material_mix	*mix = material_data;
 
-	t_color_hdr tmp;
+	a = mix->a->ptr;
+	b = mix->b->ptr;
 	a->material_func(scene, a->material_data, trace_data, o_hdr);
 	o_hdr->r *= 1 - mix->ratio;
 	o_hdr->g *= 1 - mix->ratio;
@@ -32,17 +35,22 @@ static void material_mix(const t_scene* scene, const void* material_data, const 
 	o_hdr->b += tmp.b * mix->ratio;
 }
 
-static void material_mix_free(void* material_data)
+static void	material_mix_free(void *material_data)
 {
-	t_material_mix* mix = material_data;
+	t_material_mix	*mix;
+
+	mix = material_data;
 	shared_pt_release_and_free(mix->a);
 	shared_pt_release_and_free(mix->b);
 	free(material_data);
 }
 
-bool material_mix_init(t_material* material, float ratio, t_shared_pt* a, t_shared_pt *b)
+bool	material_mix_init(t_material *material, float ratio, t_shared_pt *a,
+	t_shared_pt *b)
 {
-	t_material_mix* mix = malloc(sizeof(t_material_mix));
+	t_material_mix	*mix;
+
+	mix = malloc(sizeof(t_material_mix));
 	if (mix == NULL)
 		return (false);
 	mix->ratio = ratio;
@@ -50,7 +58,6 @@ bool material_mix_init(t_material* material, float ratio, t_shared_pt* a, t_shar
 	shared_pt_get(b);
 	mix->a = a;
 	mix->b = b;
-
 	*material = (t_material)
 	{
 		.material_data = mix,
