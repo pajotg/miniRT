@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/04/05 14:02:15 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/05 16:06:29 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,15 @@ void correct_exit(t_mlx_data* data)
 {
 	data->active = false;	// Notify render threads to stop
 	// TODO: Figure out how to do this
-	#ifdef OS_Linux
-	mlx_loop_end(data->mlx);
-	#else
-	if (data->window)
-	{
-		printf("Oi, fix this!\n");
-		exit(1);
-	}
-	#endif
+	//#ifdef OS_Linux
+	//mlx_loop_end(data->mlx);
+	//#else
+	//if (data->window)
+	//{
+	//	printf("Oi, fix this!\n");
+	//	exit(1);
+	//}
+	//#endif
 }
 
 static void cap_resolution(void* mlx, t_scene* scene)
@@ -68,7 +68,13 @@ static void do_loop(t_mlx_data* data)
 {
 	if (data->window)
 	{
-		mlx_loop(data->mlx);
+		//mlx_loop(data->mlx);
+		// Apparently you dont need mlx_loop, i can just do it myself! :D
+		while (data->active)
+		{
+			hook_loop(data);
+			mlx_do_sync(data->mlx);
+		}
 
 		// Bit of sanity checking
 		if (data->active)
@@ -88,27 +94,24 @@ static int do_error()
 	return (1);
 }
 
+static void hook_events(t_mlx_data* mlx_data)
+{
+	// TODO: Figure out hook keys
+	#ifdef OS_Linux
+	mlx_hook(mlx_data->window, KeyPress, KeyPressMask, &hook_key_down, mlx_data);
+	mlx_hook(mlx_data->window, KeyRelease, KeyReleaseMask, &hook_key_up, mlx_data);
+	mlx_hook(mlx_data->window, ClientMessage, StructureNotifyMask, hook_client_message, mlx_data);
+	#else
+	mlx_hook(mlx_data->window, 2, 0, &hook_key_down, mlx_data);
+	mlx_hook(mlx_data->window, 3, 0, &hook_key_up, mlx_data);
+	mlx_hook(mlx_data->window, 17, 0, hook_client_message, mlx_data);
+	#endif
+	mlx_mouse_hook(mlx_data->window, hook_mouse, mlx_data);
+	mlx_loop_hook(mlx_data->mlx, hook_loop, mlx_data);
+}
+
 int main(int argc, char **argv)
 {
-	/*
-	for (int i = 0; i < 100000; i++)
-	{
-		float x = (ft_randf() - 0.5) * 100;
-		float y = (ft_randf() - 0.5) * 100;
-		float z = (ft_randf() - 0.5) * 100;
-
-		int r = ft_rand() & 0xff;
-		int g = ft_rand() & 0xff;
-		int b = ft_rand() & 0xff;
-
-		t_vec3 dir = { ft_randf() - 0.5f, ft_randf() - 0.5f, ft_randf() - 0.5f };
-		vec3_normalize(&dir, &dir);
-
-		printf("obj %.2f,%.2f,%.2f %.2f,%.2f,%.2f	../obj/Deer.obj D %i,%i,%i\n", x, y, z, dir.x, dir.y, dir.z, r,g,b);
-	}
-	//*/
-
-	//return 1;
 	init_ft_printf();
 
 	t_args* arg_data = parse_args(argc, argv);
@@ -147,20 +150,7 @@ int main(int argc, char **argv)
 	}
 
 	if (mlx_data.window)
-	{
-		// TODO: Figure out hook keys
-		#ifdef OS_Linux
-		mlx_hook(mlx_data.window, KeyPress, KeyPressMask, &hook_key_down, &mlx_data);
-		mlx_hook(mlx_data.window, KeyRelease, KeyReleaseMask, &hook_key_up, &mlx_data);
-		mlx_hook(mlx_data.window, ClientMessage, StructureNotifyMask, hook_client_message, &mlx_data);
-		#else
-		mlx_hook(mlx_data.window, 2, 0, &hook_key_down, &mlx_data);
-		mlx_hook(mlx_data.window, 3, 0, &hook_key_up, &mlx_data);
-		mlx_hook(mlx_data.window, 17, 0, hook_client_message, &mlx_data);
-		#endif
-		mlx_mouse_hook(mlx_data.window, hook_mouse, &mlx_data);
-		mlx_loop_hook(mlx, hook_loop, &mlx_data);
-	}
+		hook_events(&mlx_data);
 
 	pthread_t thread_ids[NUM_THREADS];
 	for (int i = 0; i < NUM_THREADS; i++)

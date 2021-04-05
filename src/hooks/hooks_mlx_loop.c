@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:28:12 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/22 15:38:02 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/05 15:44:24 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static float	hook_frame(void)
 	return (diff);
 }
 
-//printf("Got inputs: %i|%i %i|%i\n", data->input.forward,data->input.backward, 
+//printf("Got inputs: %i|%i %i|%i\n", data->input.forward,data->input.backward,
 //
 //data->input.left, data->input.right);
 
