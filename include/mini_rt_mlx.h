@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 17:24:52 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/02/21 12:12:23 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/05 17:33:21 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef struct s_mlx_data
 	t_pixel_renderer	renderer;
 }				t_mlx_data;
 
+void			mlx_loop_on_exit(t_mlx_data* data);
 void			correct_exit(t_mlx_data *data);
 void			update_image(t_mlx_data *data);
 t_color_hdr		get_hdr(t_mlx_data *data, int x, int y);

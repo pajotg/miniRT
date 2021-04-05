@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:28:12 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/05 15:44:24 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/05 17:33:51 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,8 @@ int	hook_loop(void *p)
 	t_mlx_data	*data;
 
 	data = p;
+	if (!data->active)
+		mlx_loop_on_exit(data);
 	diff = hook_frame();
 	handle_movement(data, diff);
 	handle_clearing(data);

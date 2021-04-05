@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/04/05 17:24:37 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/05 17:35:19 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,10 @@
 
 static pthread_t g_thread_ids[NUM_THREADS];
 
-void correct_exit(t_mlx_data* data)
+void mlx_loop_on_exit(t_mlx_data* data)
 {
-	// Should probably use a mutex..
-	if (!data->active)
-		return;
-	data->active = false;	// Notify render threads to stop
-
 	// may not be %100 thread safe:
-	//		mlx loop has stopped, so that is thread safe
+	//		we are the mlx loop, so that is thread safe
 	//		waiting rendering threads see that active == false after being woken up, and return, so that is thread safe
 	//		currently rendering threads can think that this is the last pixel, and reset rendering_done_mre, so that is NOT GOOD
 	//			current "solution": have the reset code check mlx_data.active, and not reset if that is the case
@@ -77,6 +72,11 @@ void correct_exit(t_mlx_data* data)
 	exit(0);	// We cant exit out of mlx_loop, so just exit(0)
 }
 
+void correct_exit(t_mlx_data* data)
+{
+	data->active = false;	// Notify render threads to stop
+}
+
 static void cap_resolution(void* mlx, t_scene* scene)
 {
 	int rx, ry;
@@ -94,6 +94,7 @@ static void do_loop(t_mlx_data* data)
 	else
 		while (data->active)
 			render_next_pixels(data, 250);
+	mlx_loop_on_exit(data);
 }
 
 static int do_error()
