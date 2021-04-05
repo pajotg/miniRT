@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 14:34:48 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/20 15:45:41 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/05 13:32:39 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 typedef struct s_material_parse_data
 {
 	int			depth;
-	t_ray		*in_ray;
+	const t_ray	*in_ray;
 	t_ray_hit	*hit;
 }				t_material_trace_data;
 

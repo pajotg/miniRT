@@ -17,9 +17,10 @@ bool	is_first_frame(t_pixel_renderer *renderer)
 	return (renderer->frame_num <= 1);
 }
 
-int	get_aa_frame(t_pixel_renderer *renderer, t_scene* scene)
+int	get_aa_frame(t_pixel_renderer *renderer, t_scene *scene)
 {
-	if (renderer->frame_num >= 2 && (size_t)(renderer->frame_num - 2) < scene->samples_per_pixel.count)
-		return renderer->frame_num - 2;
-	return -1;
+	if (renderer->frame_num >= 2 && (size_t)(renderer->frame_num - 2) < scene->
+		samples_per_pixel.count)
+		return (renderer->frame_num - 2);
+	return (-1);
 }

@@ -6,31 +6,49 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 16:47:39 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/26 18:19:02 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/05 13:17:01 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_mlx.h"
 
-void write_pix(t_mlx_data* data, int x, int y, t_color_hdr hdr)
+void	write_pix(t_mlx_data *data, int x, int y, t_color_hdr hdr)
 {
-	t_color_rgb rgb = color_hdr_to_rgb_reindard_white(hdr, data->white);
-	unsigned int col = (rgb.b | rgb.g << 8) | rgb.r << 16;
+	unsigned int	col;
+	size_t			offset;
+	t_color_rgb		rgb;
+	unsigned int	*addr;
 
-	size_t offset = x * (data->img.bits_per_pixel / 8) + y * data->img.line_length;
-	unsigned int* addr = (unsigned int*)(data->img.addr + offset);
+	rgb = color_hdr_to_rgb_reindard_white(hdr, data->white);
+	col = (rgb.b | rgb.g << 8) | rgb.r << 16;
+	offset = x * (data->img.bits_per_pixel / 8) + y * data
+		->img.line_length;
+	addr = (unsigned int *)(data->img.addr + offset);
 	*addr = col;
 }
 
-void update_pix(t_mlx_data* data, int x, int y)
+void	update_pix(t_mlx_data *data, int x, int y)
 {
-	t_color_hdr hdr = get_hdr(data, x, y);
+	t_color_hdr	hdr;
+
+	hdr = get_hdr(data, x, y);
 	write_pix(data, x, y, hdr);
 }
 
-void update_image(t_mlx_data* data)
+void	update_image(t_mlx_data *data)
 {
-	for (int x = 0; x < data->img.width; x++)
-		for (int y = 0; y < data->img.height; y++)
+	int	y;
+	int	x;
+
+	x = 0;
+	while (x < data->img.width)
+	{
+		y = 0;
+		while (y < data->img.height)
+		{
 			update_pix(data, x, y);
+			y++;
+		}
+		x++;
+	}
 }

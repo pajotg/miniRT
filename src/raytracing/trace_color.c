@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 10:44:42 by jasper        #+#    #+#                 */
-/*   Updated: 2021/02/05 12:53:50 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/05 13:32:46 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "mini_rt_object.h"
 #include <math.h>
 
-void	trace_color(const t_scene *scene, t_ray *ray, int depth,
+void	trace_color(const t_scene *scene, const t_ray *ray, int depth,
 	t_color_hdr *o_hdr)
 {
 	t_material				*material;
