@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/04/05 16:06:29 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/05 17:24:37 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,56 +33,64 @@
 
 #define NUM_THREADS 5
 
+static pthread_t g_thread_ids[NUM_THREADS];
+
 void correct_exit(t_mlx_data* data)
 {
+	// Should probably use a mutex..
+	if (!data->active)
+		return;
 	data->active = false;	// Notify render threads to stop
+
+	// may not be %100 thread safe:
+	//		mlx loop has stopped, so that is thread safe
+	//		waiting rendering threads see that active == false after being woken up, and return, so that is thread safe
+	//		currently rendering threads can think that this is the last pixel, and reset rendering_done_mre, so that is NOT GOOD
+	//			current "solution": have the reset code check mlx_data.active, and not reset if that is the case
+	//			so:
+	//				correct_exit > active = false > end mlx loop > set rendering_done_mre in lock > wait
+	//				so if we are rendering the last pixels, we wait untill that is done, then set rendering_done_mre
+	//				if we set rendering_done_mre, then render the last pixels, it should see that active == false and return nicely
+
+	pthread_mutex_lock(&data->renderer.start_thread_lock);
+	manual_reset_event_set(&data->renderer.rendering_done_mre);	// say that rendering is done, so they dont wait on that
+	pthread_mutex_unlock(&data->renderer.start_thread_lock);
+
+	for (int i = 0; i < NUM_THREADS; i++)	// Wait untill render threads are done
+		pthread_join(g_thread_ids[i], NULL);
+
+	if (data->args->save_on_exit)	// Save screenshot if requested
+		if (!save_image(&data->img, "screenshot.bmp"))
+			ft_printf("Error\nAn error occured while saving the screenshot: \"%s\"!\n", get_last_error());
+
+	// free stuff
+	mlx_data_un_init(data);
 	// TODO: Figure out how to do this
-	//#ifdef OS_Linux
-	//mlx_loop_end(data->mlx);
-	//#else
-	//if (data->window)
-	//{
-	//	printf("Oi, fix this!\n");
-	//	exit(1);
-	//}
-	//#endif
+	#ifdef OS_Linux
+	mlx_destroy_display(mlx);
+	#endif
+	free(data->mlx);
+	free_scene(data->scene);
+	free(data->args);
+
+	ft_printf("Completed!\n");
+	exit(0);	// We cant exit out of mlx_loop, so just exit(0)
 }
 
 static void cap_resolution(void* mlx, t_scene* scene)
 {
-	// TODO: Figure out how to do this
-	#ifdef OS_Linux
 	int rx, ry;
 	mlx_get_screen_size(mlx, &rx, &ry);
 	if (scene->resolution.width > rx)
 		scene->resolution.width = rx;
 	if (scene->resolution.height > ry)
 		scene->resolution.height = ry;
-	#else
-	(void)mlx;
-	(void)scene;
-	#endif
 }
 
 static void do_loop(t_mlx_data* data)
 {
 	if (data->window)
-	{
-		//mlx_loop(data->mlx);
-		// Apparently you dont need mlx_loop, i can just do it myself! :D
-		while (data->active)
-		{
-			hook_loop(data);
-			mlx_do_sync(data->mlx);
-		}
-
-		// Bit of sanity checking
-		if (data->active)
-		{
-			ft_printf("Error\nWe called mlx_loop_end but not set active to false!\n");
-			data->active = false;
-		}
-	}
+		mlx_loop(data->mlx);
 	else
 		while (data->active)
 			render_next_pixels(data, 250);
@@ -96,7 +104,6 @@ static int do_error()
 
 static void hook_events(t_mlx_data* mlx_data)
 {
-	// TODO: Figure out hook keys
 	#ifdef OS_Linux
 	mlx_hook(mlx_data->window, KeyPress, KeyPressMask, &hook_key_down, mlx_data);
 	mlx_hook(mlx_data->window, KeyRelease, KeyReleaseMask, &hook_key_up, mlx_data);
@@ -152,42 +159,12 @@ int main(int argc, char **argv)
 	if (mlx_data.window)
 		hook_events(&mlx_data);
 
-	pthread_t thread_ids[NUM_THREADS];
 	for (int i = 0; i < NUM_THREADS; i++)
-		pthread_create(&thread_ids[i], NULL, new_pixel_render_thread, &mlx_data);
+		pthread_create(&g_thread_ids[i], NULL, new_pixel_render_thread, &mlx_data);
 
 	do_loop(&mlx_data);
 
-	if (arg_data->save_on_exit)	// Save screenshot if requested
-		if (!save_image(&mlx_data.img, "screenshot.bmp"))
-			ft_printf("Error\nAn error occured while saving the screenshot: \"%s\"!\n", get_last_error());
+	correct_exit(&mlx_data);
 
-	// may not be %100 thread safe:
-	//		mlx loop has stopped, so that is thread safe
-	//		waiting rendering threads see that active == false after being woken up, and return, so that is thread safe
-	//		currently rendering threads can think that this is the last pixel, and reset rendering_done_mre, so that is NOT GOOD
-	//			current "solution": have the reset code check mlx_data.active, and not reset if that is the case
-	//			so:
-	//				correct_exit > active = false > end mlx loop > set rendering_done_mre in lock > wait
-	//				so if we are rendering the last pixels, we wait untill that is done, then set rendering_done_mre
-	//				if we set rendering_done_mre, then render the last pixels, it should see that active == false and return nicely
-
-	pthread_mutex_lock(&mlx_data.renderer.start_thread_lock);
-	manual_reset_event_set(&mlx_data.renderer.rendering_done_mre);	// say that rendering is done, so they dont wait on that
-	pthread_mutex_unlock(&mlx_data.renderer.start_thread_lock);
-	for (int i = 0; i < NUM_THREADS; i++)	// Wait untill render threads are done
-		pthread_join(thread_ids[i], NULL);
-
-	// free stuff
-	mlx_data_un_init(&mlx_data);
-	// TODO: Figure out how to do this
-	#ifdef OS_Linux
-	mlx_destroy_display(mlx);
-	#endif
-	free(mlx);
-	free_scene(scene);
-	free(arg_data);
-
-	ft_printf("Completed!\n");
 	return 0;
 }
