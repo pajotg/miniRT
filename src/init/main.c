@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/04/05 17:35:19 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/06 12:16:57 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void mlx_loop_on_exit(t_mlx_data* data)
 	mlx_data_un_init(data);
 	// TODO: Figure out how to do this
 	#ifdef OS_Linux
-	mlx_destroy_display(mlx);
+	mlx_destroy_display(data->mlx);
 	#endif
 	free(data->mlx);
 	free_scene(data->scene);

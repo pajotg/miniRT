@@ -20,7 +20,7 @@ OBJ_DIR = obj/
 DEBUG_DIR = obj_debug/
 INCLUDE_DIRS = include libft/include $(MINI_LIBX_DIR)
 INCLUDE = -Iinclude -Ilibft/include -I$(MINI_LIBX_DIR)
-LDFLAGS = -Llibft -lft -lm -lpthread
+LDFLAGS = -L$(shell pwd)/$(MINI_LIBX_DIR)/ -lmlx -Llibft -lft -lm -lpthread
 
 FOREIGN_TARGETS = $(MINI_LIBX_DIR)/libmlx.a libft/libft.a
 MAKE_FOREIGN_TARGETS = $(MINI_LIBX_DIR)/libmlx libft/libft
@@ -33,9 +33,8 @@ FLAGS += -D OS_$(OS)
 ifeq ($(OS), Darwin)
 #LDFLAGS += -framework OpenGL -framework AppKit
 #LDFLAGS += -DYLD_INSERT_LIBRARIES=minilibx-mac/libmlx.dylib
-LDFLAGS += -L$(shell pwd)/$(MINI_LIBX_DIR)/ -lmlx
 else ifeq ($(OS), Linux)
-LDFLAGS += -lXext -lX11 -lbsd -L$(MINI_LIBX_DIR)/ -lmlx
+LDFLAGS += -lXext -lX11 -lbsd
 else
 $(error Unknown OS: $(OS))
 endif
