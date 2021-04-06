@@ -8,11 +8,11 @@ TEST_BINDER_NAME = TestBinder.a
 
 OS = $(shell uname -s)
 ifeq ($(OS), Darwin)
-MINI_LIBX_DIR = minilibx-mac
+	MINI_LIBX_DIR = minilibx-mac
 else ifeq ($(OS), Linux)
-MINI_LIBX_DIR = minilibx-linux
+	MINI_LIBX_DIR = minilibx-linux
 else
-$(error Unknown OS: $(OS))
+	$(error Unknown OS: $(OS))
 endif
 
 SRC_DIR = src/
@@ -31,27 +31,47 @@ FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
 FLAGS += -D OS_$(OS)
 
 ifeq ($(OS), Darwin)
-#LDFLAGS += -framework OpenGL -framework AppKit
-#LDFLAGS += -DYLD_INSERT_LIBRARIES=minilibx-mac/libmlx.dylib
+	#LDFLAGS += -framework OpenGL -framework AppKit
+	#LDFLAGS += -DYLD_INSERT_LIBRARIES=minilibx-mac/libmlx.dylib
 else ifeq ($(OS), Linux)
-LDFLAGS += -lXext -lX11 -lbsd
+	LDFLAGS += -lXext -lX11 -lbsd
 else
-$(error Unknown OS: $(OS))
+	$(error Unknown OS: $(OS))
 endif
 
 ifdef DEBUG
-FLAGS += -g -fsanitize=address
-USE_OBJ_DIR = $(DEBUG_DIR)
-OTHER_OBJ_DIR = $(OBJ_DIR)
+	FLAGS += -g -fsanitize=address
+	USE_OBJ_DIR = $(DEBUG_DIR)
+	OTHER_OBJ_DIR = $(OBJ_DIR)
 else
-FLAGS += -O2
-USE_OBJ_DIR = $(OBJ_DIR)
-OTHER_OBJ_DIR = $(DEBUG_DIR)
+	FLAGS += -O2
+	USE_OBJ_DIR = $(OBJ_DIR)
+	OTHER_OBJ_DIR = $(DEBUG_DIR)
 endif
 
 SOURCE_FILES = $(shell find $(SRC_DIR) -type f -name *.c)
 HEADER_FILES = $(shell find $(INCLUDE_DIRS) -type f -name *.h)
-OBJECTS = $(SOURCE_FILES:$(SRC_DIR)%.c=$(USE_OBJ_DIR)%.o)
+
+#filter out the mac/linux/bonus/nonbonus files for what case we need now
+BONUS_FILES = $(filter %_bonus.c,$(SOURCE_FILES))
+
+MAC_FILES = $(filter %_mac.c,$(SOURCE_FILES)) $(filter %_mac_bonus.c,$(SOURCE_FILES))
+LINUX_FILES = $(filter %_linux.c,$(SOURCE_FILES)) $(filter %_linux_bonus.c,$(SOURCE_FILES))
+
+ifdef BONUS
+	NON_BONUS = $(patsubst %_bonus.c,%.c,$(BONUS_FILES))
+	BONUS_FILTERED_FILES = $(filter-out $(NON_BONUS),$(SOURCE_FILES))
+else
+	BONUS_FILTERED_FILES = $(filter-out $(BONUS_FILES),$(SOURCE_FILES))
+endif
+
+ifdef LINUX
+	FILTERED_SOURCE_FILES = $(filter-out $(MAC_FILES),$(BONUS_FILTERED_FILES))
+else
+	FILTERED_SOURCE_FILES = $(filter-out $(LINUX_FILES),$(BONUS_FILTERED_FILES))
+endif
+
+OBJECTS = $(FILTERED_SOURCE_FILES:$(SRC_DIR)%.c=$(USE_OBJ_DIR)%.o)
 
 .PHONY: all
 all: $(NAME)
@@ -59,6 +79,10 @@ all: $(NAME)
 .PHONY: debug
 debug:
 	$(MAKE) DEBUG=1
+
+.PHONY: bonus
+bonus:
+	$(MAKE) BONUS=1
 
 # Be sure to make libft and minilibx no longer submodules when you want to eval, it dont work when you clone it! REEE
 # Also be sure to find #include <stdio.h>, you never know where i left it in, alright? alright.
