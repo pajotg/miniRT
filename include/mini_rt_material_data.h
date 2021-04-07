@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 14:34:48 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/02/05 13:47:10 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/07 12:57:58 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,12 @@ typedef struct s_material_glossy
 	t_color_hdr	color;
 }				t_material_glossy;
 
+typedef struct s_material_specular
+{
+	t_color_hdr	color;
+	float pow;
+}				t_material_specular;
+
 typedef struct s_material_transparant
 {
 	t_color_hdr	color;
@@ -77,5 +83,7 @@ bool			material_mix_init(t_material *material, float ratio,
 bool			material_checkerboard_init(t_material *material,
 					float checker_size, const t_color_hdr *color,
 					t_shared_pt *mat);
+bool			material_specular_init(t_material *material,
+					const t_color_hdr *color, float pow);
 
 #endif

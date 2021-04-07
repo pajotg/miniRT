@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/29 15:08:44 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/29 16:18:09 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/07 12:58:13 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,31 @@ static t_shared_pt	*read_perfect_mirror(const char *str, int *current)
 	if (!material_perfect_mirror_init(&material, &color))
 	{
 		set_error("Failed to create perfect mirror material!", false);
+		return (NULL);
+	}
+	return (create_shared_ptr_from_material(&material));
+}
+
+static t_shared_pt	*read_specular(const char *str, int *current)
+{
+	t_material	material;
+	t_color_hdr	color;
+
+	if (!read_color(str, current, false, &color))
+	{
+		set_error("Failed to read color of specular material!", false);
+		return (NULL);
+	}
+	skip_char(str, current, ' ');
+	float pow;
+	if (!read_float(str, current, &pow))
+	{
+		set_error("Failed to read pow of specular material!", false);
+		return (NULL);
+	}
+	if (!material_specular_init(&material, &color, pow))
+	{
+		set_error("Failed to create specular material!", false);
 		return (NULL);
 	}
 	return (create_shared_ptr_from_material(&material));
@@ -226,7 +251,7 @@ static t_shared_pt	*read_checkerboard(const char *str, int *current)
 ** M value [material] [material]	// mix
 ** A [material] [material]	// add
 ** D color	// diffuse
-** S color roughness	// specular
+** S color cos_angle strength	// specular
 ** G color roughness	// glossy
 ** T color	// transparent
 ** examples of valid materials:
@@ -271,6 +296,8 @@ t_shared_pt	*read_material(const char *str, int *current)
 		read_ptr = read_checkerboard;
 	else if (str[*current] == 'P')
 		read_ptr = read_perfect_mirror;
+	else if (str[*current] == 'S')
+		read_ptr = read_specular;
 	else
 	{
 		set_error("Failed to detect type of material!", false);
