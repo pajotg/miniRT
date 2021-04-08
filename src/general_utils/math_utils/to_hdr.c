@@ -30,5 +30,5 @@ t_color_hdr	convert_to_hdr(t_pixel_data *pixel)
 t_color_hdr	get_hdr(t_mlx_data *data, int x, int y)
 {
 	return (convert_to_hdr(&data->renderer.pixels[x + y * data->scene
-			->resolution.width]));
+				->resolution.width]));
 }

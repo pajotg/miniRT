@@ -39,7 +39,8 @@
 			"mini_rt_bvh.h": "c",
 			"chrono": "c",
 			"ft_get_next_line.h": "c",
-			"mini_rt_parse_obj.h": "c"
+			"mini_rt_parse_obj.h": "c",
+			"stupid_norm.h": "c"
 		},
 	}
 }

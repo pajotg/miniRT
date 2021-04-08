@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/29 15:08:44 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/07 12:58:13 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/08 18:24:38 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,22 +244,6 @@ static t_shared_pt	*read_checkerboard(const char *str, int *current)
 	return (create_shared_ptr_from_material(&material));
 }
 
-/*
-** A material is either
-** a plain color, aka: diffuse only
-** Defined by a tree like structure:
-** M value [material] [material]	// mix
-** A [material] [material]	// add
-** D color	// diffuse
-** S color cos_angle strength	// specular
-** G color roughness	// glossy
-** T color	// transparent
-** examples of valid materials:
-**	255,255,255
-**	G 255,255,255
-**	M 0.5 D 255,255,255 S 255,0,0
-*/
-
 static t_shared_pt	*read_default(t_color_hdr *
 	color)
 {
@@ -272,6 +256,20 @@ static t_shared_pt	*read_default(t_color_hdr *
 	}
 	return (create_shared_ptr_from_material(&material));
 }
+
+// A material is either:
+// 	a plain color, aka: diffuse only
+// 	or Defined by a tree like structure:
+//		M value [material] [material]	// mix
+//		A [material] [material]	// add
+//		D color	// diffuse
+//		S color pow strength	// specular
+//		G color roughness	// glossy
+//		T color	// transparent
+//	examples of valid materials:
+//		255,255,255
+//		G 255,255,255
+//		M 0.5 D 255,255,255 S 255,0,0
 
 // Read the material
 // Get what type of material it is

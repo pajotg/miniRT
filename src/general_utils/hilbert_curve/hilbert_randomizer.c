@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/02/05 10:25:57 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/20 17:57:42 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/08 18:04:37 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ t_vec2	hilbert_randomizer_get_next(t_hilbert_randomizer *curve)
 		return (hilbert_randomizer_get_next(curve));
 	return ((t_vec2)
 		{
-		.x = ox * scale + offset.x,
-		.y = oy * scale + offset.y
+			.x = ox * scale + offset.x,
+			.y = oy * scale + offset.y
 		});
 }

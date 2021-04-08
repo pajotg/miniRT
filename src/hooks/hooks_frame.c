@@ -69,7 +69,7 @@ void	hook_frame_complete(t_mlx_data *data, int total_samples,
 					* 0.0035) && !is_first_frame(&data->renderer)
 				&& get_aa_frame(&data->renderer, data->scene) == -1)
 			|| (!data->renderer.rendering_done_mre.is_set)
-			))
+		))
 	{
 		correct_exit(data);
 		save_image(&data->img, "screenshot.bmp");
