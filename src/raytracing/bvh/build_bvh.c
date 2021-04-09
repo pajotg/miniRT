@@ -37,7 +37,8 @@ static t_bvh	*try_combine_or_free(t_bvh *a, t_bvh *b)
 	return (new);
 }
 
-static bool init_indexes_and_split(t_list *objects, t_list *valid_indexes, t_list*	valid_indexes_a, t_list*	valid_indexes_b)
+static bool	init_indexes_and_split(t_list *objects, t_list *valid_indexes,
+	t_list	*valid_indexes_a, t_list	*valid_indexes_b)
 {
 	bool	success;
 
@@ -50,7 +51,7 @@ static bool init_indexes_and_split(t_list *objects, t_list *valid_indexes, t_lis
 		list_un_init(valid_indexes_b, NULL);
 		return (false);
 	}
-	return true;
+	return (true);
 }
 
 t_bvh	*bvh_build_from_indexes(t_list *objects, t_list *valid_indexes)
@@ -61,7 +62,8 @@ t_bvh	*bvh_build_from_indexes(t_list *objects, t_list *valid_indexes)
 
 	if (valid_indexes->count > 200)
 	{
-		if (!init_indexes_and_split(objects, valid_indexes, &valid_indexes_a, &valid_indexes_b))
+		if (!init_indexes_and_split(objects, valid_indexes, &valid_indexes_a,
+				&valid_indexes_b))
 			return (NULL);
 		if (valid_indexes_a.count == 0 || valid_indexes_b.count == 0)
 			new = bvh_build_from_indexes_raw(objects, valid_indexes);
@@ -78,6 +80,12 @@ t_bvh	*bvh_build_from_indexes(t_list *objects, t_list *valid_indexes)
 }
 
 //#include "ft_time.h"
+//printf("BVH building took %.2fs! with %lu objects!\n", time_difference(&end, 
+//&now), objects->count);
+//t_time end = time_now();
+//t_time now = time_now();
+//printf("building BVH!\n");
+
 t_bvh	*bvh_build(t_list *objects)
 {
 	size_t	i;
@@ -91,11 +99,7 @@ t_bvh	*bvh_build(t_list *objects)
 		list_push(&valid_indexes, &i);
 		i++;
 	}
-	//printf("building BVH!\n");
-	//t_time now = time_now();
 	new = bvh_build_from_indexes(objects, &valid_indexes);
-	//t_time end = time_now();
-	//printf("BVH building took %.2fs! with %lu objects!\n", time_difference(&end, &now), objects->count);
 	list_un_init(&valid_indexes, NULL);
 	return (new);
 }

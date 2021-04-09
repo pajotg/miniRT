@@ -13,12 +13,12 @@ static t_aabb	get_total_aabb(const t_list *base, const t_list *valid_indexes)
 	t_aabb	total_aabb;
 
 	index = list_index_unchecked(valid_indexes, 0);
-	total_aabb = ((t_object*)list_index(base, *index))->aabb;
+	total_aabb = ((t_object *)list_index(base, *index))->aabb;
 	i = 1;
 	while (i < valid_indexes->count)
 	{
 		index = list_index_unchecked(valid_indexes, i);
-		aabb_extend_box(&total_aabb, &((t_object*)list_index_unchecked(base,
+		aabb_extend_box(&total_aabb, &((t_object *)list_index_unchecked(base,
 					*index))->aabb);
 		i++;
 	}
@@ -65,7 +65,7 @@ bool	split_objects(const t_list *base, const t_list *valid_indexes, t_list *
 	i = 0;
 	while (i < valid_indexes->count)
 	{
-		curr_aabb = &((t_object*)list_index(base, *(size_t*)
+		curr_aabb = &((t_object *)list_index(base, *(size_t *)
 					list_index_unchecked(valid_indexes, i)))->aabb;
 		vec3_add(&current, &curr_aabb->max, &curr_aabb->min);
 		vec3_scale(&current, &current, 0.5);
