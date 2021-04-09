@@ -41,7 +41,8 @@
 			"ft_get_next_line.h": "c",
 			"mini_rt_parse_obj.h": "c",
 			"stupid_norm.h": "c",
-			"mini_rt_object_data.h": "c"
+			"mini_rt_object_data.h": "c",
+			"mini_rt_parse_utils.h": "c"
 		},
 	}
 }
