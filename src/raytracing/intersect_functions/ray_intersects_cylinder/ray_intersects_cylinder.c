@@ -6,12 +6,12 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:25 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/08 21:42:01 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 22:14:39 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "stupid_norm.h"
-#include "ft_ternary.h"
+//#include "ft_ternary.h"
 
 /*
 **	Woah, that took FOREVER, so manny mistakes

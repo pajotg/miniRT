@@ -6,15 +6,15 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:28:12 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/05 17:33:51 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 22:14:55 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_mlx.h"
+//#include "mini_rt_mlx.h"
 #include "ft_time.h"
-#include "ft_manual_reset_event.h"
-#include <stdio.h>
-#include <math.h>
+//#include "ft_manual_reset_event.h"
+//#include <stdio.h>
+//#include <math.h>
 #include "mini_rt_object.h"
 #include "mini_rt_render_pixel.h"
 #include "mlx.h"
