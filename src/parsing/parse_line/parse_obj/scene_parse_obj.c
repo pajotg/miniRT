@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/02/05 12:14:41 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/02 17:07:01 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:56:03 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 #include "libft.h"
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_obj.h"
-#include "mini_rt_scene.h"
+//#include "mini_rt_scene.h"
 #include "mini_rt_parse_utils.h"
-#include "mini_rt_object_data.h"
-#include "mini_rt_ray_intersects.h"
+//#include "mini_rt_object_data.h"
+//#include "mini_rt_ray_intersects.h"
 
 #include <stdlib.h>
 
-#include <stdio.h>	// bad
+//#include <stdio.h>	// bad
 
 //	malloc management
 //	combine base dir and path from .rt file

@@ -1,6 +1,6 @@
 #include "mini_rt_mlx.h"
 #include "ft_ternary.h"
-#include <stdbool.h>
+//#include <stdbool.h>
 #include <math.h>
 
 void	update_white_point(t_mlx_data *data)

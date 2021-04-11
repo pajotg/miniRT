@@ -6,16 +6,16 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 15:25:35 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/05 14:10:10 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:47:16 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_material_data.h"
-#include "mini_rt_object.h"
+//#include "mini_rt_object.h"
 #include <stdlib.h>
-#include <math.h>
+//#include <math.h>
 #include "mini_rt_render_pixel.h"
-#include "libft.h"
+//#include "libft.h"
 
 #define NORMAL_OFFSET 0.001
 

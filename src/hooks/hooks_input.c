@@ -6,16 +6,16 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 14:11:21 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/22 15:50:48 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:59:37 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_mlx.h"
-#include "mini_rt_object.h"
-#include <stdio.h>
-#include <math.h>
-#include "ft_printf.h"
-#include "mini_rt_render_pixel.h"
+//#include "mini_rt_object.h"
+//#include <stdio.h>
+//#include <math.h>
+//#include "ft_printf.h"
+//#include "mini_rt_render_pixel.h"
 // TODO: Mac keycodes
 
 #ifdef OS_Linux

@@ -6,12 +6,12 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/23 17:38:38 by jasper        #+#    #+#                 */
-/*   Updated: 2021/02/21 11:46:42 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:32:07 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_color.h"
-#include <math.h>
+//#include <math.h>
 
 /*
 **	A little more accurate, but slower

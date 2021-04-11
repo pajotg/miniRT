@@ -6,19 +6,19 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/27 17:08:45 by jasper        #+#    #+#                 */
-/*   Updated: 2021/04/02 16:37:33 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:58:03 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_object_data.h"
 #include "mini_rt_ray_intersects.h"
-#include "mini_rt_object.h"
+//#include "mini_rt_object.h"
 #include "ft_error.h"
 #include <stdlib.h>
 #include "libft.h"
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
-#include "mini_rt_material_data.h"
+//#include "mini_rt_material_data.h"
 
 // Calculate the aabb
 // Read material

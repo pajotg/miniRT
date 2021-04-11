@@ -6,14 +6,14 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 14:52:36 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/02/05 19:10:44 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:45:34 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_scene.h"
-#include "mini_rt_object.h"
+//#include "mini_rt_scene.h"
+//#include "mini_rt_object.h"
 #include "mini_rt_ray_intersects.h"
-#include <stdbool.h>
+//#include <stdbool.h>
 #include <math.h>
 
 static bool	cast_ray_bvh(const t_bvh *bvh, const t_ray *ray, t_ray_hit *o_hit)

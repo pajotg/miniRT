@@ -6,13 +6,13 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:21:48 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/31 13:20:41 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:46:31 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_render_pixel.h"
-#include "ft_manual_reset_event.h"
-#include <pthread.h>
+//#include "ft_manual_reset_event.h"
+//#include <pthread.h>
 #include <stdlib.h>
 
 void	renderer_un_init(t_pixel_renderer *renderer)

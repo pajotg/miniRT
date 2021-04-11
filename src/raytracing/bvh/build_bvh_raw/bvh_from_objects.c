@@ -36,7 +36,7 @@ static size_t	find_other_object(t_object *base, t_list *objects, t_list *
 	return (target_index);
 }
 
-static bool	bvh_from_objects(t_list *bvh_get, t_list *bvh_put, t_list *objects,
+bool	bvh_from_objects(t_list *bvh_get, t_list *bvh_put, t_list *objects,
 	t_list *valid_indexes)
 {
 	size_t		target_index;

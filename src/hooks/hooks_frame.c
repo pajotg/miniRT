@@ -6,16 +6,16 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/16 17:29:33 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/22 15:38:06 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 22:00:04 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_time.h"
-#include "mini_rt_mlx.h"
-#include "ft_printf.h"
+//#include "mini_rt_mlx.h"
+//#include "ft_printf.h"
 #include "mini_rt_bmp.h"
-#include "mini_rt_color.h"
-#include "mini_rt_pixel.h"
+//#include "mini_rt_color.h"
+//#include "mini_rt_pixel.h"
 #include <stdio.h>
 
 static t_time	g_start_time;

@@ -1,9 +1,9 @@
-#include "mini_rt_bvh.h"
+//#include "mini_rt_bvh.h"
 #include <stdlib.h>
-#include <math.h>
+//#include <math.h>
 #include "mini_rt_object.h"
 
-#include <stdio.h>	// bad
+//#include <stdio.h>	// bad
 
 void	bvh_free(t_bvh *bvh, t_leaf_free_func free_leaf_nodes)
 {

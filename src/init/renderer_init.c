@@ -6,15 +6,15 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:21:48 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/05 15:23:15 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:46:22 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_mlx.h"
-#include <stdlib.h>
-#include "ft_error.h"
-#include "libft.h"
-#include "ft_init.h"
+//#include <stdlib.h>
+//#include "ft_error.h"
+//#include "libft.h"
+//#include "ft_init.h"
 #include "ft_init_create_threading.h"
 
 #define ERR_MSG "Could not init renderer!"

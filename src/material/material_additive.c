@@ -6,14 +6,14 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/28 15:25:35 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/05 14:09:00 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:48:05 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_material_data.h"
-#include "mini_rt_object.h"
+//#include "mini_rt_object.h"
 #include <stdlib.h>
-#include <math.h>
+//#include <math.h>
 
 static void	material_additive(const t_scene *scene, const void *material_data,
 	const t_material_trace_data *trace_data, t_color_hdr *o_hdr)

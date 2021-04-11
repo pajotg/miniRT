@@ -1,10 +1,10 @@
-#include "mini_rt_bvh.h"
-#include <stdlib.h>
-#include <math.h>
+//#include "mini_rt_bvh.h"
+//#include <stdlib.h>
+//#include <math.h>
 #include "mini_rt_object.h"
 #include "ft_ternary.h"
 
-#include <stdio.h>	// bad
+//#include <stdio.h>	// bad
 
 static t_aabb	get_total_aabb(const t_list *base, const t_list *valid_indexes)
 {

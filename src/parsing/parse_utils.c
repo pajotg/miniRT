@@ -6,16 +6,16 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 16:11:07 by jasper        #+#    #+#                 */
-/*   Updated: 2021/03/29 16:20:43 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:53:13 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_error.h"
+//#include "ft_error.h"
 #include "ft_parse_utils.h"
 #include "mini_rt_object.h"
-#include <stdlib.h>
-#include "mini_rt_material_data.h"
-#include "libft.h"
+//#include <stdlib.h>
+//#include "mini_rt_material_data.h"
+//#include "libft.h"
 
 bool	read_transform(const char *str, int *current, t_transform *o_transform)
 {

@@ -6,12 +6,12 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/15 21:13:44 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/01/28 15:24:57 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:33:22 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_object.h"
-#include "mini_rt_object_data.h"
+//#include "mini_rt_object_data.h"
 
 /*
 **	Pure memory

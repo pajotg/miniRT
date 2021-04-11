@@ -6,12 +6,12 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/07 17:18:14 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/29 16:52:02 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:33:30 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt_object.h"
-#include "mini_rt_object_data.h"
+//#include "mini_rt_object_data.h"
 
 // In my opinion the function looked way better before the normification
 

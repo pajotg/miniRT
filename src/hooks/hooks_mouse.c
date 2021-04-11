@@ -6,11 +6,11 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/02/11 13:59:38 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/20 18:02:57 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:59:50 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_mlx.h"
+//#include "mini_rt_mlx.h"
 #include "mini_rt_object.h"
 #include <stdio.h>
 #include <math.h>

@@ -1,13 +1,13 @@
-#include "mini_rt_scene.h"
-#include "mini_rt_parse_scene_line.h"
+//#include "mini_rt_scene.h"
+//#include "mini_rt_parse_scene_line.h"
 #include "ft_error.h"
 #include "libft.h"
 #include "ft_get_next_line.h"
 #include "mini_rt_object.h"
-#include "ft_parse_utils.h"
+//#include "ft_parse_utils.h"
 #include <stdlib.h>
-#include "mini_rt_material_data.h"
-#include "ft_shared_ptr.h"
+//#include "mini_rt_material_data.h"
+//#include "ft_shared_ptr.h"
 
 /*
 **	doing init_success = list_init(&list, sizeof(t_camera)) && init_success;

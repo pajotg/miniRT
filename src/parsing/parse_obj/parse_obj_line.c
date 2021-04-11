@@ -1,11 +1,11 @@
 #include "libft.h"
-#include "mini_rt_parse_utils.h"
+//#include "mini_rt_parse_utils.h"
 #include "mini_rt_parse_obj.h"
-#include "ft_get_next_line.h"
+//#include "ft_get_next_line.h"
 #include "ft_parse_utils.h"
-#include "ft_vec2.h"
-#include <stdbool.h>
-#include <stdlib.h>
+//#include "ft_vec2.h"
+//#include <stdbool.h>
+//#include <stdlib.h>
 #include "ft_error.h"
 
 static bool	is_type(char *line, char *object, int *curr)

@@ -6,20 +6,20 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 19:27:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/04/02 15:53:12 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:49:25 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_scene.h"
-#include "mini_rt_parse_scene_line.h"
-#include "ft_error.h"
-#include "libft.h"
-#include "ft_get_next_line.h"
+//#include "mini_rt_scene.h"
+//#include "mini_rt_parse_scene_line.h"
+//#include "ft_error.h"
+//#include "libft.h"
+//#include "ft_get_next_line.h"
 #include "mini_rt_object.h"
-#include "ft_parse_utils.h"
+//#include "ft_parse_utils.h"
 #include <stdlib.h>
-#include "mini_rt_material_data.h"
-#include "ft_shared_ptr.h"
+//#include "mini_rt_material_data.h"
+//#include "ft_shared_ptr.h"
 
 void	un_init_object(t_object *object)
 {

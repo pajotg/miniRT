@@ -6,17 +6,17 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/17 13:59:56 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/05 13:34:45 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:47:32 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_mlx.h"
-#include "libft.h"
+//#include "mini_rt_mlx.h"
+//#include "libft.h"
 #include "mini_rt_render_pixel.h"
-#include "mini_rt_hooks.h"
+//#include "mini_rt_hooks.h"
 #include "mini_rt_image.h"
-#include "ft_list.h"
-#include <math.h>
+//#include "ft_list.h"
+//#include <math.h>
 
 // Fast render update for first frame
 // for the first frame, dont use random scattering

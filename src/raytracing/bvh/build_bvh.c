@@ -6,16 +6,16 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/02/05 15:57:59 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/29 17:03:19 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:46:00 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt_bvh.h"
-#include <stdlib.h>
-#include <math.h>
+//#include "mini_rt_bvh.h"
+//#include <stdlib.h>
+//#include <math.h>
 #include "mini_rt_object.h"
 
-#include <stdio.h>	// bad
+//#include <stdio.h>	// bad
 
 static t_bvh	*try_combine_or_free(t_bvh *a, t_bvh *b)
 {
@@ -80,7 +80,7 @@ t_bvh	*bvh_build_from_indexes(t_list *objects, t_list *valid_indexes)
 }
 
 //#include "ft_time.h"
-//printf("BVH building took %.2fs! with %lu objects!\n", time_difference(&end, 
+//printf("BVH building took %.2fs! with %lu objects!\n", time_difference(&end,
 //&now), objects->count);
 //t_time end = time_now();
 //t_time now = time_now();

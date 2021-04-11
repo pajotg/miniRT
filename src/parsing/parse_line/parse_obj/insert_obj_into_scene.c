@@ -1,15 +1,15 @@
 #include "ft_error.h"
 #include "libft.h"
-#include "ft_parse_utils.h"
+//#include "ft_parse_utils.h"
 #include "mini_rt_parse_obj.h"
-#include "mini_rt_scene.h"
-#include "mini_rt_parse_utils.h"
+//#include "mini_rt_scene.h"
+//#include "mini_rt_parse_utils.h"
 #include "mini_rt_object_data.h"
 #include "mini_rt_ray_intersects.h"
 
 #include <stdlib.h>
 
-#include <stdio.h>	// bad
+//#include <stdio.h>	// bad
 
 //static void	transform_dir(const t_transform* transform, t_vec3 *pos)
 //{

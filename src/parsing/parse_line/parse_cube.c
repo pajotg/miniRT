@@ -12,13 +12,13 @@
 
 #include "mini_rt_object_data.h"
 #include "mini_rt_ray_intersects.h"
-#include "mini_rt_object.h"
+//#include "mini_rt_object.h"
 #include "ft_error.h"
 #include <stdlib.h>
 #include "libft.h"
 #include "ft_parse_utils.h"
 #include "mini_rt_parse_utils.h"
-#include "mini_rt_material_data.h"
+//#include "mini_rt_material_data.h"
 
 static bool	stupid_norm1(t_object *object, t_object_cube *cube, char *line,
 	int *curr)

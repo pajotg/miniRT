@@ -6,17 +6,17 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/16 17:31:01 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/02 16:06:51 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/11 21:50:46 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "mini_rt_parse_utils.h"
+//#include "mini_rt_parse_utils.h"
 #include "mini_rt_parse_obj.h"
 #include "ft_get_next_line.h"
-#include "ft_parse_utils.h"
-#include "ft_vec2.h"
-#include <stdbool.h>
+//#include "ft_parse_utils.h"
+//#include "ft_vec2.h"
+//#include <stdbool.h>
 #include <stdlib.h>
 #include "ft_error.h"
 
