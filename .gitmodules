@@ -1,8 +1,0 @@
-[submodule "minilibx-linux"]
-	path = minilibx-linux
-	url = https://github.com/42Paris/minilibx-linux
-	ignore = dirty
-[submodule "libft"]
-	path = libft
-	url = https://github.com/pajotg/libft
-	ignore = dirty
