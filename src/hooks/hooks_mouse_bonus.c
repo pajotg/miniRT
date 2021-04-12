@@ -1,15 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   hooks_mouse.c                                      :+:    :+:            */
+/*   hooks_mouse_bonus.c                                :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/02/11 13:59:38 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/11 21:59:50 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/12 14:57:51 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#if BONUS
 //#include "mini_rt_mlx.h"
 #include "mini_rt_object.h"
 #include <stdio.h>
@@ -132,3 +133,13 @@ int	hook_mouse(int button, int x, int y, void *p)
 		debug_pixel(data, x, y);
 	return (0);
 }
+#else
+int	hook_mouse(int button, int x, int y, void *p)
+{
+	(void) button;
+	(void) x;
+	(void) y;
+	(void) p;
+	return (0);
+}
+#endif

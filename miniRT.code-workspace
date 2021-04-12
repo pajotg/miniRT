@@ -43,7 +43,8 @@
 			"stupid_norm.h": "c",
 			"mini_rt_object_data.h": "c",
 			"mini_rt_parse_utils.h": "c",
-			"stdio.h": "c"
+			"stdio.h": "c",
+			"mini_rt_render_pixel.h": "c"
 		},
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:28:12 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/11 22:14:55 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/12 14:52:28 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static float	hook_frame(void)
 //
 //data->input.left, data->input.right);
 
+#if BONUS
 static void	handle_movement(t_mlx_data *data, float diff)
 {
 	t_vec3		move_dir;
@@ -64,6 +65,13 @@ static void	handle_movement(t_mlx_data *data, float diff)
 	vec3_scale(&move_dir, &move_dir, diff * 5);
 	vec3_add(&cam->transform.position, &cam->transform.position, &move_dir);
 }
+#else
+static void	handle_movement(t_mlx_data *data, float diff)
+{
+	(void)data;
+	(void)diff;
+}
+#endif
 
 // in case we have stopped rendering, start again
 // Instead of resetting the progress of the frame, only getting updated pixels

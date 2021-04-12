@@ -23,6 +23,7 @@ void	update_white_point(t_mlx_data *data)
 	data->should_update_screen = true;
 }
 
+#if BONUS
 void	handle_white_point(t_mlx_data *data, float diff)
 {
 	float	change;
@@ -43,3 +44,10 @@ void	handle_white_point(t_mlx_data *data, float diff)
 		data->should_update_screen = true;
 	}
 }
+#else
+void	handle_white_point(t_mlx_data *data, float diff)
+{
+	(void)data;
+	(void)diff;
+}
+#endif

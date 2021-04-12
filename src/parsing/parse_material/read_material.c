@@ -27,6 +27,7 @@ static t_shared_pt	*read_default(t_color_hdr *
 //		G 255,255,255
 //		M 0.5 D 255,255,255 S 255,0,0
 
+#if BONUS
 static bool	parse_read_ptr(const char *str, int *current, t_shared_pt *(**
 	read_ptr)(const char *str, int *current))
 {
@@ -51,6 +52,18 @@ static bool	parse_read_ptr(const char *str, int *current, t_shared_pt *(**
 	}
 	return (true);
 }
+#else
+// Do not give bonus materials
+static bool	parse_read_ptr(const char *str, int *current, t_shared_pt *(**
+	read_ptr)(const char *str, int *current))
+{
+	(void)str;
+	(void)current;
+	(void)read_ptr;
+	set_error("Failed to detect type of material!", false);
+	return (false);
+}
+#endif
 
 // Try default material
 // Get what type of material it is

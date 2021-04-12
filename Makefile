@@ -55,6 +55,10 @@ else
 	OTHER_OBJ_DIR = $(DEBUG_DIR)
 endif
 
+ifdef BONUS
+FLAGS += -D BONUS
+endif
+
 SOURCE_FILES = $(shell find $(SRC_DIR) -type f -name *.c)
 HEADER_FILES = $(shell find $(INCLUDE_DIRS) -type f -name *.h)
 
@@ -66,9 +70,11 @@ LINUX_FILES = $(filter %_linux.c,$(SOURCE_FILES)) $(filter %_linux_bonus.c,$(SOU
 
 ifdef BONUS
 	NON_BONUS = $(patsubst %_bonus.c,%.c,$(BONUS_FILES))
-	BONUS_FILTERED_FILES = $(filter-out $(NON_BONUS),$(SOURCE_FILES))
+	#BONUS_FILTERED_FILES = $(filter-out $(NON_BONUS),$(SOURCE_FILES))
+	BONUS_FILTERED_FILES = $(SOURCE_FILES)	# meh.
 else
-	BONUS_FILTERED_FILES = $(filter-out $(BONUS_FILES),$(SOURCE_FILES))
+	#BONUS_FILTERED_FILES = $(filter-out $(BONUS_FILES),$(SOURCE_FILES))
+	BONUS_FILTERED_FILES = $(SOURCE_FILES)	# meh.
 endif
 
 ifdef LINUX

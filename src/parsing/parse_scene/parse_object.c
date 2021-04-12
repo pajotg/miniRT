@@ -27,6 +27,7 @@ static bool	is_object(char *line, char *object, int *curr)
 	return (true);
 }
 
+#if BONUS
 bool	parse_object_stupid_norm(t_scene *scene,
 	char *line, int *curr)
 {
@@ -71,3 +72,37 @@ bool	parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *line,
 	set_error(ft_strjoin("Unknown configuration: ", line), true);
 	return (false);
 }
+#else
+bool	parse_object_stupid_norm(t_scene *scene,
+	char *line, int *curr)
+{
+	if (is_object(line, "cy", curr))
+		return (scene_parse_cylinder(scene, line, curr));
+	else if (is_object(line, "tr", curr))
+		return (scene_parse_triangle(scene, line, curr));
+	return (false);
+}
+
+bool	parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *line,
+	int *curr)
+{
+	if (is_object(line, "R", curr))
+		return (scene_parse_resolution(parse_data, scene, line, curr));
+	else if (is_object(line, "A", curr))
+		return (scene_parse_ambiant(parse_data, scene, line, curr));
+	else if (is_object(line, "c", curr))
+		return (scene_parse_camera(scene, line, curr));
+	else if (is_object(line, "l", curr))
+		return (scene_parse_light(scene, line, curr));
+	else if (is_object(line, "sp", curr))
+		return (scene_parse_sphere(scene, line, curr));
+	else if (is_object(line, "pl", curr))
+		return (scene_parse_plane(scene, line, curr));
+	else if (is_object(line, "sq", curr))
+		return (scene_parse_square(scene, line, curr));
+	else
+		return (parse_object_stupid_norm(scene, line, curr));
+	set_error(ft_strjoin("Unknown configuration: ", line), true);
+	return (false);
+}
+#endif
