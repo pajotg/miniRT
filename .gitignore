@@ -6,3 +6,5 @@ miniRT
 .vscode
 output
 screenshot.bmp
+*.dylib
+*.bmp
