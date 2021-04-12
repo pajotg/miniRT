@@ -59,8 +59,119 @@ ifdef BONUS
 FLAGS += -D BONUS
 endif
 
-SOURCE_FILES = $(shell find $(SRC_DIR) -type f -name *.c)
-HEADER_FILES = $(shell find $(INCLUDE_DIRS) -type f -name *.h)
+#SOURCE_FILES = $(shell find $(SRC_DIR) -type f -name *.c)
+#HEADER_FILES = $(shell find $(INCLUDE_DIRS) -type f -name *.h)
+
+SOURCE_FILES = src/general_utils/bmp_utils/save_image.c \
+src/general_utils/hilbert_curve/hilbert_curve.c \
+src/general_utils/hilbert_curve/hilbert_randomizer.c \
+src/general_utils/hilbert_curve/hilbert_randomizer_init.c \
+src/general_utils/math_utils/color_math.c \
+src/general_utils/math_utils/to_hdr.c \
+src/hooks/hooks_frame.c \
+src/hooks/hooks_input.c \
+src/hooks/hooks_mlx_loop.c \
+src/hooks/hooks_mlx_loop2.c \
+src/hooks/hooks_mouse_bonus.c \
+src/init/ft_printf_init.c \
+src/init/init_image.c \
+src/init/main/main.c \
+src/init/main/main_2.c \
+src/init/main/mlx_destroy_display.c \
+src/init/mlx_init.c \
+src/init/mlx_un_init.c \
+src/init/renderer_init.c \
+src/init/renderer_un_init.c \
+src/material/material_additive_bonus.c \
+src/material/material_checkerboard_bonus.c \
+src/material/material_diffuse/add_diffuse_lighting.c \
+src/material/material_diffuse/material_diffuse.c \
+src/material/material_emissive_bonus.c \
+src/material/material_free.c \
+src/material/material_mix_bonus.c \
+src/material/material_perfect_mirror_bonus.c \
+src/material/material_specular/material_specular_bonus.c \
+src/material/material_specular/material_specular_init_bonus.c \
+src/parsing/parse_args.c \
+src/parsing/parse_line/parse_ambiant.c \
+src/parsing/parse_line/parse_anti_aliasing_bonus.c \
+src/parsing/parse_line/parse_camera.c \
+src/parsing/parse_line/parse_cube_bonus.c \
+src/parsing/parse_line/parse_cylinder.c \
+src/parsing/parse_line/parse_directional_light_bonus.c \
+src/parsing/parse_line/parse_gi_bonus.c \
+src/parsing/parse_line/parse_light.c \
+src/parsing/parse_line/parse_noise_reduction_bonus.c \
+src/parsing/parse_line/parse_obj/insert_obj_into_scene_bonus.c \
+src/parsing/parse_line/parse_obj/scene_parse_obj_bonus.c \
+src/parsing/parse_line/parse_plane.c \
+src/parsing/parse_line/parse_resulution.c \
+src/parsing/parse_line/parse_sphere.c \
+src/parsing/parse_line/parse_square.c \
+src/parsing/parse_line/parse_triangle.c \
+src/parsing/parse_material/create_shared_ptr_from_material.c \
+src/parsing/parse_material/parse_material_1_bonus.c \
+src/parsing/parse_material/parse_material_2_bonus.c \
+src/parsing/parse_material/read_material.c \
+src/parsing/parse_obj/parse_obj_bonus.c \
+src/parsing/parse_obj/parse_obj_file_bonus.c \
+src/parsing/parse_obj/parse_obj_line_bonus.c \
+src/parsing/parse_obj/parse_obj_line_face_bonus.c \
+src/parsing/parse_scene/parse_line.c \
+src/parsing/parse_scene/parse_object.c \
+src/parsing/parse_scene/parse_scene.c \
+src/parsing/parse_scene/parse_scene_file.c \
+src/parsing/parse_scene/parse_scene_free.c \
+src/parsing/parse_utils.c \
+src/raytracing/bvh/build_bvh.c \
+src/raytracing/bvh/build_bvh_raw/build_bvh_raw.c \
+src/raytracing/bvh/build_bvh_raw/build_bvh_utils.c \
+src/raytracing/bvh/build_bvh_raw/bvh_from_objects.c \
+src/raytracing/bvh/bvh.c \
+src/raytracing/bvh/split_objects.c \
+src/raytracing/cast_ray.c \
+src/raytracing/intersect_functions/ray_intersects_aabb.c \
+src/raytracing/intersect_functions/ray_intersects_cube/ray_intersects_cube_bonus.c \
+src/raytracing/intersect_functions/ray_intersects_cube/stupid_norm_bonus.c \
+src/raytracing/intersect_functions/ray_intersects_cylinder/ray_intersects_cylinder.c \
+src/raytracing/intersect_functions/ray_intersects_cylinder/stupid_norm.c \
+src/raytracing/intersect_functions/ray_intersects_plane.c \
+src/raytracing/intersect_functions/ray_intersects_sphere.c \
+src/raytracing/intersect_functions/ray_intersects_square/ray_intersects_square.c \
+src/raytracing/intersect_functions/ray_intersects_triangle/ray_intersects_triangle.c \
+src/raytracing/pix_to_ray/pix_to_ray.c \
+src/raytracing/trace_color.c \
+src/render_loop/edge_detect_bonus.c \
+src/render_loop/is_frame.c \
+src/render_loop/new_pixel_render_thread_bonus.c \
+src/render_loop/noise_detection_bonus.c \
+src/render_loop/render_next_pixels/render_next_pixels.c \
+src/render_loop/render_next_pixels/render_next_pixels_2.c \
+src/render_loop/render_pixel.c \
+src/render_loop/update_image.c
+
+HEADER_FILES = include/mini_rt_args.h \
+include/mini_rt_bmp.h \
+include/mini_rt_bvh.h \
+include/mini_rt_color.h \
+include/mini_rt_hilbert_randomizer.h \
+include/mini_rt_hooks.h \
+include/mini_rt_image.h \
+include/mini_rt_init.h \
+include/mini_rt_material.h \
+include/mini_rt_material_data.h \
+include/mini_rt_mlx.h \
+include/mini_rt_object.h \
+include/mini_rt_object_data.h \
+include/mini_rt_parse_obj.h \
+include/mini_rt_parse_scene_line.h \
+include/mini_rt_parse_utils.h \
+include/mini_rt_pixel.h \
+include/mini_rt_ray_intersects.h \
+include/mini_rt_raycast.h \
+include/mini_rt_render_pixel.h \
+include/mini_rt_renderer.h \
+include/mini_rt_scene.h
 
 #filter out the mac/linux/bonus/nonbonus files for what case we need now
 BONUS_FILES = $(filter %_bonus.c,$(SOURCE_FILES))
@@ -119,6 +230,8 @@ $(OBJECTS): $(USE_OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES) \
 	mkdir -p $(shell dirname $@)
 	$(CC) $(FLAGS) $(INCLUDE) -c -o $@ $<
 
+$(FOREIGN_TARGETS):
+	make --no-print-directory -C $(shell dirname $@)
 
 # cleanup targets
 .PHONY: clean
