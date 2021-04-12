@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:28:12 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/12 15:41:28 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/12 15:43:59 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ int	hook_loop(void *p)
 	float			diff;
 	t_mlx_data		*data;
 	t_time			current;
-	float			diff;
 	static t_time	last = {0, 0 };
 
 	data = p;
