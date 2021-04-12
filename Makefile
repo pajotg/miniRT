@@ -22,8 +22,14 @@ INCLUDE_DIRS = include libft/include $(MINI_LIBX_DIR)
 INCLUDE = -Iinclude -Ilibft/include -I$(MINI_LIBX_DIR)
 LDFLAGS = -L$(shell pwd)/$(MINI_LIBX_DIR)/ -lmlx -Llibft -lft -lm -lpthread
 
-FOREIGN_TARGETS = $(MINI_LIBX_DIR)/libmlx.a libft/libft.a
-MAKE_FOREIGN_TARGETS = $(MINI_LIBX_DIR)/libmlx libft/libft
+FOREIGN_TARGETS = libft/libft.a
+MAKE_FOREIGN_TARGETS = libft/libft $(MINI_LIBX_DIR)/libmlx
+
+ifeq ($(OS), Darwin)
+FOREIGN_TARGETS += $(MINI_LIBX_DIR)/libmlx.dylib
+else
+FOREIGN_TARGETS += $(MINI_LIBX_DIR)/libmlx.a
+endif
 
 FLAGS = -DBUFFER_SIZE=128 -Wall -Wextra -Werror
 #FLAGS = -DBUFFER_SIZE=128 # warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning warning
@@ -84,12 +90,10 @@ debug:
 bonus:
 	$(MAKE) BONUS=1
 
-# Be sure to make libft and minilibx no longer submodules when you want to eval, it dont work when you clone it! REEE
-# Also be sure to find #include <stdio.h>, you never know where i left it in, alright? alright.
-# Making it work with the foreign targets was a nightmare, the phony on the $(MAKE) -C libft make it look always out of date
-# so it would always re-link, so i had to put the MAKE_FOREIGN_TARGETS in the order only dependency so it would not matter if it was "out of date"
-# and then ALSO add the real library in the dependencies so it would update if it actually was out of date... UGH!
-$(NAME): $(OBJECTS) $(FOREIGN_TARGETS) | $(MAKE_FOREIGN_TARGETS) $(OBJ_DIR) $(DEBUG_DIR)
+_ = $(shell make --no-print-directory -C libft)
+_ = $(shell make --no-print-directory -C $(MINI_LIBX_DIR))
+
+$(NAME): $(OBJECTS) $(FOREIGN_TARGETS) | $(OBJ_DIR) $(DEBUG_DIR)
 ifeq ($(OS), Darwin)
 	cp $(MINI_LIBX_DIR)/libmlx.dylib libmlx.dylib
 endif
@@ -108,21 +112,6 @@ $(OBJECTS): $(USE_OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES) \
 	| $(SRC_DIR) $(USE_OBJ_DIR)
 	mkdir -p $(shell dirname $@)
 	$(CC) $(FLAGS) $(INCLUDE) -c -o $@ $<
-
-
-# only the other makefile can determine if it needs to be updated, so phony it.
-# kinda annoying that i had to seperate the real target and the "call make target"
-#	i chose to do it by removing the .a at the end
-# maybe not the best way, oh well
-
-.PHONY: $(MAKE_FOREIGN_TARGETS)
-$(MAKE_FOREIGN_TARGETS):
-	#$(MAKE) -C $(dir $@) $(notdir $@).a
-	$(MAKE) -C $(dir $@)
-
-# also in case the file does not exist yet, add this rule so it wont error
-# we will make the libs with the $(MAKE_FOREIGN_TARGETS) target
-$(FOREIGN_TARGETS):
 
 
 # cleanup targets
