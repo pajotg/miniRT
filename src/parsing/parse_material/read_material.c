@@ -54,6 +54,7 @@ static bool	parse_read_ptr(const char *str, int *current, t_shared_pt *(**
 }
 #else
 // Do not give bonus materials
+
 static bool	parse_read_ptr(const char *str, int *current, t_shared_pt *(**
 	read_ptr)(const char *str, int *current))
 {

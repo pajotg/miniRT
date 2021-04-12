@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/27 17:28:12 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/12 14:52:28 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/12 15:41:28 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,6 @@
 
 //	returns time since last frame
 // 	Get time since last frame
-
-static float	hook_frame(void)
-{
-	t_time			current;
-	float			diff;
-	static t_time	last = {0, 0 };
-
-	current = time_now();
-	diff = time_difference(&current, &last);
-	if (last.seconds == 0)
-		diff = 0;
-	last = current;
-	return (diff);
-}
 
 //printf("Got inputs: %i|%i %i|%i\n", data->input.forward,data->input.backward,
 //
@@ -66,6 +52,7 @@ static void	handle_movement(t_mlx_data *data, float diff)
 	vec3_add(&cam->transform.position, &cam->transform.position, &move_dir);
 }
 #else
+
 static void	handle_movement(t_mlx_data *data, float diff)
 {
 	(void)data;
@@ -120,13 +107,20 @@ static void	handle_screen_update(t_mlx_data *data)
 
 int	hook_loop(void *p)
 {
-	float		diff;
-	t_mlx_data	*data;
+	float			diff;
+	t_mlx_data		*data;
+	t_time			current;
+	float			diff;
+	static t_time	last = {0, 0 };
 
 	data = p;
 	if (!data->active)
 		mlx_loop_on_exit(data);
-	diff = hook_frame();
+	current = time_now();
+	diff = time_difference(&current, &last);
+	if (last.seconds == 0)
+		diff = 0;
+	last = current;
 	handle_movement(data, diff);
 	handle_clearing(data);
 	render_next_pixels(data, 250);

@@ -73,6 +73,7 @@ bool	parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *line,
 	return (false);
 }
 #else
+
 bool	parse_object_stupid_norm(t_scene *scene,
 	char *line, int *curr)
 {

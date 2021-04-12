@@ -45,6 +45,7 @@ void	handle_white_point(t_mlx_data *data, float diff)
 	}
 }
 #else
+
 void	handle_white_point(t_mlx_data *data, float diff)
 {
 	(void)data;

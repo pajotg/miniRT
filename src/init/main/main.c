@@ -6,16 +6,16 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/22 18:24:12 by jasper        #+#    #+#                 */
-/*   Updated: 2021/04/12 14:58:30 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/12 15:38:27 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "stupid_norm.h"
 
 #if BONUS
-#define NUM_THREADS 5
+# define NUM_THREADS 5
 #else
-#define NUM_THREADS 0
+# define NUM_THREADS 0
 #endif
 
 static pthread_t	g_thread_ids[NUM_THREADS];

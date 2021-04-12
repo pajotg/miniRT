@@ -73,6 +73,7 @@ src/hooks/hooks_input.c \
 src/hooks/hooks_mlx_loop.c \
 src/hooks/hooks_mlx_loop2.c \
 src/hooks/hooks_mouse_bonus.c \
+src/hooks/hooks_mouse.c \
 src/init/ft_printf_init.c \
 src/init/init_image.c \
 src/init/main/main.c \
