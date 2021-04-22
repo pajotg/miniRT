@@ -8,3 +8,4 @@ output
 screenshot.bmp
 *.dylib
 *.bmp
+mlx-test

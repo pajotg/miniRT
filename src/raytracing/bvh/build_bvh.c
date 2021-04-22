@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/02/05 15:57:59 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/11 21:46:00 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/22 14:58:03 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ t_bvh	*bvh_build_from_indexes(t_list *objects, t_list *valid_indexes)
 	t_list	valid_indexes_b;
 	t_bvh	*new;
 
+	if (valid_indexes->count == 0)
+		return (NULL);
 	if (valid_indexes->count > 200)
 	{
 		if (!init_indexes_and_split(objects, valid_indexes, &valid_indexes_a,
