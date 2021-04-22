@@ -6,13 +6,21 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 16:58:07 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/08 14:59:24 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/22 14:51:07 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_parse_utils.h"
 #include "ft_error.h"
 #include "libft.h"
+
+// When we read a overflowing, its nice to read all the digits
+
+static void skip_digits(const char *str, int *current)
+{
+	while (ft_isdigit(str[*current]))
+		(*current)++;
+}
 
 bool	read_int(const char *str, int *current, int *value)
 {
@@ -31,6 +39,7 @@ bool	read_int(const char *str, int *current, int *value)
 			if (is_negative)
 				*value = -2147483648;
 			*value = 2147483647;
+			skip_digits(str, current);
 			return (false);
 		}
 		(*current)++;
