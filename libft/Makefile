@@ -96,6 +96,7 @@ src/list/list_index.c \
 src/list/list_access.c \
 src/list/list_clear.c \
 src/list/list_init.c \
+src/list/list_un_init.c \
 src/ft_to/ft_toupper.c \
 src/ft_to/ft_tolower.c \
 src/random/ft_error.c \
