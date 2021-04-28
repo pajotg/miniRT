@@ -53,6 +53,16 @@ int	complete_first_frame(t_mlx_data *data)
 	return (total_samples);
 }
 
+// Had some problems with nans when there is no ambiant, so... this should be 
+//able to handle zero brightness
+
+static float	safe_divide(float a, float b)
+{
+	if (b != 0)
+		return (a / b);
+	return (100000);
+}
+
 // divide by number of samples, to get a more accurate "how much noise does one
 // sample give?"
 // divide by magnitide of color, small differences in light spots dont matter,
@@ -75,11 +85,13 @@ int	complete_aa_pixel(t_mlx_data *data, int i)
 	pixel->num_samples += temp->pixel_data.num_samples;
 	after = convert_to_hdr(pixel);
 	new_aa_difference = get_difference(&before, &after);
-	new_aa_difference /= (after.r * after.r + after.g * after.g + after.b
-			 *after.b);
-	new_aa_difference /= temp->pixel_data.num_samples;
+	new_aa_difference = safe_divide(new_aa_difference, (after.r * after.r
+				 +after.g * after.g + after.b
+				 *after.b) * temp->pixel_data.num_samples);
 	if (new_aa_difference > 10)
 		new_aa_difference = 10;
+	if (new_aa_difference < 0)
+		new_aa_difference = 0;
 	temp->aa_difference = (new_aa_difference + temp->aa_difference) / 2;
 	return (temp->pixel_data.num_samples);
 }

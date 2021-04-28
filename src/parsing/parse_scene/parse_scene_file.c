@@ -75,9 +75,9 @@ static bool	do_ze_parsing_stupid_norm(t_scene_parse_data *parse_data, t_scene *
 static bool	is_this_a_valid_scene_stupid_norm(t_scene *scene,
 	t_scene_parse_data *parse_data)
 {
-	if ((!scene->bvh && scene->objects.count > 0) || !parse_data->has_ambiant || !parse_data->has_resolution
-		 || scene->cameras.count == 0 || (scene->noise_reduction != 0 && scene
-			->samples_per_pixel.count == 0))
+	if ((!scene->bvh && scene->objects.count > 0) || !parse_data->has_ambiant
+		|| !parse_data->has_resolution || scene->cameras.count == 0
+		|| (scene->noise_reduction != 0 && scene->samples_per_pixel.count == 0))
 	{
 		if (!parse_data->has_ambiant)
 			set_error("No ambiant in configuration!", false);

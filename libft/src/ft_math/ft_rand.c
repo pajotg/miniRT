@@ -6,7 +6,7 @@
 /*   By: jasper <jasper@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 16:25:40 by jasper        #+#    #+#                 */
-/*   Updated: 2021/04/06 12:18:22 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/04/23 14:10:01 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ t_vec3	random_on_sphere(void)
 	phi = acosf(1 - 2 * ft_randf());
 	return ((t_vec3)
 		{
-			.x = sin(phi) *cos(theta),
+			.x = sin(phi) * cos(theta),
 			.y = cos(phi),
-			.z = sin(phi) *sin(theta),
+			.z = sin(phi) * sin(theta),
 		});
 }
 
