@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/26 16:58:07 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/04/22 14:51:07 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/05/02 10:36:12 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 // When we read a overflowing, its nice to read all the digits
 
-static void skip_digits(const char *str, int *current)
+static void	skip_digits(const char *str, int *current)
 {
 	while (ft_isdigit(str[*current]))
 		(*current)++;
