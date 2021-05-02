@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/04 12:59:25 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/03/29 16:04:15 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/05/02 17:02:07 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,19 @@ static t_args	*init(int argc)
 
 // Checks for: strlen >= 4, ends with .rt, and character before . != /
 
+static bool validate(t_args *data)
+{
+	if (data->save && data->save_on_exit)
+	{
+		set_error("Both save and save-on-exit arguments where specified!",
+			false);
+		return (false);
+	}
+	if (data->save)
+		data->no_res_cap = true;
+	return (true);
+}
+
 t_args	*parse_args(int argc, char **argv)
 {
 	t_args	*data;
@@ -83,10 +96,8 @@ t_args	*parse_args(int argc, char **argv)
 	}
 	if (!parse_flags(data, argc, argv))
 		return (NULL);
-	if (data->save && data->save_on_exit)
+	if (!validate(data))
 	{
-		set_error("Both save and save-on-exit arguments where specified!",
-			false);
 		free(data);
 		return (NULL);
 	}
