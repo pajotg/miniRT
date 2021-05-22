@@ -46,7 +46,7 @@ static bool	calculate_datas(t_triangle_intersection_data *tid, t_object *object,
 	tid->a = vec3_dot(&tid->edge1, &tid->h);
 	if (tid->a > -EPSILON && tid->a < EPSILON)
 		return (false);
-	tid->f = 1 /tid->a;
+	tid->f = 1 / tid->a;
 	vec3_subtract(&tid->s, &ray->origin, &object->transform.position);
 	tid->u = tid->f * vec3_dot(&tid->s, &tid->h);
 	if (tid->u < 0 || tid->u > 1)

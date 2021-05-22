@@ -10,9 +10,9 @@ static bool	init_lists(t_list **bvh_get, t_list **bvh_put, int valid_count)
 	*bvh_put = list_new(sizeof(t_bvh *));
 	init_success = init_success && bvh_put;
 	init_success = init_success && list_set_capacity(*bvh_put, sizeof(t_bvh *)
-			 *valid_count / 2 + 1);
+			 * valid_count / 2 + 1);
 	init_success = init_success && list_set_capacity(*bvh_get, sizeof(t_bvh *)
-			 *valid_count / 4 + 1);
+			 * valid_count / 4 + 1);
 	if (!init_success)
 	{
 		list_free(*bvh_get, (t_free_values)bvh_free_simple);

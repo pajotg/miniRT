@@ -64,7 +64,7 @@ static t_args	*init(int argc)
 
 // Checks for: strlen >= 4, ends with .rt, and character before . != /
 
-static bool validate(t_args *data)
+static bool	validate(t_args *data)
 {
 	if (data->save && data->save_on_exit)
 	{

@@ -44,7 +44,7 @@ static bool	ric_validate_hit_point(t_cube_intersection_data *sa)
 		if (sa->which_plane != sa->i)
 		{
 			sa->coord = sa->origin[sa->i] + sa->dir[sa->i]
-				 *sa->hit_t[sa->which_plane];
+				 * sa->hit_t[sa->which_plane];
 			if ((sa->coord < sa->min_b[sa->i]) || (sa->coord > sa->max_b[sa->i])
 			)
 				return (false);
@@ -63,7 +63,7 @@ static void	ric_calculate_hit_point_and_normal(t_cube_intersection_data *sa,
 		if (sa->which_plane != sa->i)
 		{
 			sa->coord = sa->origin[sa->i] + sa->dir[sa->i]
-				 *sa->hit_t[sa->which_plane];
+				 * sa->hit_t[sa->which_plane];
 			((float*)&o_hit->location)[sa->i] = sa->coord;
 			((float*)&o_hit->normal)[sa->i] = 0;
 		}

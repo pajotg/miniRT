@@ -75,7 +75,7 @@ void	ric_calculate_times(t_cube_intersection_data *sa)
 	{
 		if (sa->side[sa->i] != 0 && sa->dir[sa->i] != 0.)
 			sa->hit_t[sa->i] = (sa->candidate_plane[sa->i] - sa->origin[sa->i])
-				 /sa->dir[sa->i];
+				 / sa->dir[sa->i];
 		else
 			sa->hit_t[sa->i] = ter_float(sa->inside, INFINITY, -INFINITY);
 		sa->i++;

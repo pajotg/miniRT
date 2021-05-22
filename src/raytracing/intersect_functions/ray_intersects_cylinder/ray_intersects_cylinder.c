@@ -52,14 +52,14 @@ static bool	ric_magic_distance_math(t_cylinder_intersection_data *cid,
 	if (cid->dir2d_sqr <= 0)
 		return (false);
 	cid->t = - (cid->origin.x * cid->dir.x + cid->dir.y * cid->origin.y)
-		 /cid->dir2d_sqr;
+		 / cid->dir2d_sqr;
 	cid->dsqr = cid->origin.x * cid->origin.x + cid->origin.y * cid->origin.y
-		 -cid->t * cid->t
-		 *cid->dir2d_sqr;
+		 - cid->t * cid->t
+		 * cid->dir2d_sqr;
 	if (cid->dsqr > cid->data->radius * cid->data->radius)
 		return (false);
 	cid->k = sqrtf((cid->data->radius * cid->data->radius - cid->dsqr)
-			 /cid->dir2d_sqr);
+			 / cid->dir2d_sqr);
 	cid->is_inside = cid->t < cid->k;
 	if (cid->is_inside)
 		cid->k = -cid->k;

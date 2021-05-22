@@ -86,8 +86,8 @@ int	complete_aa_pixel(t_mlx_data *data, int i)
 	after = convert_to_hdr(pixel);
 	new_aa_difference = get_difference(&before, &after);
 	new_aa_difference = safe_divide(new_aa_difference, (after.r * after.r
-				 +after.g * after.g + after.b
-				 *after.b) * temp->pixel_data.num_samples);
+				 + after.g * after.g + after.b
+				 * after.b) * temp->pixel_data.num_samples);
 	if (new_aa_difference > 10)
 		new_aa_difference = 10;
 	if (new_aa_difference < 0)
