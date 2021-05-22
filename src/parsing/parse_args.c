@@ -6,7 +6,7 @@
 /*   By: jsimonis <jsimonis@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/04 12:59:25 by jsimonis      #+#    #+#                 */
-/*   Updated: 2021/05/02 17:02:07 by jsimonis      ########   odam.nl         */
+/*   Updated: 2021/05/22 18:28:58 by jsimonis      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,8 @@ static bool	validate(t_args *data)
 			false);
 		return (false);
 	}
-	if (data->save)
-		data->no_res_cap = true;
+	//if (data->save)
+	//	data->no_res_cap = true;
 	return (true);
 }
 
