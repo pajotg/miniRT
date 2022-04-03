@@ -36,13 +36,13 @@ appear once<br>
 Lines starting with '#' are comments.<br>
 You can have:
 * **R** [width] [height] - The resolution
-* **A** [color] - The ambiant color, ratio is a multiplier, can go above 1 for bright stuff
+* **A** [hdrcolor] - The ambiant color, ratio is a multiplier, can go above 1 for bright stuff
 * **AA** [samples] ... - The Anti-Aliasing sample count, Bonus, can have multiple numbers, so 'AA 2 4 8' will render a AA frame with 2, then with 4, and then with 8
 * **NR** [samples] ... - The Noise-Rediction sample count, Bonus
 * **GI** - Enables Global-Illumination, Bonus
 * **c** [transform] [fov] - Camera
-* **l** [location] [color] - Point Light
-* **dl** [lookdir] [color] - Directional Light, Bonus, Light goes in the direction of [lookdir]
+* **l** [location] [hdrcolor] - Point Light
+* **dl** [lookdir] [hdrcolor] - Directional Light, Bonus, Light goes in the direction of [lookdir]
 * **sp** [location] [size] [material] - Sphere
 * **pl** [transform] [material] - Plane
 * **cy** [transform] [diameter] [height] [material] - Cylinder
@@ -55,12 +55,13 @@ Ive used things like [transform] and [color] and such above, they are written li
 * **location**: [x],[y],[z]
 * **lookdir**: [x],[y],[z]
 * **transform**: [location] [lookdir]
-* **color**: [ratio] [r],[g],[b]
+* **color**: [r],[g],[b]
+* **hdrcolor**: [ratio] [color]
 * **material**: its either:
 	*	a plain [color], diffuse only
 	*	or Defined by a tree like structure:
 		*	**D** [color] - Diffuse
-		*	**E** [color] - Emissive
+		*	**E** [hdrcolor] - Emissive
 		*	**M** [ratio] [material] [material] - Mix
 		*	**A** [material] [material] - Add
 		*	**C** [size] [color] [material] - Checkerboard
