@@ -41,6 +41,7 @@ bool	parse_object_stupid_norm(t_scene *scene,
 		return (scene_parse_directional_light(scene, line, curr));
 	else if (is_object(line, "obj", curr))
 		return (scene_parse_obj(scene, line, curr));
+	set_error(ft_strjoin("Unknown configuration: ", line), true);
 	return (false);
 }
 
@@ -69,8 +70,6 @@ bool	parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *line,
 		return (scene_parse_square(scene, line, curr));
 	else
 		return (parse_object_stupid_norm(scene, line, curr));
-	set_error(ft_strjoin("Unknown configuration: ", line), true);
-	return (false);
 }
 #else
 
@@ -81,6 +80,7 @@ bool	parse_object_stupid_norm(t_scene *scene,
 		return (scene_parse_cylinder(scene, line, curr));
 	else if (is_object(line, "tr", curr))
 		return (scene_parse_triangle(scene, line, curr));
+	set_error(ft_strjoin("Unknown configuration: ", line), true);
 	return (false);
 }
 
@@ -103,7 +103,5 @@ bool	parse_object(t_scene_parse_data *parse_data, t_scene *scene, char *line,
 		return (scene_parse_square(scene, line, curr));
 	else
 		return (parse_object_stupid_norm(scene, line, curr));
-	set_error(ft_strjoin("Unknown configuration: ", line), true);
-	return (false);
 }
 #endif
